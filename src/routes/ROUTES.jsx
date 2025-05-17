@@ -1,8 +1,7 @@
 import MainPage from "../pages/index.jsx";
 import HomePage from "../pages/UserPages/HomePage/index.jsx";
 import ProtectedRoute from "../ProtectedRoute.jsx";
-
-
+import Contact from "../pages/UserPages/ContactPage/index.jsx";
 
 const router = [
     {
@@ -12,6 +11,10 @@ const router = [
             {
                 path: "/",
                 element: <HomePage/>
+            },
+            {
+                path: "/contact",
+                element: <Contact/>
             }
         ]
     },

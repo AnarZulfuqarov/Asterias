@@ -1,20 +1,18 @@
 import { useTranslation } from "react-i18next";
 import { FaPhone } from "react-icons/fa"; // Changed to phone icon
 import "./index.scss";
-import {useNavigate} from "react-router";
 
-const CircleText = () => {
+const CircleTextBlack = () => {
     const { t } = useTranslation();
-    const navigate = useNavigate();
     return (
-        <div className="circle-text-wrapper" onClick={() => navigate("/contact")} style={{cursor: "pointer"}}>
+        <div className="circle-text-wrapperr" >
             <svg
                 className="circle-text-svg"
                 viewBox="0 0 200 200"
                 xmlns="http://www.w3.org/2000/svg"
             >
                 {/* Add a filled circle for the background */}
-                <circle cx="100" cy="100" r="80" fill="#AFFBA9" /> {/* Light green background */}
+                <circle cx="100" cy="100" r="80" fill="#000000" /> {/* Light green background */}
 
                 <defs>
                     {/* Circular path for the text */}
@@ -31,7 +29,7 @@ const CircleText = () => {
 
                 {/* Text along the circular path */}
                 <text
-                    fill="#333"
+                    fill="#fff"
                     fontSize={
                         localStorage.getItem("sssLanguage") === "az"
                             ? "13"
@@ -54,9 +52,18 @@ const CircleText = () => {
             </svg>
 
             {/* Phone icon in the center */}
-            <FaPhone className="center-icon" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="43" height="43" viewBox="0 0 43 43" fill="none" className="center-icon">
+                <g clip-path="url(#clip0_142_790)">
+                    <path d="M31.0852 27.6483L33.7492 15.4299M33.7492 15.4299L22.4137 10.1488M33.7492 15.4299L9.24995 27.57" stroke="white" stroke-width="1.95301" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+                <defs>
+                    <clipPath id="clip0_142_790">
+                        <rect width="31.2482" height="31.2482" fill="white" transform="translate(42.4365 28.562) rotate(153.64)"/>
+                    </clipPath>
+                </defs>
+            </svg>
         </div>
     );
 };
 
-export default CircleText;
+export default CircleTextBlack;
