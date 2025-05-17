@@ -19,12 +19,6 @@ function App() {
         <>
             <ToastContainer/>
             <RouterProvider router={routes}/>
-            {/*<div className={"container"}>*/}
-            {/*    <div className="row">*/}
-            {/*        <ServicesCard/>*/}
-            {/*        <ServicesCard/>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
         </>
     )
 }

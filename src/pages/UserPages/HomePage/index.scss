@@ -1,0 +1,156 @@
+// Set a base font size for rem units
+html {
+  font-size: 16px; // Base font size for rem calculations
+}
+
+// Ensure viewport scaling respects zoom
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+#homePage {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+                  to bottom,
+                  rgba(173, 216, 230, 0.2),
+                  rgba(255, 255, 255, 0)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4vw; // Use vw for gap
+  flex-direction: column;
+
+  .head-text {
+    text-align: center;
+
+    h1 {
+      color: #1f1f1f;
+      font-feature-settings: "liga" off;
+      font-size: 3rem; // Use rem for font size
+      font-style: normal;
+      font-weight: 600;
+      line-height: 5rem; // Use rem for line height
+      letter-spacing: -0.07rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+
+    }
+  }
+
+  .star {
+    position: absolute;
+    top: 1vw;
+    left: 1vw;
+    z-index: -1;
+  }
+
+  .starBack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -2;
+  }
+
+  .arrow {
+    position: absolute;
+    top:240px; // Use vh for positioning
+    right: 300px; // Use vw for positioning
+  }
+
+  .arrow-back {
+    position: absolute;
+    top: 12vh; // Use vh
+    right: 0;
+    z-index: -2;
+
+  }
+
+  .head {
+    position: absolute;
+    bottom:100px; // Use vh
+    right: -3vw; // Use vw
+    margin-bottom: 1.5vw;
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    transform: rotate(90deg);
+
+    .hr {
+      width: 5vw; // Use vw for line width
+      height: 0.0625rem; // Use rem for thin line
+      background: #2f2f2f;
+    }
+
+    h5 {
+      color: #474747;
+      font-size: 1rem; // Use rem for font size
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
+  }
+
+  .spinner {
+    position: relative;
+    width: 30vw; // Use vw for spinner size
+    height: 30vw;
+  }
+
+  .segment {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 50%, 100% 10%, 100% 40%);
+    transform-origin: center;
+    border-radius: 50%;
+  }
+
+  .segment-label {
+    position: absolute;
+    top: 20%;
+    left: 70%;
+    transform-origin: center;
+    color: white;
+    font-size: .85vw; // Use rem for font size
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .center-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8vw; // Use vw for circle size
+    height: 8vw;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 0.875rem; // Use rem for font size
+    font-weight: 600;
+    color: #1f1f1f;
+    box-shadow: 0 0 0.5vw rgba(0, 0, 0, 0.1); // Use vw for shadow
+    z-index: 1;
+    padding: 1vw; // Use vw for padding
+    border: 0.125vw solid #ccc; // Use vw for border
+  }
+}
