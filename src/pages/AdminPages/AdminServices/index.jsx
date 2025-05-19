@@ -1,12 +1,26 @@
 import ServicesTable from "./Table.jsx";
 import image1 from "../../../assets/profile.png";
+import {useNavigate} from "react-router-dom";
 
 function AdminServices() {
+    const navigate = useNavigate();
     return (
         <div>
             <div className={"right"}>
                 <div className={"adminTopBar"}>
-                    <button className="addBtn">
+                    <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "10px",
+                    }}>
+                        <img src={image1} alt="profile"/>
+                        <div>
+                            <p>Admin</p>
+                            <p className={"p"}>sabina.heidarovaa@gmail.com</p>
+                        </div>
+                    </div>
+                    <button className="addBtn" onClick={()=> navigate('/admin/services/add')}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -29,18 +43,6 @@ function AdminServices() {
                         </svg>
                         Xidmət əlavə et
                     </button>
-                    <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "10px",
-                    }}>
-                        <img src={image1} alt="profile"/>
-                        <div>
-                            <p>Admin</p>
-                            <p className={"p"}>sabina.heidarovaa@gmail.com</p>
-                        </div>
-                    </div>
                 </div>
             </div>
             <ServicesTable/>

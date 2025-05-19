@@ -1,45 +1,45 @@
 import "./index.scss";
-import {Upload, Switch, Image} from 'antd';
-import {UploadOutlined} from '@ant-design/icons';
-import {useState} from 'react';
+import { Upload, Switch, Image } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { useState } from 'react';
 import image1 from "../../../assets/profile.png";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-function AdminServDetail() {
-    const [singleFileList, setSingleFileList] = useState([]); // For single image upload
-    const [tripleFileLists, setTripleFileLists] = useState([[], [], []]); // For triple image uploads
+function AdminServCreate() {
+    const [singleFileList, setSingleFileList] = useState([]);
+    const [tripleFileLists, setTripleFileLists] = useState([[], [], []]);
     const [singleImageSwitch, setSingleImageSwitch] = useState(true);
     const [tripleImageSwitch, setTripleImageSwitch] = useState(false);
-    const [previewImage, setPreviewImage] = useState(''); // For image preview
-    const [previewOpen, setPreviewOpen] = useState(false); // For controlling preview visibility
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewOpen, setPreviewOpen] = useState(false);
 
-    const handleSingleImageChange = ({fileList: newFileList}) => {
+    const navigate = useNavigate();
+
+    const handleSingleImageChange = ({ fileList: newFileList }) => {
         setSingleFileList(newFileList);
-        console.log('Single Image File List:', newFileList);
     };
 
-    const handleTripleImageChange = (index) => ({fileList: newFileList}) => {
+    const handleTripleImageChange = (index) => ({ fileList: newFileList }) => {
         setTripleFileLists(prev => {
             const newLists = [...prev];
             newLists[index] = newFileList;
             return newLists;
         });
-        console.log(`Triple Image File List for slot ${index + 1}:`, newFileList);
     };
 
     const handleSingleSwitchChange = (checked) => {
         setSingleImageSwitch(checked);
-        setTripleImageSwitch(!checked); // Toggle the other switch off
+        setTripleImageSwitch(!checked);
         if (checked) {
-            setTripleFileLists([[], [], []]); // Reset triple images when switching to single
+            setTripleFileLists([[], [], []]);
         }
     };
 
     const handleTripleSwitchChange = (checked) => {
         setTripleImageSwitch(checked);
-        setSingleImageSwitch(!checked); // Toggle the other switch off
+        setSingleImageSwitch(!checked);
         if (checked) {
-            setSingleFileList([]); // Reset single image when switching to triple
+            setSingleFileList([]);
         }
     };
 
@@ -48,110 +48,144 @@ function AdminServDetail() {
         setPreviewOpen(true);
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+
+        // Validate image uploads
+        if (singleImageSwitch && singleFileList.length === 0) {
+            alert('Please upload a single image');
+            return;
+        }
+        if (tripleImageSwitch && tripleFileLists.every(list => list.length === 0)) {
+            alert('Please upload at least one image for triple image mode');
+            return;
+        }
+
+        // Process images
+        let offerCardImage = '';
+        let offerImages = [];
+
+        if (singleImageSwitch && singleFileList.length > 0) {
+            offerCardImage = singleFileList[0].originFileObj;
+        } else if (tripleImageSwitch) {
+            offerImages = tripleFileLists
+                .filter(list => list.length > 0)
+                .map(list => list[0].originFileObj);
+        }
+
+        // Create data object
+        const data = {
+            Name: formData.get('name'),
+            NameEng: formData.get('nameEng'),
+            NameRu: formData.get('nameRu'),
+            Description: formData.get('description'),
+            DescriptionEng: formData.get('descriptionEng'),
+            DescriptionRu: formData.get('descriptionRu'),
+            OfferCardImage: offerCardImage,
+            OfferImages: offerImages,
+            Period: formData.get('period'),
+            PeriodEng: formData.get('periodEng'),
+            PeriodRu: formData.get('periodRu'),
+            AgeLimit: formData.get('ageLimit'),
+            TemplateId: singleImageSwitch ? '1' : '0'
+        };
+
+        console.log('Form Data:', data);
+    };
+
     const uploadButton = (
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-            <UploadOutlined style={{fontSize: '24px'}}/>
-            <div style={{marginTop: '8px'}}>Upload</div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <UploadOutlined style={{ fontSize: '24px' }} />
+            <div style={{ marginTop: '8px' }}>Upload</div>
         </div>
     );
 
-    const navigate = useNavigate();
-
     return (
-
         <>
-            <div className={"right"}>
-                <div className={"adminTopBar"}>
+            <div className="right">
+                <div className="adminTopBar">
                     <div style={{
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         gap: "10px",
                     }}>
-                        <img src={image1} alt="profile"/>
+                        <img src={image1} alt="profile" />
                         <div>
                             <p>Admin</p>
-                            <p className={"p"}>sabina.heidarovaa@gmail.com</p>
+                            <p className="p">sabina.heidarovaa@gmail.com</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="admin-services-detail">
+            <form id="admin-services-create" onSubmit={handleSubmit}>
                 <div>
                     <label>Xidmət (AZ):</label>
-                    <input type="text" value="Tələbə (Akademik Kouçluq)" readOnly/>
+                    <input type="text" name="name" required />
                 </div>
 
                 <div>
                     <label>Xidmət (RU):</label>
-                    <input type="text" value="Студент (Академический Коучинг)" readOnly/>
+                    <input type="text" name="nameRu" required />
                 </div>
 
                 <div>
                     <label>Xidmət (ENG):</label>
-                    <input type="text" value="Student (Academic Coaching)" readOnly/>
+                    <input type="text" name="nameEng" required />
                 </div>
 
                 <div>
                     <label>Alt Başlıq (AZ):</label>
-                    <textarea
-                        value="Yeniyetmələrə özünə daha yaxşı başa düşməyə, müəyyən bacanaq, bilik və təcrübə əldə etməyə Tələbə (Akademik) Kouçluğu, qabiliyyətləri inkişaf etdirməyə, məqsədlər qarşı qəbul etməyə və macədərlərə catmaq üçün yaradıcı yollaranı təklif edən tələbə və kouç arasında fərdi sessiyalardan ibarətdir."
-                        readOnly
-                    />
+                    <textarea name="description" required />
                 </div>
 
                 <div>
                     <label>Alt Başlıq (RU):</label>
-                    <textarea
-                        value="Подросткам для лучшего понимания себя, приобретения определенных навыков, знаний и опыта через Студент (Академический) Коучинг, развития своих способностей, принятия целей и достижения их через творческие пути, предлагаемые в индивидуальных сессиях между студентом и коучем."
-                        readOnly
-                    />
+                    <textarea name="descriptionRu" required />
                 </div>
 
                 <div>
                     <label>Alt Başlıq (ENG):</label>
-                    <textarea
-                        value="For teenagers to better understand themselves, acquire certain skills, knowledge, and experience through Student (Academic) Coaching, develop their abilities, set goals, and achieve them through creative pathways offered in individual sessions between the student and the coach."
-                        readOnly
-                    />
+                    <textarea name="descriptionEng" required />
                 </div>
 
                 <div className="row">
                     <div className="col-6 pd00">
                         <label>Keçirilmə müddəti (AZ):</label>
-                        <input type="text" value="6-9 ay" readOnly/>
+                        <input type="text" name="period" required />
                         <label>Keçirilmə müddəti (RU):</label>
-                        <input type="text" value="6-9 месяцев" readOnly/>
+                        <input type="text" name="periodRu" required />
                         <label>Keçirilmə müddəti (ENG):</label>
-                        <input type="text" value="6-9 months" readOnly/>
+                        <input type="text" name="periodEng" required />
                     </div>
 
                     <div className="col-6 pd01">
-                        <label>Yek:</label>
-                        <input type="text" value="11+" readOnly/>
+                        <label>Yaş:</label>
+                        <input type="text" name="ageLimit" required />
                     </div>
                 </div>
 
-                <div className="row" style={{marginTop: '16px'}}>
-                    <div className="col-6 pd00" style={{display: 'flex', alignItems: 'center'}}>
+                <div className="row" style={{ marginTop: '16px' }}>
+                    <div className="col-6 pd00" style={{ display: 'flex', alignItems: 'center' }}>
                         <label>Xidmət şəhifəsi nümunə 1 (bir şəkilin olduğu)</label>
                         <Switch
                             checked={singleImageSwitch}
                             onChange={handleSingleSwitchChange}
-                            style={{marginLeft: '10px'}}
+                            style={{ marginLeft: '10px' }}
                         />
                     </div>
-                    <div className="col-6 pd01" style={{display: 'flex', alignItems: 'center'}}>
+                    <div className="col-6 pd01" style={{ display: 'flex', alignItems: 'center' }}>
                         <label>Xidmət şəhifəsi nümunə 2 (üç şəkilin olduğu)</label>
                         <Switch
                             checked={tripleImageSwitch}
                             onChange={handleTripleSwitchChange}
-                            style={{marginLeft: '10px'}}
+                            style={{ marginLeft: '10px' }}
                         />
                     </div>
                 </div>
 
-                <div className="row" style={{marginTop: '16px'}}>
+                <div className="row" style={{ marginTop: '16px' }}>
                     <div className="col-6 pd00">
                         <Upload
                             listType="picture-card"
@@ -164,7 +198,7 @@ function AdminServDetail() {
                             {singleFileList.length >= 1 ? null : uploadButton}
                         </Upload>
                     </div>
-                    <div className="col-6 pd01" style={{display: 'flex', gap: '10px'}}>
+                    <div className="col-6 pd01" style={{ display: 'flex', gap: '10px' }}>
                         {[0, 1, 2].map(index => (
                             <Upload
                                 key={index}
@@ -182,7 +216,7 @@ function AdminServDetail() {
                 </div>
                 {previewImage && (
                     <Image
-                        wrapperStyle={{display: 'none'}}
+                        wrapperStyle={{ display: 'none' }}
                         preview={{
                             visible: previewOpen,
                             onVisibleChange: visible => setPreviewOpen(visible),
@@ -192,10 +226,10 @@ function AdminServDetail() {
                     />
                 )}
 
-                <button className="button">Dayişiklikləri yadda saxla</button>
-            </div>
+                <button type="submit" className="button">Yadda saxla</button>
+            </form>
         </>
     );
 }
 
-export default AdminServDetail;
+export default AdminServCreate;
