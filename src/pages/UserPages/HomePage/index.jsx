@@ -1,31 +1,65 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./index.scss";
 import CircleText from "../../../components/UserComponents/CircleText/index.jsx";
 
 function HomePage() {
     const [rotation, setRotation] = useState(0);
+    const [segments, setSegments] = useState([]);
+    const navigate = useNavigate();
 
-    const segmentLabels = [
-        "Təlim-Tərbiyə",
-        "Kouçinq",
-        "Public Speaking",
-        "Public Speaking",
-        "Public Speaking",
-        "Public Speaking",
-        "Public Speaking",
-        "Public Speaking",
-    ];
+    const fetchSegments = () => {
+        const backendResponse = {
+            labels: [
+                "Təlim-Tərbiyə",
+                "Kouçinq",
+                "Public Speaking",
+                "Leadership",
+                "Team Building",
+                "Team Building",
+                "Team Building",
+                "Team Building",
+                "Team Building",
+            ],
+            colors: [
+                "#FF6F61",
+                "#FF9800",
+                "#FFD700",
+                "#4CAF50",
+                "#2196F3",
+                "#2196F3",
+            ],
+            types: [1, 2, 1, 2, 1, 2, 1, 2, 1], // Added types array (1 or 2)
+        };
 
-    const colors = [
-        "#FF6F61",
-        "#FF9800",
-        "#FFD700",
-        "#4CAF50",
-        "#2196F3",
-        "#9C27B0",
-        "#00BCD4",
-        "#E91E63",
-    ];
+        const defaultColors = [
+            "#FF6F61",
+            "#FF9800",
+            "#FFD700",
+            "#4CAF50",
+            "#2196F3",
+            "#9C27B0",
+            "#00BCD4",
+            "#E91E63",
+            "#FF5722",
+        ];
+        const segmentCount = backendResponse.labels.length;
+        const colors = backendResponse.colors.length >= segmentCount
+            ? backendResponse.colors
+            : Array(segmentCount).fill().map((_, i) => defaultColors[i % defaultColors.length]);
+
+        setSegments(
+            backendResponse.labels.map((label, index) => ({
+                label,
+                color: colors[index],
+                type: backendResponse.types[index],
+            }))
+        );
+    };
+
+    useEffect(() => {
+        fetchSegments();
+    }, []);
 
     useEffect(() => {
         const animate = () => {
@@ -34,6 +68,19 @@ function HomePage() {
         };
         requestAnimationFrame(animate);
     }, []);
+
+    const segmentAngle = segments.length > 0 ? 360 / segments.length : 0;
+
+    const handleSegmentClick = (id, type) => {
+        // Navigate to the appropriate route based on type
+        if (type === 1) {
+            navigate(`/serviceDetailOne/${encodeURIComponent(id)}`);
+        } else if (type === 2) {
+            navigate(`/serviceDetailTwo/${encodeURIComponent(id)}`);
+        } else {
+            console.error("Invalid segment type:", type);
+        }
+    };
 
     return (
         <div id="homePage">
@@ -48,7 +95,7 @@ function HomePage() {
             <div className="arrow">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="10vw" // Use vw for scalable SVG
+                    width="10vw"
                     height="7.83vw"
                     viewBox="0 0 180 141"
                     fill="none"
@@ -77,34 +124,41 @@ function HomePage() {
             </div>
             <div className="spinner-container">
                 <div className="spinner">
-                    {segmentLabels.map((label, index) => (
+                    {segments.map((segment, index) => (
                         <div
                             key={index}
                             className="segment"
                             style={{
-                                backgroundColor: colors[index],
-                                transform: `rotate(${index * 45 + rotation}deg)`,
-                                filter: "drop-shadow(0 0 0.5vw rgba(0, 0, 0, 0.2))", // Use vw for shadow
+                                backgroundColor: segment.color,
+                                transform: `rotate(${index * segmentAngle + rotation}deg)`,
+                                filter: `drop-shadow(0.3vw 0.3vw 0.5vw ${segment.color}80)`,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
+                                cursor: "pointer",
                             }}
+                            onClick={() => handleSegmentClick(1, segment.type)}
                         >
-              <span
-                  className="segment-label"
-                  style={{
-                      marginLeft: "0",
-                      marginTop: "3.3vw", // Use vw for spacing
-                      rotate: "-24deg",
-                      width: "10vw", // Use vw for width
-                  }}
-              >
-                {label}
-              </span>
+                            <span
+                                className="segment-label"
+                                style={{
+                                    marginLeft: "0",
+                                    marginTop: "3.3vw",
+                                    rotate: `${-segmentAngle / 2}deg`,
+                                    width: "10vw",
+                                    transform: segments.length > 9 ? "rotate(-15deg)" : undefined,
+                                }}
+                            >
+                                {segment.label}
+                            </span>
                         </div>
                     ))}
                     <div className="center-circle">
-                        <span>Asterias Training And Development Center</span>
+                        <div className={"circleFirst"}>
+                            <div className={"circleSecond"}>
+                                <span>Asterias Training And Development Center</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -114,9 +168,8 @@ function HomePage() {
             <div className="head">
                 <div className={"hr"}></div>
                 <h5>Daha ətraflı məlumat üçün</h5>
-                <CircleText/>
+                <CircleText />
             </div>
-
         </div>
     );
 }

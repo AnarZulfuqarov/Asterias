@@ -1,0 +1,87 @@
+#adminLeftBar {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100vh;
+  padding: 40px 30px 55px;
+  position: relative;
+  z-index: 2;
+  background-color: white;
+
+  img {
+    width: 150px;
+    margin-bottom: 56px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+
+  li {
+    display: flex;
+    padding: 8px 7px;
+    align-items: center;
+
+    gap: 8px;
+    align-self: stretch;
+    margin-bottom: 8px;
+
+    .icon {
+      color: black;
+      font-size: 20px;
+    }
+  }
+
+  .selected {
+    transition: all .2s ease;
+    border-left: 4px solid #007781;
+    background: #F5FFE0;
+  }
+
+  li a {
+    color: #585858;
+    font-family: "Lato";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  li a svg {
+    margin-top: 4px;
+    margin-right: 10px; /* İkon ilə yazı arasındakı boşluq */
+    font-size: 20px;
+  }
+
+  .logoutAyir {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    button {
+      display: flex;
+      padding: 8px 7px;
+      align-items: center;
+      gap: 8px;
+      align-self: stretch;
+      color: #E00;
+      font-family: "Lato";
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}

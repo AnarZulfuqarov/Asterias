@@ -1,9 +1,7 @@
-// Set a base font size for rem units
 html {
-  font-size: 16px; // Base font size for rem calculations
+  font-size: 16px;
 }
 
-// Ensure viewport scaling respects zoom
 body {
   width: 100vw;
   height: 100vh;
@@ -24,7 +22,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4vw; // Use vw for gap
+  gap: 4vw;
   flex-direction: column;
 
   .head-text {
@@ -33,16 +31,14 @@ body {
     h1 {
       color: #1f1f1f;
       font-feature-settings: "liga" off;
-      font-size: 3rem; // Use rem for font size
+      font-size: 3rem;
       font-style: normal;
       font-weight: 600;
-      line-height: 5rem; // Use rem for line height
+      line-height: 5rem;
       letter-spacing: -0.07rem;
       display: flex;
       justify-content: center;
       align-items: center;
-
-
     }
   }
 
@@ -62,22 +58,21 @@ body {
 
   .arrow {
     position: absolute;
-    top:240px; // Use vh for positioning
-    right: 300px; // Use vw for positioning
+    top: 240px;
+    right: 300px;
   }
 
   .arrow-back {
     position: absolute;
-    top: 12vh; // Use vh
+    top: 12vh;
     right: 0;
     z-index: -2;
-
   }
 
   .head {
     position: absolute;
-    bottom:100px; // Use vh
-    right: -3vw; // Use vw
+    bottom: 100px;
+    right: -3vw;
     margin-bottom: 1.5vw;
     display: flex;
     align-items: center;
@@ -85,14 +80,14 @@ body {
     transform: rotate(90deg);
 
     .hr {
-      width: 5vw; // Use vw for line width
-      height: 0.0625rem; // Use rem for thin line
+      width: 5vw;
+      height: 0.0625rem;
       background: #2f2f2f;
     }
 
     h5 {
       color: #474747;
-      font-size: 1rem; // Use rem for font size
+      font-size: 1rem;
       font-style: normal;
       font-weight: 400;
       line-height: normal;
@@ -108,7 +103,7 @@ body {
 
   .spinner {
     position: relative;
-    width: 30vw; // Use vw for spinner size
+    width: 30vw;
     height: 30vw;
   }
 
@@ -116,20 +111,22 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    clip-path: polygon(50% 50%, 100% 10%, 100% 40%);
+    clip-path: polygon(50% 50%, 100% 5%, 100% 35%);
     transform-origin: center;
-    border-radius: 50%;
+    border-radius: 100%;
   }
 
   .segment-label {
     position: absolute;
-    top: 20%;
-    left: 70%;
+    top: 21%;
+    left: 63%;
     transform-origin: center;
     color: white;
-    font-size: .85vw; // Use rem for font size
+    font-size: 0.7vw;
     font-weight: 500;
     white-space: nowrap;
+    text-align: center;
+    transform: rotate(-9deg);
   }
 
   .center-circle {
@@ -137,20 +134,43 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 8vw; // Use vw for circle size
-    height: 8vw;
+    width: 11vw;
+    height: 11vw;
     background-color: white;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-size: 0.875rem; // Use rem for font size
-    font-weight: 600;
     color: #1f1f1f;
-    box-shadow: 0 0 0.5vw rgba(0, 0, 0, 0.1); // Use vw for shadow
+    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.05); // Softer, more diffused shadow
     z-index: 1;
-    padding: 1vw; // Use vw for padding
-    border: 0.125vw solid #ccc; // Use vw for border
+    border: none;
+    padding: 10px;
+    .circleFirst{
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1.5px solid #E5E5E5;
+      padding: 10px;
+      .circleSecond{
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 3px solid #00778138;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #1F1F1F;
+        text-align: center;
+        font-family: "Mona Sans";
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 20px; /* 150% */
+        text-transform: capitalize;
+      }
+    }
   }
 }
