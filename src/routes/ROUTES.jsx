@@ -10,6 +10,7 @@ import AdminContact from "../pages/AdminPages/AdminContact/index.jsx";
 import AdminServDetail from "../pages/AdminPages/AdminServicesDetail/index.jsx";
 import AdminLogin from "../pages/AdminPages/AdminLogin/index.jsx";
 import NotFound from "../pages/UserPages/NotFound/index.jsx";
+import AdminServiceAdd from "../pages/AdminPages/AdminServiceAdd/index.jsx";
 
 const router = [
     {
@@ -53,6 +54,10 @@ const router = [
             {
                 path: "/admin/services/:id",
                 element: <AdminServDetail/>
+            },
+            {
+                path: "/admin/services/add",
+                element: <AdminServiceAdd />
             }
         ]
     },
