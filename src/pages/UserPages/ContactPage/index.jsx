@@ -1,6 +1,7 @@
 import "./index.scss"
 import CircleTextBlack from "../../../components/UserComponents/CircleTextBlack/index.jsx";
 import {useNavigate} from "react-router";
+import image1 from '/src/assets/Group4.png'
 function Contact() {
     const navigate = useNavigate();
     return (
@@ -8,7 +9,7 @@ function Contact() {
             <div className={"container"}>
                 <div className={"header"}>
                     <div className={"header-left"}>
-                        <img src='/src/assets/Group4.png' onClick={()=>navigate("/")} />
+                        <img src={image1} onClick={()=>navigate("/")} />
                         <svg onClick={()=>navigate("/")} xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none" className={"arrow"}>
                             <path d="M7.99951 5.83496L2.99951 10.835L7.99951 15.835" stroke="#1F1F1F" stroke-width="1.15596" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M2.99951 10.835H10.9995C16.5225 10.835 20.9995 15.312 20.9995 20.835V21.835" stroke="#1F1F1F" stroke-width="1.15596" stroke-linecap="round" stroke-linejoin="round"/>

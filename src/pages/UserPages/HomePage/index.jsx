@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
 import CircleText from "../../../components/UserComponents/CircleText/index.jsx";
-
+import image1 from "/src/assets/Blobs 24px.svg"
+import image2 from "/src/assets/Color.png"
+import star from "/src/assets/Mask group.svg"
+import starBack from "/src/assets/starBack.png"
+import arrowBack from "/src/assets/arrowBack.png"
 function HomePage() {
     const [rotation, setRotation] = useState(0);
     const [segments, setSegments] = useState([]);
@@ -86,10 +90,10 @@ function HomePage() {
         <div id="homePage">
             <div className="head-text">
                 <h1>
-                    Bacarıqlarını <img src="/src/assets/Blobs 24px.svg" alt="icon" /> Kəşf Et
+                    Bacarıqlarını <img src={image1} alt="icon" /> Kəşf Et
                 </h1>
                 <h1>
-                    Güclü <img src="/src/assets/Color.png" alt="icon2" /> Tərəflərini Ortaya Çıxar
+                    Güclü <img src={image2} alt="icon2" /> Tərəflərini Ortaya Çıxar
                 </h1>
             </div>
             <div className="arrow">
@@ -162,9 +166,9 @@ function HomePage() {
                     </div>
                 </div>
             </div>
-            <img src="/src/assets/Mask group.svg" className="star" alt="star" />
-            <img src="/src/assets/starBack.png" className="starBack" alt="starBack" />
-            <img src="/src/assets/arrowBack.png" className="arrow-back" alt="arrowBack" />
+            <img src={star} className="star" alt="star" />
+            <img src={starBack} className="starBack" alt="starBack" />
+            <img src={arrowBack} className="arrow-back" alt="arrowBack" />
             <div className="head">
                 <div className={"hr"}></div>
                 <h5>Daha ətraflı məlumat üçün</h5>
