@@ -6,7 +6,6 @@ function MainPage() {
         <>
             <ScrollToTop/>
             <Outlet/>
-
         </>
     );
 }

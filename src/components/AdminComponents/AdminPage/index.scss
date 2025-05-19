@@ -1,61 +1,9 @@
 #adminPage {
   display: flex;
   background-color: rgba(250, 250, 250, 0.48);
-
   .adminRightBar {
-    background-color: #FAFAFA;;
+    padding-left: 300px;
     width: 100%;
-    padding: 48px;
     height: 100vh;
-    overflow-y: scroll;
-
-    .adminTopBar {
-      display: flex;
-      align-items: center;
-      justify-content: end;
-      gap: 16px;
-      padding: 8px 180px 8px 0;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background-color: #FAFAFA;
-      box-shadow: rgba(205, 205, 205, 0.2) 0px 2px 8px 0px;
-      z-index: 0;
-
-      img {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-      }
-
-      p {
-        color: #000;
-        font-family: "Lato";
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 600;
-        line-height: normal;
-      }
-
-      button {
-        border: none;
-        background-color: #1677ff;
-        color: #fff;
-        padding: 5px 10px;
-        font-size: 16px;
-        font-weight: 600;
-        border-radius: 10px;
-        transition: all 0.5s;
-
-        &:hover {
-          opacity: 0.8;
-        }
-      }
-    }
-
-    .rightBottomBar {
-      border-radius: 25px;
-    }
   }
 }

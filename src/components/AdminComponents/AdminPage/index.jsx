@@ -1,23 +1,15 @@
-import {Outlet, useNavigate} from "react-router-dom";
+import {Outlet} from "react-router-dom";
 import AdminLeftBar from "../AdminLeftBar/index.jsx";
-import  image1 from "/src/assets/profile.png"
 import './index.scss'
-function AdminPage() {
 
+function AdminPage() {
 
 
     return (
         <section id="adminPage">
             <AdminLeftBar/>
-            <div className="adminRightBar">
-                <div className="adminTopBar">
-
-                    <img src={image1} alt="profile"/>
-                    <p>Admin</p>
-                </div>
-                <div className="rightBottomBar">
-                    <Outlet/>
-                </div>
+            <div className="adminRightBar container">
+                <Outlet/>
             </div>
         </section>
     );
