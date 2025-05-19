@@ -1,0 +1,52 @@
+.circle-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%; /* Daire şekli */
+  background: #d4f7c5; /* Örnektteki yeşil arka plan */
+  overflow: hidden; /* Harflerin dışına taşmasını engelle */
+}
+
+.phone-icon {
+  font-size: 30px;
+  z-index: 1;
+  position: absolute; /* İkonu sabit tut */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Merkeze hizala */
+}
+
+.rotating-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: rotate 10s linear infinite; /* Dönme animasyonu */
+}
+
+.rotating-text span {
+  position: absolute;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  width: 100%; /* Harflerin daire boyunca yayılmasını sağlar */
+  transform-origin: 0 75px; /* Daire merkezinden harflerin konumunu ayarlar */
+  white-space: nowrap; /* Metnin bir satırda kalmasını sağlar */
+}
+
+/* Dönme animasyonu */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

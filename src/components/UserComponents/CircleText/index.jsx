@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
-import { FaPhone } from "react-icons/fa"; // Changed to phone icon
+import { FaPhone } from "react-icons/fa";
 import "./index.scss";
-import {useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 
 const CircleText = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     return (
-        <div className="circle-text-wrapper" onClick={() => navigate("/contact")} style={{cursor: "pointer"}}>
+        <div className="circle-text-wrapper" onClick={() => navigate("/contact")} style={{ cursor: "pointer" }}>
             <svg
                 className="circle-text-svg"
                 viewBox="0 0 200 200"
@@ -33,19 +33,19 @@ const CircleText = () => {
                 <text
                     fill="#333"
                     fontSize={
-                        localStorage.getItem("asteriasLang") === "az"
+                        localStorage.getItem("sssLanguage") === "az"
                             ? "13"
-                            : localStorage.getItem("asteriasLang") === "en"
+                            : localStorage.getItem("sssLanguage") === "en"
                                 ? "13.5"
                                 : "11"
                     }
-                    letterSpacing="1.6"
+                    letterSpacing="1.4" // Adjusted for tighter spacing
                     fontFamily="sans-serif"
-                    fontWeight="bold" // Added for bold text
+                    fontWeight="bold"
                 >
                     <textPath
                         xlinkHref="#circlePath"
-                        startOffset="50%"
+                        startOffset="48%" // Slight adjustment for better text positioning
                         textAnchor="middle"
                     >
                         {t("circleText").replace(/\s/g, " * ")} {/* Add stars between words */}

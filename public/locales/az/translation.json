@@ -36,5 +36,32 @@
       "note_placeholder": "",
       "submit_button": "Göndər"
     }
+  },
+  "servDetailOne": {
+    "header": "Tələbə kouçluğu",
+    "description": "Yeniyetmələrin özünü daha yaxşı başa düşməyə, mühüm bacarıq, bilik və təcrübə əldə etməyə, qabiliyyətlərini inkişaf etdirməyə, müstəqil qərarlar qəbul etməyi və məqsədlərinə çatmağı öyrənməyə yiyələnən tələbə və kouç arasında fərdi sessiyalardan ibarətdir.",
+    "functions": {
+      "duration_label": "Müddəti",
+      "duration_value": "3/6/9 ay",
+      "age_label": "Yaş",
+      "age_value": "11+"
+    },
+    "button": "Müraciət et"
+  },
+  "servDetailTwo": {
+    "header": "Karyera kouçluğu",
+    "description": "Yeniyetmələrin özünü daha yaxşı başa düşməyə, mühüm bacarıq, bilik və təcrübə əldə etməyə, qabiliyyətlərini inkişaf etdirməyə, müstəqil qərarlar qəbul etməyi və məqsədlərinə çatmağı öyrənməyə yiyələnən tələbə və kouç arasında fərdi sessiyalardan ibarətdir.",
+    "functions": {
+      "duration_label": "Müddəti",
+      "duration_value": "3/6/9 ay",
+      "age_label": "Yaş",
+      "age_value": "11+"
+    },
+    "button": "Müraciət et"
+  },
+  "notFound": {
+    "header": "404 - Səhifə tapılmadı",
+    "description": "Axtardığınız səhifə ya silinib, ya da ünvan səhvdir. Zəhmət olmasa, əsas səhifəyə qayıdın.",
+    "button": "Geri qayıt"
   }
 }

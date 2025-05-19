@@ -217,6 +217,7 @@ function HomePage() {
                 <div className="hr"></div>
                 <h5>{t('homepage.more_info')}</h5>
                 <CircleText />
+
             </div>
             <div className="language">
                 <div

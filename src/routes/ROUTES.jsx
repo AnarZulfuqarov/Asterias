@@ -8,6 +8,8 @@ import AdminPage from "../components/AdminComponents/AdminPage/index.jsx";
 import AdminServices from "../pages/AdminPages/AdminServices/index.jsx";
 import AdminContact from "../pages/AdminPages/AdminContact/index.jsx";
 import AdminServDetail from "../pages/AdminPages/AdminServicesDetail/index.jsx";
+import AdminLogin from "../pages/AdminPages/AdminLogin/index.jsx";
+import NotFound from "../pages/UserPages/NotFound/index.jsx";
 
 const router = [
     {
@@ -54,14 +56,14 @@ const router = [
             }
         ]
     },
-    // {
-    //   path: "/login",
-    //   element: <AdminLogin/>
-    // },
-    // {
-    //     path: "*",
-    //     element: <NotFound/>
-    // }
+    {
+      path: "/login",
+      element: <AdminLogin/>
+    },
+    {
+        path: "*",
+        element: <NotFound/>
+    }
 ];
 
 export default router;

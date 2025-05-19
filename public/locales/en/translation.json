@@ -36,5 +36,32 @@
       "note_placeholder": "",
       "submit_button": "Submit"
     }
+  },
+  "servDetailOne": {
+    "header": "Student Coaching",
+    "description": "Consists of individual sessions between a student and a coach, aimed at helping teenagers better understand themselves, acquire essential skills, knowledge, and experience, develop their abilities, learn to make independent decisions, and achieve their goals.",
+    "functions": {
+      "duration_label": "Duration",
+      "duration_value": "3/6/9 months",
+      "age_label": "Age",
+      "age_value": "11+"
+    },
+    "button": "Apply"
+  },
+  "servDetailTwo": {
+    "header": "Career Coaching",
+    "description": "Consists of individual sessions between a student and a coach, aimed at helping teenagers better understand themselves, acquire essential skills, knowledge, and experience, develop their abilities, learn to make independent decisions, and achieve their career goals.",
+    "functions": {
+      "duration_label": "Duration",
+      "duration_value": "3/6/9 months",
+      "age_label": "Age",
+      "age_value": "11+"
+    },
+    "button": "Apply"
+  },
+  "notFound": {
+    "header": "404 - Page Not Found",
+    "description": "The page you are looking for has either been deleted or the address is incorrect. Please return to the homepage.",
+    "button": "Go Back"
   }
 }
