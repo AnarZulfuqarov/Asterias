@@ -33,9 +33,9 @@ const CircleText = () => {
                 <text
                     fill="#333"
                     fontSize={
-                        localStorage.getItem("sssLanguage") === "az"
+                        localStorage.getItem("asteriasLang") === "az"
                             ? "13"
-                            : localStorage.getItem("sssLanguage") === "en"
+                            : localStorage.getItem("asteriasLang") === "en"
                                 ? "13.5"
                                 : "11"
                     }

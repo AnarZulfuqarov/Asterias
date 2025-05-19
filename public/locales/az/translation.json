@@ -1,1 +1,40 @@
-{}
+{
+  "navbar": {
+    "languages": {
+      "az": "Azərbaycanca",
+      "en": "İngilis",
+      "ru": "Rus"
+    }
+  },
+  "homepage": {
+    "title1": "Bacarıqlarını ",
+    "title1.2": "Kəşf Et",
+    "title2": "Güclü ",
+    "title2.2": "Tərəflərini Ortaya Çıxar",
+    "more_info": "Daha ətraflı məlumat üçün",
+    "center_text": "Asterias Təlim və İnkişaf Mərkəzi",
+    "segments": {
+      "training": "Təlim-Tərbiyə",
+      "coaching": "Kouçinq",
+      "public_speaking": "İctimai Nitq",
+      "leadership": "Liderlik",
+      "team_building": "Komanda Quruluşu"
+    }
+  },
+  "contact": {
+    "header": "Bizimlə əlaqə",
+    "form": {
+      "first_name_label": "Ad",
+      "first_name_placeholder": "Adınızı daxil edin",
+      "last_name_label": "Soyad",
+      "last_name_placeholder": "Soyadınızı daxil edin",
+      "email_label": "Email",
+      "email_placeholder": "Emailinizi daxil edin",
+      "phone_label": "Nömrə",
+      "phone_placeholder": "+994 ** *** ** **",
+      "note_label": "Qeyd",
+      "note_placeholder": "",
+      "submit_button": "Göndər"
+    }
+  }
+}

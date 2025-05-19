@@ -3,8 +3,53 @@ import backBak from "../../../assets/Group42.png";
 import icon from "../../../assets/icob2.png";
 import main from "../../../assets/136fcdd4c523b8a0f94ae173624eade6675b9ef3.jpg";
 import {useNavigate} from "react-router";
+import {useTranslation} from "react-i18next";
+import {useState} from "react";
+import flagAz from "../../../assets/azerbaijan.png";
+import flagEn from "../../../assets/uk.png";
+import flagRu from "../../../assets/circle.png";
+import {FaChevronDown} from "react-icons/fa";
 function ServDetailPageTwo() {
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
+    const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+    const [langTimeoutId, setLangTimeoutId] = useState(null);
+    const toggleLangDropdown = () => {
+        setLangDropdownOpen(!langDropdownOpen);
+    };
+    const handleLanguageChange = (lng) => {
+        i18n.changeLanguage(lng);
+        localStorage.setItem('asteriasLang', lng);
+        setLangDropdownOpen(false);
+    };
+
+    let currentFlag = flagAz;
+    let currentTitle = "Az"
+    if (i18n.language?.startsWith('en')) {
+        currentTitle = "En"
+        currentFlag = flagEn;
+    } else if (i18n.language?.startsWith('ru')) {
+        currentTitle = "Ru"
+
+        currentFlag = flagRu;
+    } else if (i18n.language?.startsWith('az')) {
+        currentTitle = "Az"
+
+        currentFlag = flagAz;
+    }
+    const handleLangMouseEnter = () => {
+        if (langTimeoutId) {
+            clearTimeout(langTimeoutId);
+            setLangTimeoutId(null);
+        }
+    };
+
+    const handleLangMouseLeave = () => {
+        const timeout = setTimeout(() => {
+            setLangDropdownOpen(false);
+        }, 1000);
+        setLangTimeoutId(timeout);
+    };
     return (
         <div id={"servDetailTwo"}>
             <div className={"container"}>
@@ -65,6 +110,33 @@ function ServDetailPageTwo() {
                                 <img src={main}/>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div className="language">
+                <div
+                    className="dropdown"
+                    onClick={toggleLangDropdown}
+                    onMouseEnter={handleLangMouseEnter}
+                    onMouseLeave={handleLangMouseLeave}
+                >
+                    <button className="dropbtn">
+                        <img src={currentFlag} alt="Current Flag" />
+                        {currentTitle}
+                        <FaChevronDown className="zakirinChevronu" />
+                    </button>
+                    <div className={`dropdown-content ${langDropdownOpen ? 'show' : ''}`}>
+                        <div onClick={() => handleLanguageChange('az')}>
+                            <img src={flagAz} alt="AZ Flag" /> {t('navbar.languages.az')}
+
+                        </div>
+                        <div onClick={() => handleLanguageChange('en')}>
+                            <img src={flagEn} alt="EN Flag" /> {t('navbar.languages.en')}
+                        </div>
+                        <div onClick={() => handleLanguageChange('ru')}>
+                            <img src={flagRu} alt="RU Flag" /> {t('navbar.languages.ru')}
+                        </div>
+
                     </div>
                 </div>
             </div>

@@ -6,6 +6,83 @@
   background-image: url("/src/assets/Service detail 1.png");
   background-size: cover;
   background-position: center;
+  .zakirinChevronu {
+    font-size: 14px ;
+    margin-left: 5px;
+    color: #015359;
+    @media (max-width: 991.98px) { // MD ölçü
+      font-size:18px;
+    }
+    @media (max-width: 767.98px) { // SM ölçü
+      font-size: 18px;
+    }
+  }
+  .language {
+    position: absolute;
+    top: 50px;
+    right: 50px;
+
+    .dropdown {
+      position: relative;
+      cursor: pointer;
+
+      .dropbtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        color: #015359;
+        font-family: "Mona Sans";
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+        img {
+          width: 22px;
+          margin-right: 10px;
+        }
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: white;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s ease;
+        opacity: 0;
+        z-index: 1001;
+        top: 60px;
+        border-radius: 10px;
+
+        div {
+          padding: 10px 32px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+          font-size: 14px;
+          gap: 16px;
+          border-bottom: 1px solid #ececec;
+
+          img {
+            width: 20px;
+            margin-right: 8px;
+          }
+
+          &:hover {
+            background-color: #f1f1f1;
+          }
+        }
+      }
+
+      .dropdown-content.show {
+        display: block;
+        opacity: 1;
+      }
+    }
+  }
   .back{
     width: 70px;
     height: 70px;

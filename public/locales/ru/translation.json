@@ -1,1 +1,40 @@
-{}
+{
+  "navbar": {
+    "languages": {
+      "az": "Азербайджанский",
+      "en": "Английский",
+      "ru": "Русский"
+    }
+  },
+  "homepage": {
+    "title1": "Открой свои ",
+    "title1.2": "навыки",
+    "title2": "Раскрой свои ",
+    "title2.2": "сильные стороны",
+    "more_info": "Для получения дополнительной информации",
+    "center_text": "Центр обучения и развития Asterias",
+    "segments": {
+      "training": "Обучение",
+      "coaching": "Коучинг",
+      "public_speaking": "Публичные выступления",
+      "leadership": "Лидерство",
+      "team_building": "Командообразование"
+    }
+  },
+  "contact": {
+    "header": "Свяжитесь с нами",
+    "form": {
+      "first_name_label": "Имя",
+      "first_name_placeholder": "Введите ваше имя",
+      "last_name_label": "Фамилия",
+      "last_name_placeholder": "Введите вашу фамилию",
+      "email_label": "Электронная почта",
+      "email_placeholder": "Введите ваш email",
+      "phone_label": "Телефон",
+      "phone_placeholder": "+994 ** *** ** **",
+      "note_label": "Заметка",
+      "note_placeholder": "",
+      "submit_button": "Отправить"
+    }
+  }
+}
