@@ -6,6 +6,7 @@ import {
 } from "../../../services/userApi.jsx";
 import showToast from "../../../components/ToastMessage.js";
 import "./index.scss";
+import {useNavigate} from "react-router-dom";
 
 // Helper function to convert image URL to File object
 const convertImageToFile = async (imgSrc, fileName) => {
@@ -20,6 +21,7 @@ const convertImageToFile = async (imgSrc, fileName) => {
 };
 
 const ServicesTable = () => {
+    const navigate = useNavigate();
     const { data: getAllServices, refetch: getAllServicesRefetch, isLoading } = useGetAllServicesQuery();
     const [deleteService] = useDeleteServiceMutation();
     const [putService] = usePutServiceMutation();
@@ -190,7 +192,7 @@ const ServicesTable = () => {
                                     <>
                                         <button
                                             className="editDelete"
-                                            onClick={() => save(record.id)}
+                                            onClick={() => navigate('/admin/services/1')}
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -227,7 +229,7 @@ const ServicesTable = () => {
                                     <>
                                         <button
                                             className="editDelete"
-                                            onClick={() => edit(record)}
+                                            onClick={() => navigate('/admin/services/1')}
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"

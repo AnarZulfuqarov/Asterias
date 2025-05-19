@@ -154,7 +154,9 @@ body {
     display: flex;
     align-items: center;
     gap: 1vw;
-
+    bottom: 100px;
+    right: -4vw;
+    transform: rotate(90deg);
     &.lang-az {
       bottom: 100px;
       right: -4vw;
