@@ -59,8 +59,8 @@ function ServDetailPageTwo() {
                 <div className={"back"} onClick={() => navigate("/")}>
                     <img src={backBak} alt="Back" />
                 </div>
-                <div className={"row"} style={{ alignItems: "end" }}>
-                    <div className={"col-6"}>
+                <div className={"row"} style={{ alignItems: "center" }}>
+                    <div className={"col-6 col-md-12 col-sm-12 col-xs-12"}>
                         <div className={"text"}>
                             <div className={"head"}>
                                 <h2>
@@ -116,7 +116,7 @@ function ServDetailPageTwo() {
                             </button>
                         </div>
                     </div>
-                    <div className={"col-6"}>
+                    <div className={"col-6 col-md-12 col-sm-12 col-xs-12"}>
                         <div className={"images"}>
                             <div className={"image1"}>
                                 <img src={main} alt="Image 1" />

@@ -38,9 +38,9 @@ const router = [
     {
         path: "/admin",
         element: (
-            // <ProtectedRoute>
+            <ProtectedRoute>
                 <AdminPage/>
-            // </ProtectedRoute>
+             </ProtectedRoute>
         ),
         children: [
             {

@@ -17,7 +17,6 @@ function AdminServices() {
                         <img src={image1} alt="profile"/>
                         <div>
                             <p>Admin</p>
-                            <p className={"p"}>sabina.heidarovaa@gmail.com</p>
                         </div>
                     </div>
                     <button className="addBtn" onClick={()=> navigate('/admin/services/add')}>

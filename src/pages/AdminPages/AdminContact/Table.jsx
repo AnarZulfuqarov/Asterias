@@ -1,44 +1,22 @@
-import React, {useState} from "react";
-import {Table, Button, Popconfirm, Form, Input} from "antd";
-import {EditOutlined, DeleteOutlined, PlusOutlined, CheckOutlined, CloseOutlined} from "@ant-design/icons";
+import React, { useState } from "react";
+import { Table, Form, Input, Modal } from "antd";
 import {
-    useDeleteServiceMutation,
-    useGetAllServicesQuery,
-    usePostServiceMutation,
-    usePutServiceMutation,
+    useGetAllContactQuery,
 } from "../../../services/userApi.jsx";
 import showToast from "../../../components/ToastMessage.js";
 import "./index.scss";
 
-// Helper function to convert image URL to File object
-const convertImageToFile = async (imgSrc, fileName) => {
-    try {
-        const res = await fetch(imgSrc);
-        if (!res.ok) throw new Error("Failed to fetch image");
-        const blob = await res.blob();
-        return new File([blob], fileName, {type: blob.type});
-    } catch (error) {
-        throw new Error(`Image conversion failed: ${error.message}`);
-    }
-};
-
 const ContactTable = () => {
-    const {data: getAllServices, refetch: getAllServicesRefetch, isLoading} = useGetAllServicesQuery();
-    const [deleteService] = useDeleteServiceMutation();
-    const [putService] = usePutServiceMutation();
+    const { data: getAllContact, refetch: getAllContactRefetch, isLoading } = useGetAllContactQuery();
     const [form] = Form.useForm();
-    const dataSource = [
-        {
-            title: "Service",
-        },
-
-        {
-            title: "Service Name",
-        }
-    ];
+    const dataSource = getAllContact?.data;
 
     // State for editing
     const [editingKey, setEditingKey] = useState(null);
+
+    // State for modal
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [modalContent, setModalContent] = useState("");
 
     // Check if a row is being edited
     const isEditing = (record) => record.id === editingKey;
@@ -46,13 +24,11 @@ const ContactTable = () => {
     // Start editing a row
     const edit = (record) => {
         form.setFieldsValue({
-            title: record.title,
-            titleEng: record.titleEng,
-            titleRu: record.titleRu,
-            subTitle: record.subTitle,
-            subTitleEng: record.subTitleEng,
-            subTitleRu: record.subTitleRu,
-            cardImage: record.cardImage,
+            name: record.name,
+            surname: record.surname,
+            email: record.email,
+            phoneNumber: record.phoneNumber,
+            description: record.description,
         });
         setEditingKey(record.id);
     };
@@ -63,48 +39,16 @@ const ContactTable = () => {
         form.resetFields();
     };
 
-    // Save edited row
-    const save = async (id) => {
-        try {
-            const row = await form.validateFields();
-            const formData = new FormData();
-            const textFields = ["title", "titleEng", "titleRu", "subTitle", "subTitleEng", "subTitleRu"];
-            textFields.forEach((field) => {
-                if (row[field]) formData.append(field, row[field]);
-            });
-            formData.append("id", id);
-
-            // Handle image if changed (assuming cardImage is a URL or name)
-            if (row.cardImage) {
-                const imgObj = availableServiceCardImages.find((item) => item.name === row.cardImage);
-                if (imgObj) {
-                    const file = await convertImageToFile(imgObj.src, imgObj.name);
-                    formData.append("cardImage", file);
-                } else {
-                    throw new Error("Selected image not found");
-                }
-            }
-
-            await putService(formData).unwrap();
-            showToast("Service updated successfully!", "success");
-            setEditingKey(null);
-            getAllServicesRefetch();
-        } catch (error) {
-            console.error("PUT Error:", error);
-            showToast(error.message || error?.data?.message || "Error updating service!", "error");
-        }
+    // Handle showing modal with full description
+    const showDescriptionModal = (description) => {
+        setModalContent(description || "No description available");
+        setIsModalVisible(true);
     };
 
-    // Delete operation
-    const handleDelete = async (record) => {
-        try {
-            await deleteService(record.id).unwrap();
-            showToast("Service deleted successfully!", "success");
-            getAllServicesRefetch();
-        } catch (error) {
-            console.error("Delete Error:", error);
-            showToast(error?.data?.message || "Error deleting service!", "error");
-        }
+    // Handle modal close
+    const handleModalClose = () => {
+        setIsModalVisible(false);
+        setModalContent("");
     };
 
     // Table columns
@@ -115,14 +59,17 @@ const ContactTable = () => {
             render: (_, __, index) => index + 1,
         },
         {
-            title: "Ad ",
-            dataIndex: "title",
-            key: "title",
+            title: "Ad",
+            dataIndex: "name",
+            key: "name",
             render: (text, record) => {
                 if (isEditing(record)) {
                     return (
-                        <Form.Item name="title" rules={[{required: true, message: "Başlıq daxil edin"}]}>
-                            <Input/>
+                        <Form.Item
+                            name="name"
+                            rules={[{ required: true, message: "Ad daxil edin" }]}
+                        >
+                            <Input />
                         </Form.Item>
                     );
                 }
@@ -130,14 +77,17 @@ const ContactTable = () => {
             },
         },
         {
-            title: "Soyad ",
-            dataIndex: "title",
-            key: "title",
+            title: "Soyad",
+            dataIndex: "surname",
+            key: "surname",
             render: (text, record) => {
                 if (isEditing(record)) {
                     return (
-                        <Form.Item name="title" rules={[{required: true, message: "Başlıq daxil edin"}]}>
-                            <Input/>
+                        <Form.Item
+                            name="surname"
+                            rules={[{ required: true, message: "Soyad daxil edin" }]}
+                        >
+                            <Input />
                         </Form.Item>
                     );
                 }
@@ -145,14 +95,20 @@ const ContactTable = () => {
             },
         },
         {
-            title: "Email ",
-            dataIndex: "title",
-            key: "title",
+            title: "Email",
+            dataIndex: "email",
+            key: "email",
             render: (text, record) => {
                 if (isEditing(record)) {
                     return (
-                        <Form.Item name="title" rules={[{required: true, message: "Başlıq daxil edin"}]}>
-                            <Input/>
+                        <Form.Item
+                            name="email"
+                            rules={[
+                                { required: true, message: "Email daxil edin" },
+                                { type: "email", message: "Düzgün email formatı daxil edin" },
+                            ]}
+                        >
+                            <Input />
                         </Form.Item>
                     );
                 }
@@ -161,13 +117,16 @@ const ContactTable = () => {
         },
         {
             title: "Nömrə",
-            dataIndex: "subTitle",
-            key: "subTitle",
+            dataIndex: "phoneNumber",
+            key: "phoneNumber",
             render: (text, record) => {
                 if (isEditing(record)) {
                     return (
-                        <Form.Item name="subTitle">
-                            <Input/>
+                        <Form.Item
+                            name="phoneNumber"
+                            rules={[{ required: true, message: "Nömrə daxil edin" }]}
+                        >
+                            <Input />
                         </Form.Item>
                     );
                 }
@@ -176,26 +135,31 @@ const ContactTable = () => {
         },
         {
             title: "Qeyd",
-            dataIndex: "subTitle",
-            key: "subTitle",
+            dataIndex: "description",
+            key: "description",
             render: (text, record) => {
                 if (isEditing(record)) {
                     return (
-                        <Form.Item name="subTitle">
-                            <Input/>
+                        <Form.Item name="description">
+                            <Input.TextArea />
                         </Form.Item>
                     );
                 }
-                return text;
+                const truncatedText = text && text.length > 20 ? `${text.slice(0, 20)}...` : text || "";
+                return (
+                    <span
+                        style={{ cursor: text ? "pointer" : "default", color: text ? "#1890ff" : "inherit" }}
+                        onClick={() => text && showDescriptionModal(text)}
+                    >
+                        {truncatedText}
+                    </span>
+                );
             },
         },
     ];
 
-
-
     return (
         <div className="services-table-container-contact">
-
             <Form form={form} component={false}>
                 <Table
                     rowKey="id"
@@ -203,12 +167,36 @@ const ContactTable = () => {
                     dataSource={dataSource}
                     loading={isLoading}
                     pagination={{
-                        pageSize: 1,
+                        pageSize: 5,
                         className: "custom-pagination",
                     }}
                     className="custom-table"
                 />
             </Form>
+            <Modal
+                title="Tam Qeyd"
+                open={isModalVisible}
+                onCancel={handleModalClose}
+                footer={[
+                    <button
+                        key="close"
+                        className="ant-btn ant-btn-default"
+                        onClick={handleModalClose}
+                        style={{
+                            backgroundColor:"green",
+                            padding:"4px 8px",
+                            color:"white",
+                            border:"none",
+                            borderRadius:"5px",
+                            cursor:"pointer",
+                        }}
+                    >
+                        Bağla
+                    </button>,
+                ]}
+            >
+                <p>{modalContent}</p>
+            </Modal>
         </div>
     );
 };

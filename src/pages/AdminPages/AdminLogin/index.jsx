@@ -18,7 +18,7 @@ function AdminLogin() {
         try {
             const response = await postAdminLogin({ email, password }).unwrap();
             showToast("Giriş uğurlu oldu !","success")
-            setTimeout(navigate("/admin/category"), 2000);
+            setTimeout(navigate("/admin/services"), 2000);
             if (response?.statusCode === 200) {
                 const token = response?.data?.token;
                 console.log(response?.data?.token)

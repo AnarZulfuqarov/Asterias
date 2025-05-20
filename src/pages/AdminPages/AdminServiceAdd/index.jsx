@@ -1,26 +1,28 @@
 import "./index.scss";
-import { Upload, Switch, Image } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { Upload, Switch, Image } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { useState } from "react";
 import image1 from "../../../assets/profile.png";
 import { useNavigate } from "react-router-dom";
+import {usePostOffersMutation} from "../../../services/userApi.jsx";
 
 function AdminServCreate() {
     const [singleFileList, setSingleFileList] = useState([]);
     const [tripleFileLists, setTripleFileLists] = useState([[], [], []]);
     const [singleImageSwitch, setSingleImageSwitch] = useState(true);
     const [tripleImageSwitch, setTripleImageSwitch] = useState(false);
-    const [previewImage, setPreviewImage] = useState('');
+    const [previewImage, setPreviewImage] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
 
     const navigate = useNavigate();
+    const [postOffers, { isLoading, isError, error }] = usePostOffersMutation();
 
     const handleSingleImageChange = ({ fileList: newFileList }) => {
         setSingleFileList(newFileList);
     };
 
     const handleTripleImageChange = (index) => ({ fileList: newFileList }) => {
-        setTripleFileLists(prev => {
+        setTripleFileLists((prev) => {
             const newLists = [...prev];
             newLists[index] = newFileList;
             return newLists;
@@ -48,56 +50,63 @@ function AdminServCreate() {
         setPreviewOpen(true);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
 
         // Validate image uploads
         if (singleImageSwitch && singleFileList.length === 0) {
-            alert('Please upload a single image');
+            alert("Please upload a single image");
             return;
         }
-        if (tripleImageSwitch && tripleFileLists.every(list => list.length === 0)) {
-            alert('Please upload at least one image for triple image mode');
+        if (tripleImageSwitch && tripleFileLists.every((list) => list.length === 0)) {
+            alert("Please upload at least one image for triple image mode");
             return;
         }
 
-        // Process images
-        let offerCardImage = '';
-        let offerImages = [];
+        // Prepare FormData for backend
+        const offerData = new FormData();
 
+        // Append text fields
+        offerData.append("name", formData.get("name"));
+        offerData.append("nameEng", formData.get("nameEng"));
+        offerData.append("nameRu", formData.get("nameRu"));
+        offerData.append("description", formData.get("description"));
+        offerData.append("descriptionEng", formData.get("descriptionEng"));
+        offerData.append("descriptionRu", formData.get("descriptionRu"));
+        offerData.append("period", formData.get("period"));
+        offerData.append("periodEng", formData.get("periodEng"));
+        offerData.append("periodRu", formData.get("periodRu"));
+        offerData.append("ageLimit", formData.get("ageLimit"));
+        offerData.append("templateId", singleImageSwitch ? "1" : "2");
+
+        // Append images
         if (singleImageSwitch && singleFileList.length > 0) {
-            offerCardImage = singleFileList[0].originFileObj;
-        } else if (tripleImageSwitch) {
-            offerImages = tripleFileLists
-                .filter(list => list.length > 0)
-                .map(list => list[0].originFileObj);
+            offerData.append("offerImages", singleFileList[0].originFileObj);
+        }
+        if (tripleImageSwitch) {
+            tripleFileLists
+                .filter((list) => list.length > 0)
+                .forEach((list) => {
+                    offerData.append(`offerImages`, list[0].originFileObj);
+                });
         }
 
-        // Create data object
-        const data = {
-            Name: formData.get('name'),
-            NameEng: formData.get('nameEng'),
-            NameRu: formData.get('nameRu'),
-            Description: formData.get('description'),
-            DescriptionEng: formData.get('descriptionEng'),
-            DescriptionRu: formData.get('descriptionRu'),
-            OfferCardImage: offerCardImage,
-            OfferImages: offerImages,
-            Period: formData.get('period'),
-            PeriodEng: formData.get('periodEng'),
-            PeriodRu: formData.get('periodRu'),
-            AgeLimit: formData.get('ageLimit'),
-            TemplateId: singleImageSwitch ? '1' : '0'
-        };
-
-        console.log('Form Data:', data);
+        try {
+            // Send the request using the mutation
+            await postOffers(offerData).unwrap();
+            alert("Offer created successfully!");
+            navigate("/admin/services"); // Redirect to offers list or another page
+        } catch (err) {
+            console.error("Failed to create offer:", err);
+            alert(`Error: ${err?.data?.message || "Failed to create offer"}`);
+        }
     };
 
     const uploadButton = (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <UploadOutlined style={{ fontSize: '24px' }} />
-            <div style={{ marginTop: '8px' }}>Upload</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+            <UploadOutlined style={{ fontSize: "24px" }} />
+            <div style={{ marginTop: "8px" }}>Upload</div>
         </div>
     );
 
@@ -105,12 +114,7 @@ function AdminServCreate() {
         <>
             <div className="right">
                 <div className="adminTopBar">
-                    <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "10px",
-                    }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
                         <img src={image1} alt="profile" />
                         <div>
                             <p>Admin</p>
@@ -124,32 +128,26 @@ function AdminServCreate() {
                     <label>Xidmət (AZ):</label>
                     <input type="text" name="name" required />
                 </div>
-
                 <div>
                     <label>Xidmət (RU):</label>
                     <input type="text" name="nameRu" required />
                 </div>
-
                 <div>
                     <label>Xidmət (ENG):</label>
                     <input type="text" name="nameEng" required />
                 </div>
-
                 <div>
                     <label>Alt Başlıq (AZ):</label>
                     <textarea name="description" required />
                 </div>
-
                 <div>
                     <label>Alt Başlıq (RU):</label>
                     <textarea name="descriptionRu" required />
                 </div>
-
                 <div>
                     <label>Alt Başlıq (ENG):</label>
                     <textarea name="descriptionEng" required />
                 </div>
-
                 <div className="row">
                     <div className="col-6 pd00">
                         <label>Keçirilmə müddəti (AZ):</label>
@@ -159,33 +157,22 @@ function AdminServCreate() {
                         <label>Keçirilmə müddəti (ENG):</label>
                         <input type="text" name="periodEng" required />
                     </div>
-
                     <div className="col-6 pd01">
                         <label>Yaş:</label>
                         <input type="text" name="ageLimit" required />
                     </div>
                 </div>
-
-                <div className="row" style={{ marginTop: '16px' }}>
-                    <div className="col-6 pd00" style={{ display: 'flex', alignItems: 'center' }}>
+                <div className="row" style={{ marginTop: "16px" }}>
+                    <div className="col-6 pd00" style={{ display: "flex", alignItems: "center" }}>
                         <label>Xidmət şəhifəsi nümunə 1 (bir şəkilin olduğu)</label>
-                        <Switch
-                            checked={singleImageSwitch}
-                            onChange={handleSingleSwitchChange}
-                            style={{ marginLeft: '10px' }}
-                        />
+                        <Switch checked={singleImageSwitch} onChange={handleSingleSwitchChange} style={{ marginLeft: "10px" }} />
                     </div>
-                    <div className="col-6 pd01" style={{ display: 'flex', alignItems: 'center' }}>
+                    <div className="col-6 pd01" style={{ display: "flex", alignItems: "center" }}>
                         <label>Xidmət şəhifəsi nümunə 2 (üç şəkilin olduğu)</label>
-                        <Switch
-                            checked={tripleImageSwitch}
-                            onChange={handleTripleSwitchChange}
-                            style={{ marginLeft: '10px' }}
-                        />
+                        <Switch checked={tripleImageSwitch} onChange={handleTripleSwitchChange} style={{ marginLeft: "10px" }} />
                     </div>
                 </div>
-
-                <div className="row" style={{ marginTop: '16px' }}>
+                <div className="row" style={{ marginTop: "16px" }}>
                     <div className="col-6 pd00">
                         <Upload
                             listType="picture-card"
@@ -198,8 +185,8 @@ function AdminServCreate() {
                             {singleFileList.length >= 1 ? null : uploadButton}
                         </Upload>
                     </div>
-                    <div className="col-6 pd01" style={{ display: 'flex', gap: '10px' }}>
-                        {[0, 1, 2].map(index => (
+                    <div className="col-6 pd01" style={{ display: "flex", gap: "10px" }}>
+                        {[0, 1, 2].map((index) => (
                             <Upload
                                 key={index}
                                 listType="picture-card"
@@ -216,17 +203,19 @@ function AdminServCreate() {
                 </div>
                 {previewImage && (
                     <Image
-                        wrapperStyle={{ display: 'none' }}
+                        wrapperStyle={{ display: "none" }}
                         preview={{
                             visible: previewOpen,
-                            onVisibleChange: visible => setPreviewOpen(visible),
-                            afterOpenChange: visible => !visible && setPreviewImage(''),
+                            onVisibleChange: (visible) => setPreviewOpen(visible),
+                            afterOpenChange: (visible) => !visible && setPreviewImage(""),
                         }}
                         src={previewImage}
                     />
                 )}
-
-                <button type="submit" className="button">Yadda saxla</button>
+                <button type="submit" className="button" disabled={isLoading}>
+                    {isLoading ? "Submitting..." : "Yadda saxla"}
+                </button>
+                {isError && <p style={{ color: "red" }}>Error: {error?.data?.message || "Failed to submit"}</p>}
             </form>
         </>
     );

@@ -1,113 +1,62 @@
-import { useState } from "react";
-import {
-    useDeleteServiceMutation,
-    useGetAllServicesQuery,
-    usePutServiceMutation,
-} from "../../../services/userApi.jsx";
+import {useEffect, useState} from "react";
+import { useDeleteOffersMutation, useGetAllOffersQuery } from "../../../services/userApi.jsx";
 import showToast from "../../../components/ToastMessage.js";
 import "./index.scss";
-import {useNavigate} from "react-router-dom";
-
-// Helper function to convert image URL to File object
-const convertImageToFile = async (imgSrc, fileName) => {
-    try {
-        const res = await fetch(imgSrc);
-        if (!res.ok) throw new Error("Failed to fetch image");
-        const blob = await res.blob();
-        return new File([blob], fileName, { type: blob.type });
-    } catch (error) {
-        throw new Error(`Image conversion failed: ${error.message}`);
-    }
-};
+import { useNavigate } from "react-router-dom";
+import { OFFER_CARD_IMAGES, OFFER_IMAGES } from "../../../contants.js";
 
 const ServicesTable = () => {
     const navigate = useNavigate();
-    const { data: getAllServices, refetch: getAllServicesRefetch, isLoading } = useGetAllServicesQuery();
-    const [deleteService] = useDeleteServiceMutation();
-    const [putService] = usePutServiceMutation();
-    const [editingKey, setEditingKey] = useState(null);
-    const [formData, setFormData] = useState({});
+    const { data: getAllOffers, refetch: getAllOffersRefetch, isLoading } = useGetAllOffersQuery();
+    const [deleteService] = useDeleteOffersMutation();
     const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 3;
+    const [expandedRows, setExpandedRows] = useState([]);
+    const [showModal, setShowModal] = useState(false); // State for modal visibility
+    const [recordToDelete, setRecordToDelete] = useState(null); // State to store the record to delete
+    const pageSize = 5;
 
-    // Sample data (replace with actual API data)
-    const dataSource = [
-        {
-            id: 1,
-            title: "Service",
-            subTitle:
-                "Yeniyetmələrin özünü daha yaxşı başa düşməyə, mühüm bacarıq, bilik və təcrübə əldə etməyə...",
-        },
-        {
-            id: 2,
-            title: "Service Name",
-            subTitle:
-                "Yeniyetmələrin özünü daha yaxşı başa düşməyə, mühüm bacarıq, bilik və təcrübə əldə etməyə...",
-        },
-    ];
-
-    const isEditing = (record) => record.id === editingKey;
-
-    const edit = (record) => {
-        setFormData({
-            title: record.title,
-            subTitle: record.subTitle,
-            cardImage: record.cardImage,
-        });
-        setEditingKey(record.id);
-    };
-
-    const cancel = () => {
-        setEditingKey(null);
-        setFormData({});
-    };
-
-    const save = async (id) => {
-        try {
-            const formDataToSend = new FormData();
-            const textFields = ["title", "subTitle"];
-            textFields.forEach((field) => {
-                if (formData[field]) formDataToSend.append(field, formData[field]);
-            });
-            formDataToSend.append("id", id);
-
-            // Handle image if changed
-            if (formData.cardImage) {
-                const imgObj = availableServiceCardImages.find((item) => item.name === formData.cardImage);
-                if (imgObj) {
-                    const file = await convertImageToFile(imgObj.src, imgObj.name);
-                    formDataToSend.append("cardImage", file);
-                } else {
-                    throw new Error("Selected image not found");
-                }
-            }
-
-            await putService(formDataToSend).unwrap();
-            showToast("Service updated successfully!", "success");
-            setEditingKey(null);
-            getAllServicesRefetch();
-        } catch (error) {
-            console.error("PUT Error:", error);
-            showToast(error.message || error?.data?.message || "Error updating service!", "error");
-        }
-    };
-
+    const dataSource = getAllOffers?.data || [];
+    useEffect(() => {
+        getAllOffersRefetch();
+    }, []);
     const handleDelete = async (record) => {
         try {
             await deleteService(record.id).unwrap();
             showToast("Service deleted successfully!", "success");
-            getAllServicesRefetch();
+            getAllOffersRefetch();
         } catch (error) {
             console.error("Delete Error:", error);
             showToast(error?.data?.message || "Error deleting service!", "error");
         }
     };
 
-    const handleInputChange = (e, field) => {
-        setFormData({ ...formData, [field]: e.target.value });
+    // Function to open the modal and set the record to delete
+    const confirmDelete = (record) => {
+        setRecordToDelete(record);
+        setShowModal(true);
     };
 
-    // Pagination logic
+    // Function to handle the deletion after confirmation
+    const handleConfirmDelete = async () => {
+        if (recordToDelete) {
+            await handleDelete(recordToDelete);
+        }
+        setShowModal(false);
+        setRecordToDelete(null);
+    };
+
+    // Function to cancel the deletion
+    const handleCancelDelete = () => {
+        setShowModal(false);
+        setRecordToDelete(null);
+    };
+
+    const toggleRow = (id) => {
+        setExpandedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    };
+
     const totalItems = dataSource.length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const paginatedData = dataSource.slice(
@@ -117,6 +66,7 @@ const ServicesTable = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
+        setExpandedRows([]);
     };
 
     return (
@@ -127,109 +77,49 @@ const ServicesTable = () => {
                     <th>№</th>
                     <th>Şəkil</th>
                     <th>Başlıq (AZ)</th>
-                    <th>Alt Başlıq (AZ)</th>
-                    <th>Fəaliyyaətlər</th>
+                    <th>Təsvir (AZ)</th>
+                    <th>Müddət (AZ)</th>
+                    <th>Yaş Həddi</th>
+                    <th>Şablon ID</th>
+                    <th>Fəaliyyətlər</th>
                 </tr>
                 </thead>
                 <tbody>
-                {paginatedData.map((record, index) => (
-                    <tr key={record.id}>
-                        <td>{(currentPage - 1) * pageSize + index + 1}</td>
-                        <td>
-                            {isEditing(record) ? (
-                                <input
-                                    type="text"
-                                    value={formData.cardImage || ""}
-                                    onChange={(e) => handleInputChange(e, "cardImage")}
-                                    placeholder="Image name"
-                                    className="edit-input"
-                                />
-                            ) : record.cardImage ? (
-                                <img
-                                    src={record.cardImage}
-                                    alt="Card"
-                                    className="service-image"
-                                    onError={(e) => {
-                                        e.target.src = "/src/assets/services/placeholder.png";
-                                    }}
-                                />
-                            ) : (
-                                <span>No Image</span>
-                            )}
-                        </td>
-                        <td>
-                            {isEditing(record) ? (
-                                <input
-                                    type="text"
-                                    value={formData.title || ""}
-                                    onChange={(e) => handleInputChange(e, "title")}
-                                    placeholder="Başlıq daxil edin"
-                                    className="edit-input"
-                                    required
-                                />
-                            ) : (
-                                record.title
-                            )}
-                        </td>
-                        <td>
-                            <div className="subtitle-cell">
-                                {isEditing(record) ? (
-                                    <input
-                                        type="text"
-                                        value={formData.subTitle || ""}
-                                        onChange={(e) => handleInputChange(e, "subTitle")}
-                                        placeholder="Alt Başlıq"
-                                        className="edit-input"
-                                    />
-                                ) : (
-                                    record.subTitle
-                                )}
-                            </div>
-                        </td>
-                        <td>
-                            <div className="editdeleteDiv">
-                                {isEditing(record) ? (
-                                    <>
+                {isLoading ? (
+                    <tr>
+                        <td colSpan={8}>Loading...</td>
+                    </tr>
+                ) : paginatedData.length > 0 ? (
+                    paginatedData.map((record, index) => (
+                        <>
+                            <tr key={record.id}>
+                                <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                                <td>
+                                    {record.offerImageNames && record.offerImageNames.length > 0 ? (
+                                        <img
+                                            src={OFFER_IMAGES + record.offerImageNames[0]}
+                                            alt="Primary"
+                                            className="service-image"
+                                            onError={(e) => {
+                                                e.target.src = "/src/assets/services/placeholder.png";
+                                            }}
+                                        />
+                                    ) : (
+                                        <span>No Image</span>
+                                    )}
+                                </td>
+                                <td>{record.name}</td>
+                                <td>
+                                    <div className="description-cell">{record.description}</div>
+                                </td>
+                                <td>{record.period}</td>
+                                <td>{record.ageLimit || "N/A"}</td>
+                                <td>{record.templateId || "N/A"}</td>
+                                <td>
+                                    <div className="editdeleteDiv">
                                         <button
                                             className="editDelete"
-                                            onClick={() => navigate('/admin/services/1')}
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 20 20"
-                                                fill="none"
-                                            >
-                                                <path
-                                                    d="M7.5 17.5L2.5 12.5L4.225 10.775L7.5 14.05L15.775 5.775L17.5 7.5L7.5 17.5Z"
-                                                    fill="#007781"
-                                                />
-                                            </svg>
-                                        </button>
-                                        <button className="editDelete" onClick={cancel}>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 20 20"
-                                                fill="none"
-                                            >
-                                                <path
-                                                    d="M15 5L5 15M5 5L15 15"
-                                                    stroke="#ED0303"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <button
-                                            className="editDelete"
-                                            onClick={() => navigate('/admin/services/1')}
+                                            onClick={() => navigate(`/admin/services/${record.id}`)}
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -246,7 +136,7 @@ const ServicesTable = () => {
                                         </button>
                                         <button
                                             className="editDelete"
-                                            onClick={() => handleDelete(record)}
+                                            onClick={() => confirmDelete(record)} // Trigger modal instead of direct deletion
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -271,12 +161,71 @@ const ServicesTable = () => {
                                                 />
                                             </svg>
                                         </button>
-                                    </>
-                                )}
-                            </div>
-                        </td>
+                                        <button
+                                            className="editDelete"
+                                            onClick={() => toggleRow(record.id)}
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 20 20"
+                                                fill="none"
+                                            >
+                                                <path
+                                                    d={expandedRows.includes(record.id) ? "M10 7.5L5 12.5H15L10 7.5Z" : "M10 12.5L5 7.5H15L10 12.5Z"}
+                                                    fill="#007781"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {expandedRows.includes(record.id) && (
+                                <tr className="expanded-row">
+                                    <td colSpan={8}>
+                                        <div className="expanded-content">
+                                            <div className="language-section">
+                                                <h4>English</h4>
+                                                <p><strong>Name:</strong> {record.nameEng || "N/A"}</p>
+                                                <p><strong>Description:</strong> {record.descriptionEng || "N/A"}</p>
+                                                <p><strong>Period:</strong> {record.periodEng || "N/A"}</p>
+                                            </div>
+                                            <div className="language-section">
+                                                <h4>Russian</h4>
+                                                <p><strong>Name:</strong> {record.nameRu || "N/A"}</p>
+                                                <p><strong>Description:</strong> {record.descriptionRu || "N/A"}</p>
+                                                <p><strong>Period:</strong> {record.periodRu || "N/A"}</p>
+                                            </div>
+                                            {record.offerImages && record.offerImages.length > 1 && (
+                                                <div className="image-section">
+                                                    <h4>Additional Images</h4>
+                                                    <div className="image-gallery">
+                                                        {record.offerImages.slice(1).map((image, idx) => (
+                                                            <img
+                                                                key={idx}
+                                                                src={OFFER_CARD_IMAGES + image}
+                                                                alt={`Additional ${idx + 1}`}
+                                                                className="additional-image"
+                                                                onError={(e) => {
+                                                                    e.target.src = "/src/assets/services/placeholder.png";
+                                                                }}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </>
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan={8}>No data available</td>
                     </tr>
-                ))}
+                )}
                 </tbody>
             </table>
             <div className="custom-pagination">
@@ -304,6 +253,39 @@ const ServicesTable = () => {
                     Next
                 </button>
             </div>
+
+            {/* Confirmation Modal */}
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <button className="modal-close" onClick={handleCancelDelete}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M15.8337 4.1665L4.16699 15.8332M4.16699 4.1665L15.8337 15.8332" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div className={"modal-iconback1"}>
+                            <div className={"modal-iconback2"}>
+
+                                <div className="modal-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="45" height="44" viewBox="0 0 45 44" fill="none">
+                                        <path d="M22.5013 24.5665L27.818 29.8832C28.1541 30.2193 28.5819 30.3874 29.1013 30.3874C29.6208 30.3874 30.0486 30.2193 30.3847 29.8832C30.7208 29.5471 30.8888 29.1193 30.8888 28.5999C30.8888 28.0804 30.7208 27.6527 30.3847 27.3165L25.068 21.9999L30.3847 16.6832C30.7208 16.3471 30.8888 15.9193 30.8888 15.3999C30.8888 14.8804 30.7208 14.4526 30.3847 14.1165C30.0486 13.7804 29.6208 13.6124 29.1013 13.6124C28.5819 13.6124 28.1541 13.7804 27.818 14.1165L22.5013 19.4332L17.1847 14.1165C16.8485 13.7804 16.4208 13.6124 15.9013 13.6124C15.3819 13.6124 14.9541 13.7804 14.618 14.1165C14.2819 14.4526 14.1138 14.8804 14.1138 15.3999C14.1138 15.9193 14.2819 16.3471 14.618 16.6832L19.9347 21.9999L14.618 27.3165C14.2819 27.6527 14.1138 28.0804 14.1138 28.5999C14.1138 29.1193 14.2819 29.5471 14.618 29.8832C14.9541 30.2193 15.3819 30.3874 15.9013 30.3874C16.4208 30.3874 16.8485 30.2193 17.1847 29.8832L22.5013 24.5665ZM22.5013 40.3332C19.9652 40.3332 17.5819 39.8517 15.3513 38.8886C13.1208 37.9254 11.1805 36.6195 9.53048 34.9707C7.88048 33.3219 6.57453 31.3817 5.61264 29.1499C4.65075 26.9181 4.16919 24.5348 4.16797 21.9999C4.16675 19.465 4.64831 17.0816 5.61264 14.8499C6.57698 12.6181 7.88292 10.6778 9.53048 9.02901C11.178 7.38023 13.1183 6.07429 15.3513 5.11117C17.5843 4.14806 19.9677 3.6665 22.5013 3.6665C25.035 3.6665 27.4183 4.14806 29.6513 5.11117C31.8843 6.07429 33.8246 7.38023 35.4722 9.02901C37.1197 10.6778 38.4263 12.6181 39.3919 14.8499C40.3574 17.0816 40.8384 19.465 40.8347 21.9999C40.831 24.5348 40.3495 26.9181 39.39 29.1499C38.4306 31.3817 37.1246 33.3219 35.4722 34.9707C33.8197 36.6195 31.8795 37.9261 29.6513 38.8904C27.4232 39.8547 25.0399 40.3357 22.5013 40.3332Z" fill="#E60D0D"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <h3>Bu xidməti silmək istədiyinizə əminsiniz?</h3>
+                        <p>Xidmət silindikdən sonra onunla bağlı bütün məlumatlar daimi olaraq silinəcək.</p>
+                        <div className="modal-actions">
+                            <button className="modal-cancel" onClick={handleCancelDelete}>
+                                Ləğv et
+                            </button>
+                            <button className="modal-confirm" onClick={handleConfirmDelete}>
+                                SİL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

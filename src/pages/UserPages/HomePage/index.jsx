@@ -147,6 +147,7 @@ function HomePage() {
                     height="7.83vw"
                     viewBox="0 0 180 141"
                     fill="none"
+                    className={"arrow-svg"}
                 >
                     <g clipPath="url(#clip0_189_538)">
                         <path

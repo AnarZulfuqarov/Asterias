@@ -4,9 +4,9 @@ import Cookies from "js-cookie";
 export const userApi = createApi({
     reducerPath: 'userApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://api.sss-tel.az/api',
+        baseUrl: 'https://asterias-001-site1.ktempurl.com/api',
         prepareHeaders: (headers) => {
-            const token = Cookies.get('sssToken');
+            const token = Cookies.get('asteriasToken');
             if (token) {
                 headers.set('Authorization', `Bearer ${token}`);
             }
@@ -16,7 +16,7 @@ export const userApi = createApi({
     endpoints: (builder) => ({
         postAdminLogin: builder.mutation({
             query: (admin) => ({
-                url: `/Admin/login`,
+                url: `/Admins/login`,
                 method: 'POST',
                 body: admin,
                 headers: {'Content-Type': 'application/json'}
@@ -24,7 +24,7 @@ export const userApi = createApi({
         }),
         postContact: builder.mutation({
             query: (contact) => ({
-                url: `/Contact/create-contact`,
+                url: `/Contacts`,
                 method: 'POST',
                 body: contact,
                 headers: {'Content-Type': 'application/json'}
@@ -32,62 +32,37 @@ export const userApi = createApi({
         }),
         getAllContact: builder.query({
             query: () => ({
-                url: `/Contact/get-all-contacts`,
+                url: `/Contacts`,
             }),
         }),
-        getAllProject: builder.query({
+        getAllOffers: builder.query({
             query: () => ({
-                url: `/Project/get-all-projects`,
+                url: `/Offers`,
             }),
         }),
-        postProject: builder.mutation({
+        postOffers: builder.mutation({
             query: (project) => ({
-                url: `/Project/create-project`,
+                url: `/Offers`,
                 method: 'POST',
                 body: project
             }),
         }),
-        deleteProject: builder.mutation({
+        deleteOffers: builder.mutation({
             query: (id) => ({
-                url: `/Project/delete-project/${id}`,
+                url: `/Offers/?id=${id}`,
                 method: 'DELETE',
             }),
         }),
-        putProject: builder.mutation({
+        putOffers: builder.mutation({
             query: (project) => ({
-                url: `/Project/update-project`,
+                url: `/Offers`,
                 method: 'PUT',
                 body: project,
             }),
         }),
-        putService: builder.mutation({
-            query: (service) => ({
-                url: `/Service/update-service`,
-                method: 'PUT',
-                body: service,
-            }),
-        }),
-        getAllServices: builder.query({
-            query: () => ({
-                url: `/Service/get-all-services`,
-            }),
-        }),
-        postService: builder.mutation({
-            query: (service) => ({
-                url: `/Service/create-service`,
-                method: 'POST',
-                body: service
-            }),
-        }),
-        deleteService: builder.mutation({
+        getOffersById: builder.query({
             query: (id) => ({
-                url: `/Service/delete-service/${id}`,
-                method: 'DELETE',
-            }),
-        }),
-        getProjectById: builder.query({
-            query: (id) => ({
-                url: `/Project/get-project-by-id/${id}`,
+                url: `/Offers/${id}`,
             }),
         }),
     }),
@@ -97,14 +72,10 @@ export const {
     usePostContactMutation,
     usePostAdminLoginMutation,
 
-    useGetAllProjectQuery,
-    usePostProjectMutation,
-    useDeleteProjectMutation,
-    usePutProjectMutation,
-    useGetProjectByIdQuery,
+    useGetAllOffersQuery,
+    usePostOffersMutation,
+    useDeleteOffersMutation,
+    usePutOffersMutation,
+    useGetOffersByIdQuery,
 
-    useGetAllServicesQuery,
-    usePostServiceMutation,
-    useDeleteServiceMutation,
-    usePutServiceMutation,
 } = userApi

@@ -57,8 +57,8 @@ function ServDetailPageOne() {
                 <div className={"back"} onClick={() => navigate("/")}>
                     <img src={backBak}/>
                 </div>
-                <div className={"row"} style={{alignItems: "end"}}>
-                    <div className={"col-6"} >
+                <div className={"row"} style={{alignItems: "center  "}}>
+                    <div className={"col-6 col-md-12 col-sm-12 col-xs-12"} >
                         <div className={"text"}>
                            <div className={"head"}>
                                <h2 style={{ fontSize: i18n.language === 'az' ? '48px' : i18n.language === 'en' ? '36px' : '34px' }}>
@@ -103,7 +103,7 @@ function ServDetailPageOne() {
 
                         </div>
                     </div>
-                    <div className={"col-6"}>
+                    <div className={"col-6 col-md-12 col-sm-12 col-xs-12"}>
                         <div className={"image"}>
                             <div className={"frame"}>
                                 <img src={frame}/>
