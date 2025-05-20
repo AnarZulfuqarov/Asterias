@@ -76,7 +76,7 @@ function HomePage() {
 
     useEffect(() => {
         const animate = () => {
-            setRotation((prev) => (prev + 0.1) % 360);
+            setRotation((prev) => (prev + 0.2) % 360);
             requestAnimationFrame(animate);
         };
         requestAnimationFrame(animate);
