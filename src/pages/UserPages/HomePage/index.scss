@@ -408,15 +408,16 @@ body {
 
   .segment-label {
     position: absolute;
-    top: 21%;
-    left: 63%;
+    top: 23.8%;
+    left: 62%;
     transform-origin: center;
     color: white;
-    font-size: clamp(8px, 13px, 11px); /* 0.5rem * 16px, 0.7vw * 1920px / 100, 0.7rem * 16px */
     font-weight: 500;
     white-space: nowrap;
     text-align: center;
     transform: rotate(-9deg);
+    margin-top: 45px;
+    font-size: 13px;
     @media (max-width: 991.98px) {
       font-size: clamp(6px, 12px, 8px); /* 0.4rem * 14px, 0.6vw * 1920px / 100, 0.6rem * 14px */
     }
@@ -494,6 +495,9 @@ body {
         font-weight: 500;
         line-height: clamp(16px, 38px, 20px); /* 1rem * 16px, 2vw * 1920px / 100, 1.25rem * 16px */
         text-transform: capitalize;
+        font-size: 9px;
+        scale: 1.1;
+        font-weight: 500;
         @media (max-width: 767.98px) {
           padding: 5px; /* 0.375rem * 12px */
           font-size: clamp(8px, 23px, 9px); /* 0.625rem * 12px, 1.2vw * 1920px / 100, 0.75rem * 12px */

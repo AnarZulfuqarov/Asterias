@@ -76,7 +76,7 @@ function HomePage() {
 
     useEffect(() => {
         const animate = () => {
-            setRotation((prev) => (prev + 0.5) % 360);
+            setRotation((prev) => (prev + 0.1) % 360);
             requestAnimationFrame(animate);
         };
         requestAnimationFrame(animate);
@@ -192,8 +192,7 @@ function HomePage() {
                                 className="segment-label"
                                 style={{
                                     marginLeft: "0",
-                                    marginTop: "3.3vw",
-                                    rotate: `${-segmentAngle / 2}deg`,
+                                    rotate: `${(-segmentAngle / 2) + 2}deg`,
                                     width: "10vw",
                                     transform: segments.length > 9 ? "rotate(-15deg)" : undefined,
                                 }}

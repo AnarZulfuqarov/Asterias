@@ -30,27 +30,27 @@ const CircleText = () => {
                 </defs>
 
                 {/* Text along the circular path */}
-                <text
-                    fill="#333"
-                    fontSize={
-                        localStorage.getItem("sssLanguage") === "az"
-                            ? "13"
-                            : localStorage.getItem("sssLanguage") === "en"
-                                ? "13.5"
-                                : "11"
-                    }
-                    letterSpacing="1.4" // Adjusted for tighter spacing
-                    fontFamily="sans-serif"
-                    fontWeight="bold"
-                >
-                    <textPath
-                        xlinkHref="#circlePath"
-                        startOffset="48%" // Slight adjustment for better text positioning
-                        textAnchor="middle"
-                    >
-                        {t("circleText").replace(/\s/g, " * ")} {/* Add stars between words */}
-                    </textPath>
-                </text>
+                {/*<text*/}
+                {/*    fill="#333"*/}
+                {/*    fontSize={*/}
+                {/*        localStorage.getItem("sssLanguage") === "az"*/}
+                {/*            ? "13"*/}
+                {/*            : localStorage.getItem("sssLanguage") === "en"*/}
+                {/*                ? "13.5"*/}
+                {/*                : "11"*/}
+                {/*    }*/}
+                {/*    letterSpacing="1.4" // Adjusted for tighter spacing*/}
+                {/*    fontFamily="sans-serif"*/}
+                {/*    fontWeight="bold"*/}
+                {/*>*/}
+                {/*    <textPath*/}
+                {/*        xlinkHref="#circlePath"*/}
+                {/*        startOffset="48%" // Slight adjustment for better text positioning*/}
+                {/*        textAnchor="middle"*/}
+                {/*    >*/}
+                {/*        {t("circleText").replace(/\s/g, " * ")} /!* Add stars between words *!/*/}
+                {/*    </textPath>*/}
+                {/*</text>*/}
             </svg>
 
             {/* Phone icon in the center */}

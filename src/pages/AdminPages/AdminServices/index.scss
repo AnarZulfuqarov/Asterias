@@ -3,20 +3,24 @@
   position: relative;
   height: 100vh;
 
+  * {
+    font-family: "Noto Sans", sans-serif !important;
+  }
+
   .custom-table {
     display: grid;
-    grid-template-columns: 0.2fr .8fr 1fr 1.5fr 0.5fr 0.5fr .5fr .5fr; /* Proportional columns with fr units */
+    grid-template-columns: 0.5fr .8fr 1fr 1.5fr 0.5fr 3.5fr .5fr; /* Proportional columns with fr units */
     overflow: hidden;
     background: #fff;
     width: 100%;
     border-collapse: collapse;
-    border: 0.5px solid #ddd;
+    border: 0.5px solid #dcdcdc;
     border-radius: 10px;
 
     tr,
     th,
     td {
-      border: 0.5px solid #ddd;
+      border: 0.5px solid #dcdcdc;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -165,11 +169,15 @@
     }
   }
 
+  .icon {
+    color: #C3C3C3;
+    font-size: 24px;
+  }
+
   .editdeleteDiv {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
   }
 
   .custom-pagination {

@@ -2,6 +2,9 @@ import "./index.scss";
 import backBak from "../../../assets/Group42.png";
 import icon from "../../../assets/icob2.png";
 import main from "../../../assets/136fcdd4c523b8a0f94ae173624eade6675b9ef3.jpg";
+import xet from "../../../assets/Path (top).png";
+import xet1 from "../../../assets/Path (bottom).png";
+import xet2 from "../../../assets/Path (top1).png";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -127,6 +130,15 @@ function ServDetailPageTwo() {
                             <div className={"image3"}>
                                 <img src={main} alt="Image 3" />
                             </div>
+                            <div className={"image4"}>
+                                <img src={xet} alt={"Image 3"} />
+                            </div>
+                            <div className={"image5"}>
+                                <img src={xet1} alt={"Image 3"} />
+                            </div>
+                            <div className={"image6"}>
+                                <img src={xet2} alt={"Image 3"} />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,7 +150,9 @@ function ServDetailPageTwo() {
                     onMouseEnter={handleLangMouseEnter}
                     onMouseLeave={handleLangMouseLeave}
                 >
-                    <button className="dropbtn">
+                    <button className="dropbtn" style={{
+                        cursor: 'pointer',
+                    }}>
                         <img src={currentFlag} alt="Current Flag" />
                         {currentTitle}
                         <FaChevronDown className="zakirinChevronu" />

@@ -10,6 +10,8 @@ import flagAz from "../../../assets/azerbaijan.png";
 import flagEn from "../../../assets/uk.png";
 import flagRu from "../../../assets/circle.png";
 import {FaChevronDown} from "react-icons/fa";
+import elli from "../../../assets/Ellipse 2.png"
+import elli1 from "../../../assets/Decoration1.png"
 function ServDetailPageOne() {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
@@ -53,12 +55,17 @@ function ServDetailPageOne() {
     };
     return (
         <div id={"servDetailOne"}>
+            <img className={"elli"} src={elli}/>
+            <img className={"elli1"} src={elli1}/>
             <div className={"container"}>
                 <div className={"back"} onClick={() => navigate("/")}>
-                    <img src={backBak}/>
+                    <img src={backBak} style={{
+                        position: "relative",
+                        zIndex: 9999,
+                    }}/>
                 </div>
-                <div className={"row"} style={{alignItems: "center  "}}>
-                    <div className={"col-6 col-md-12 col-sm-12 col-xs-12"} >
+                <div className={"row"} style={{alignItems: "center"}}>
+                    <div className={"col-6 col-md-12 col-sm-12 col-xs-12"}  style={{alignItems: "center", position: "relative", zIndex: 120}}>
                         <div className={"text"}>
                            <div className={"head"}>
                                <h2 style={{ fontSize: i18n.language === 'az' ? '48px' : i18n.language === 'en' ? '36px' : '34px' }}>

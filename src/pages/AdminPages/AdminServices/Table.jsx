@@ -4,6 +4,7 @@ import showToast from "../../../components/ToastMessage.js";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
 import { OFFER_CARD_IMAGES, OFFER_IMAGES } from "../../../contants.js";
+import {RxDividerVertical} from "react-icons/rx";
 
 const ServicesTable = () => {
     const navigate = useNavigate();
@@ -76,11 +77,10 @@ const ServicesTable = () => {
                 <tr>
                     <th>№</th>
                     <th>Şəkil</th>
-                    <th>Başlıq (AZ)</th>
-                    <th>Təsvir (AZ)</th>
-                    <th>Müddət (AZ)</th>
-                    <th>Yaş Həddi</th>
-                    <th>Şablon ID</th>
+                    <th>Xidmətin adı</th>
+                    <th>Keçirilmə müddəti</th>
+                    <th>Yaş</th>
+                    <th>Alt başlıq</th>
                     <th>Fəaliyyətlər</th>
                 </tr>
                 </thead>
@@ -103,18 +103,18 @@ const ServicesTable = () => {
                                             onError={(e) => {
                                                 e.target.src = "/src/assets/services/placeholder.png";
                                             }}
+                                            style={{
+                                                borderRadius: "10px",
+                                            }}
                                         />
                                     ) : (
                                         <span>No Image</span>
                                     )}
                                 </td>
                                 <td>{record.name}</td>
-                                <td>
-                                    <div className="description-cell">{record.description}</div>
-                                </td>
                                 <td>{record.period}</td>
                                 <td>{record.ageLimit || "N/A"}</td>
-                                <td>{record.templateId || "N/A"}</td>
+                                <td>{record.description || "N/A"}</td>
                                 <td>
                                     <div className="editdeleteDiv">
                                         <button
@@ -134,6 +134,7 @@ const ServicesTable = () => {
                                                 />
                                             </svg>
                                         </button>
+                                        <RxDividerVertical className={"icon"}/>
                                         <button
                                             className="editDelete"
                                             onClick={() => confirmDelete(record)} // Trigger modal instead of direct deletion
@@ -161,23 +162,7 @@ const ServicesTable = () => {
                                                 />
                                             </svg>
                                         </button>
-                                        <button
-                                            className="editDelete"
-                                            onClick={() => toggleRow(record.id)}
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 20 20"
-                                                fill="none"
-                                            >
-                                                <path
-                                                    d={expandedRows.includes(record.id) ? "M10 7.5L5 12.5H15L10 7.5Z" : "M10 12.5L5 7.5H15L10 12.5Z"}
-                                                    fill="#007781"
-                                                />
-                                            </svg>
-                                        </button>
+
                                     </div>
                                 </td>
                             </tr>

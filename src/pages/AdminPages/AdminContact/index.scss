@@ -86,12 +86,13 @@
     border: none;
     cursor: pointer;
   }
-
+.icon {
+  color: #ddd !important;
+}
   .editdeleteDiv {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
   }
 
   .custom-pagination {

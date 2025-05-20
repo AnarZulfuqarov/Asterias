@@ -10,6 +10,25 @@
   align-items: center;
   justify-content: center;
 
+  .elli {
+    position: absolute;
+    right: -300px;
+    top: -300px;
+    width: 600px;
+    aspect-ratio: 1/1;
+  }
+
+  .elli1 {
+    position: absolute;
+    width: 1600px;
+    rotate: -2deg;
+    scale: 2.7;
+    top: 350px;
+    left: 500px;
+    z-index: 105;
+    opacity: 0.5;
+  }
+
   .zakirinChevronu {
     font-size: 14px;
     margin-left: 5px;
@@ -24,8 +43,10 @@
     .dropdown {
       position: relative;
       cursor: pointer;
+      z-index: 9999;
 
       .dropbtn {
+        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -251,7 +272,8 @@
     align-items: center;
     justify-content: end;
     position: relative;
-    z-index:0;
+    z-index: 0;
+
     .frame {
       width: 400px;
       height: 400px;
@@ -649,7 +671,7 @@
     .back {
       width: 40px;
       height: 40px;
-      position:relative;
+      position: relative;
       left: 20px;
       top: -10px;
     }
@@ -663,13 +685,15 @@
           font-size: 26px !important;
           line-height: 40px;
           letter-spacing: -0.8px;
-          img{
+
+          img {
             width: 50px;
             height: 50px;
             aspect-ratio: 1/1;
           }
         }
-        .arrowDetail{
+
+        .arrowDetail {
           display: none;
         }
       }
