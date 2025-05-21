@@ -418,8 +418,10 @@ body {
     transform: rotate(-9deg);
     margin-top: 45px;
     font-size: 13px;
-    @media (max-width: 991.98px) {
-      font-size: clamp(6px, 12px, 8px); /* 0.4rem * 14px, 0.6vw * 1920px / 100, 0.6rem * 14px */
+    @media (max-width: 1200px) {
+      top: 23%;
+      left: 66%;
+      font-size: clamp(6px, 12px, 15px); /* 0.4rem * 14px, 0.6vw * 1920px / 100, 0.6rem * 14px */
     }
     @media (max-width: 767.98px) {
       font-size: clamp(4px, 19px, 6px); /* 0.35rem * 12px, 1vw * 1920px / 100, 0.5rem * 12px */

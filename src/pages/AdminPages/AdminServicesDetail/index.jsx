@@ -1,6 +1,6 @@
 import "./index.scss";
 import { Upload, Switch, Image, Button } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import image1 from "../../../assets/profile.png";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,10 +9,14 @@ import { OFFER_IMAGES } from "../../../contants.js";
 
 function AdminServDetail() {
     const { id } = useParams();
-    const { data: getOffersById } = useGetOffersByIdQuery(id);
+    const { data: getOffersById, refetch: getAllOffersRefetch, isLoading: isOfferLoading } = useGetOffersByIdQuery(id);
     const offer = getOffersById?.data;
-    const [putOffer] = usePutOffersMutation();
+    const [putOffer, { isLoading: isSubmitting, isError, error }] = usePutOffersMutation();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        getAllOffersRefetch();
+    }, []);
 
     // State for form fields
     const [formData, setFormData] = useState({
@@ -218,7 +222,8 @@ function AdminServDetail() {
         const payload = getChangedFields();
         // Log payload entries for debugging
         console.log("Payload:", Object.fromEntries(payload));
-        if (payload.has("name") ||
+        if (
+            payload.has("name") ||
             payload.has("nameEng") ||
             payload.has("nameRu") ||
             payload.has("description") ||
@@ -230,7 +235,8 @@ function AdminServDetail() {
             payload.has("ageLimit") ||
             payload.has("templateId") ||
             payload.has("OfferImageNames") ||
-            payload.has("DeleteOfferImageNames")) {
+            payload.has("DeleteOfferImageNames")
+        ) {
             // Ensure there's something to send besides Id
             try {
                 const response = await putOffer(payload).unwrap();
@@ -242,7 +248,7 @@ function AdminServDetail() {
                 }
             } catch (error) {
                 console.error("Failed to save changes:", error);
-                alert("Failed to save changes.");
+                alert(`Error: ${error?.data?.message || "Failed to save changes"}`);
             }
         } else {
             alert("No changes detected.");
@@ -278,168 +284,197 @@ function AdminServDetail() {
                         <img src={image1} alt="profile" />
                         <div>
                             <p>Admin</p>
-                            <p className="p">sabina.heidarovaa@gmail.com</p>
                         </div>
                     </div>
+                    <div className="navigation-bar">
+                        <h2 className="nav-title">
+                <span className="nav-link" onClick={() => navigate("/admin/services")}>
+                  Xidmətlər
+                </span>
+                            <span className="nav-divider"> — </span>
+                            <span className="nav-subtitle">{offer?.name || "Loading..."}</span>
+                        </h2>
+                    </div>
                 </div>
+
             </div>
             <div id="admin-services-detail">
-                <div>
-                    <label>Xidmət (AZ):</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                    />
-                </div>
-
-                <div>
-                    <label>Xidmət (RU):</label>
-                    <input
-                        type="text"
-                        name="nameRu"
-                        value={formData.nameRu}
-                        onChange={handleInputChange}
-                    />
-                </div>
-
-                <div>
-                    <label>Xidmət (ENG):</label>
-                    <input
-                        type="text"
-                        name="nameEng"
-                        value={formData.nameEng}
-                        onChange={handleInputChange}
-                    />
-                </div>
-
-                <div>
-                    <label>Alt Başlıq (AZ):</label>
-                    <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                    />
-                </div>
-
-                <div>
-                    <label>Alt Başlıq (RU):</label>
-                    <textarea
-                        name="descriptionRu"
-                        value={formData.descriptionRu}
-                        onChange={handleInputChange}
-                    />
-                </div>
-
-                <div>
-                    <label>Alt Başlıq (ENG):</label>
-                    <textarea
-                        name="descriptionEng"
-                        value={formData.descriptionEng}
-                        onChange={handleInputChange}
-                    />
-                </div>
-
-                <div className="row">
-                    <div className="col-6 pd00">
-                        <label>Keçirilmə müddəti (AZ):</label>
-                        <input
-                            type="text"
-                            name="period"
-                            value={formData.period}
-                            onChange={handleInputChange}
-                        />
-                        <label>Keçirilmə müddəti (RU):</label>
-                        <input
-                            type="text"
-                            name="periodRu"
-                            value={formData.periodRu}
-                            onChange={handleInputChange}
-                        />
-                        <label>Keçirilmə müddəti (ENG):</label>
-                        <input
-                            type="text"
-                            name="periodEng"
-                            value={formData.periodEng}
-                            onChange={handleInputChange}
-                        />
+                {isOfferLoading ? (
+                    <div className="loading-spinner">
+                        <LoadingOutlined style={{ fontSize: "24px", marginBottom: "16px" }} />
+                        <p>Yüklənir...</p>
                     </div>
+                ) : (
+                    <>
+                        {/* Navigation Bar */}
 
-                    <div className="col-6 pd01">
-                        <label>Yaş:</label>
-                        <input
-                            type="text"
-                            name="ageLimit"
-                            value={formData.ageLimit}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                </div>
-
-                <div className="row" style={{ marginTop: "16px" }}>
-                    <div className="col-6 pd00" style={{ display: "flex", alignItems: "center" }}>
-                        <label>Xidmət şəhifəsi nümunə 1 (bir şəkilin olduğu)</label>
-                        <Switch
-                            checked={singleImageSwitch}
-                            onChange={handleSingleSwitchChange}
-                            style={{ marginLeft: "10px" }}
-                        />
-                    </div>
-                    <div className="col-6 pd01" style={{ display: "flex", alignItems: "center" }}>
-                        <label>Xidmət şəhifəsi nümunə 2 (üç şəkilin olduğu)</label>
-                        <Switch
-                            checked={tripleImageSwitch}
-                            onChange={handleTripleSwitchChange}
-                            style={{ marginLeft: "10px" }}
-                        />
-                    </div>
-                </div>
-
-                <div className="row" style={{ marginTop: "16px" }}>
-                    <div className="col-6 pd00">
-                        <Upload
-                            listType="picture-card"
-                            fileList={singleFileList}
-                            onPreview={handlePreview}
-                            onChange={handleSingleImageChange}
-                            beforeUpload={() => false}
-                            disabled={tripleImageSwitch}
+                        <div>
+                            <label>Xidmət (AZ):</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div>
+                            <label>Xidmət (RU):</label>
+                            <input
+                                type="text"
+                                name="nameRu"
+                                value={formData.nameRu}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div>
+                            <label>Xidmət (ENG):</label>
+                            <input
+                                type="text"
+                                name="nameEng"
+                                value={formData.nameEng}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div>
+                            <label>Alt Başlıq (AZ):</label>
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div>
+                            <label>Alt Başlıq (RU):</label>
+                            <textarea
+                                name="descriptionRu"
+                                value={formData.descriptionRu}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div>
+                            <label>Alt Başlıq (ENG):</label>
+                            <textarea
+                                name="descriptionEng"
+                                value={formData.descriptionEng}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div className="row">
+                            <div className="col-6 pd00">
+                                <label>Keçirilmə müddəti (AZ):</label>
+                                <input
+                                    type="text"
+                                    name="period"
+                                    value={formData.period}
+                                    onChange={handleInputChange}
+                                />
+                                <label>Keçirilmə müddəti (RU):</label>
+                                <input
+                                    type="text"
+                                    name="periodRu"
+                                    value={formData.periodRu}
+                                    onChange={handleInputChange}
+                                />
+                                <label>Keçirilmə müddəti (ENG):</label>
+                                <input
+                                    type="text"
+                                    name="periodEng"
+                                    value={formData.periodEng}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="col-6 pd01">
+                                <label>Yaş:</label>
+                                <input
+                                    type="text"
+                                    name="ageLimit"
+                                    value={formData.ageLimit}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        </div>
+                        <div className="row" style={{ marginTop: "16px" }}>
+                            <div className="col-6 pd00" style={{ display: "flex", alignItems: "center" }}>
+                                <label>Xidmət şəhifəsi nümunə 1 (bir şəkilin olduğu)</label>
+                                <Switch
+                                    checked={singleImageSwitch}
+                                    onChange={handleSingleSwitchChange}
+                                    style={{ marginLeft: "10px" }}
+                                    disabled={isSubmitting}
+                                />
+                            </div>
+                            <div className="col-6 pd01" style={{ display: "flex", alignItems: "center" }}>
+                                <label>Xidmət şəhifəsi nümunə 2 (üç şəkilin olduğu)</label>
+                                <Switch
+                                    checked={tripleImageSwitch}
+                                    onChange={handleTripleSwitchChange}
+                                    style={{ marginLeft: "10px" }}
+                                    disabled={isSubmitting}
+                                />
+                            </div>
+                        </div>
+                        <div className="row" style={{ marginTop: "16px" }}>
+                            <div className="col-6 pd00">
+                                <Upload
+                                    listType="picture-card"
+                                    fileList={singleFileList}
+                                    onPreview={handlePreview}
+                                    onChange={handleSingleImageChange}
+                                    beforeUpload={() => false}
+                                    disabled={tripleImageSwitch || isSubmitting}
+                                >
+                                    {singleFileList.length >= 1 ? null : uploadButton}
+                                </Upload>
+                            </div>
+                            <div className="col-6 pd01" style={{ display: "flex", gap: "10px" }}>
+                                {[0, 1, 2].map((index) => (
+                                    <Upload
+                                        key={index}
+                                        listType="picture-card"
+                                        fileList={tripleFileLists[index]}
+                                        onPreview={handlePreview}
+                                        onChange={handleTripleImageChange(index)}
+                                        beforeUpload={() => false}
+                                        disabled={singleImageSwitch || isSubmitting}
+                                    >
+                                        {tripleFileLists[index].length >= 1 ? null : uploadButton}
+                                    </Upload>
+                                ))}
+                            </div>
+                        </div>
+                        {previewImage && (
+                            <Image
+                                wrapperStyle={{ display: "none" }}
+                                preview={{
+                                    visible: previewOpen,
+                                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                                    afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                                }}
+                                src={previewImage}
+                            />
+                        )}
+                        {isError && (
+                            <p style={{ color: "red", marginTop: "16px" }}>
+                                Error: {error?.data?.message || "Failed to save changes"}
+                            </p>
+                        )}
+                        <Button
+                            type="primary"
+                            onClick={handleSubmit}
+                            className="button"
+                            disabled={isSubmitting}
                         >
-                            {singleFileList.length >= 1 ? null : uploadButton}
-                        </Upload>
-                    </div>
-                    <div className="col-6 pd01" style={{ display: "flex", gap: "10px" }}>
-                        {[0, 1, 2].map((index) => (
-                            <Upload
-                                key={index}
-                                listType="picture-card"
-                                fileList={tripleFileLists[index]}
-                                onPreview={handlePreview}
-                                onChange={handleTripleImageChange(index)}
-                                beforeUpload={() => false}
-                                disabled={singleImageSwitch}
-                            >
-                                {tripleFileLists[index].length >= 1 ? null : uploadButton}
-                            </Upload>
-                        ))}
-                    </div>
-                </div>
-                {previewImage && (
-                    <Image
-                        wrapperStyle={{ display: "none" }}
-                        preview={{
-                            visible: previewOpen,
-                            onVisibleChange: (visible) => setPreviewOpen(visible),
-                            afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                        }}
-                        src={previewImage}
-                    />
+                            {isSubmitting ? (
+                                <span>
+                  <LoadingOutlined style={{ marginRight: "8px" }} />
+                  Dəyişikliklər saxlanılır...
+                </span>
+                            ) : (
+                                "Dəyişiklikləri yadda saxla"
+                            )}
+                        </Button>
+                    </>
                 )}
-
-                <Button type="primary" onClick={handleSubmit} className="button">
-                    Dəyişiklikləri yadda saxla
-                </Button>
             </div>
         </>
     );

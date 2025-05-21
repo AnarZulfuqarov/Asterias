@@ -1,10 +1,10 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useDeleteOffersMutation, useGetAllOffersQuery } from "../../../services/userApi.jsx";
 import showToast from "../../../components/ToastMessage.js";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
 import { OFFER_CARD_IMAGES, OFFER_IMAGES } from "../../../contants.js";
-import {RxDividerVertical} from "react-icons/rx";
+import { RxDividerVertical } from "react-icons/rx";
 
 const ServicesTable = () => {
     const navigate = useNavigate();
@@ -17,14 +17,32 @@ const ServicesTable = () => {
     const pageSize = 5;
 
     const dataSource = getAllOffers?.data || [];
+
     useEffect(() => {
         getAllOffersRefetch();
     }, []);
+
     const handleDelete = async (record) => {
         try {
             await deleteService(record.id).unwrap();
             showToast("Service deleted successfully!", "success");
-            getAllOffersRefetch();
+
+            // Refetch data to get the updated list
+            await getAllOffersRefetch();
+
+            // Check if the current page is valid after deletion
+            const updatedData = getAllOffers?.data || [];
+            const totalItems = updatedData.length;
+            const totalPages = Math.ceil(totalItems / pageSize);
+
+            // If the current page exceeds the total pages after deletion, go to the last valid page
+            if (currentPage > totalPages && totalPages > 0) {
+                setCurrentPage(totalPages);
+                setExpandedRows([]); // Reset expanded rows when changing pages
+            } else if (totalPages === 0) {
+                setCurrentPage(1); // If no data remains, reset to page 1
+                setExpandedRows([]);
+            }
         } catch (error) {
             console.error("Delete Error:", error);
             showToast(error?.data?.message || "Error deleting service!", "error");
@@ -134,7 +152,7 @@ const ServicesTable = () => {
                                                 />
                                             </svg>
                                         </button>
-                                        <RxDividerVertical className={"icon"}/>
+                                        <RxDividerVertical className={"icon"} />
                                         <button
                                             className="editDelete"
                                             onClick={() => confirmDelete(record)} // Trigger modal instead of direct deletion
@@ -162,7 +180,6 @@ const ServicesTable = () => {
                                                 />
                                             </svg>
                                         </button>
-
                                     </div>
                                 </td>
                             </tr>
@@ -244,16 +261,36 @@ const ServicesTable = () => {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <button className="modal-close" onClick={handleCancelDelete}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M15.8337 4.1665L4.16699 15.8332M4.16699 4.1665L15.8337 15.8332" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                            >
+                                <path
+                                    d="M15.8337 4.1665L4.16699 15.8332M4.16699 4.1665L15.8337 15.8332"
+                                    stroke="black"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
                             </svg>
                         </button>
                         <div className={"modal-iconback1"}>
                             <div className={"modal-iconback2"}>
-
                                 <div className="modal-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="45" height="44" viewBox="0 0 45 44" fill="none">
-                                        <path d="M22.5013 24.5665L27.818 29.8832C28.1541 30.2193 28.5819 30.3874 29.1013 30.3874C29.6208 30.3874 30.0486 30.2193 30.3847 29.8832C30.7208 29.5471 30.8888 29.1193 30.8888 28.5999C30.8888 28.0804 30.7208 27.6527 30.3847 27.3165L25.068 21.9999L30.3847 16.6832C30.7208 16.3471 30.8888 15.9193 30.8888 15.3999C30.8888 14.8804 30.7208 14.4526 30.3847 14.1165C30.0486 13.7804 29.6208 13.6124 29.1013 13.6124C28.5819 13.6124 28.1541 13.7804 27.818 14.1165L22.5013 19.4332L17.1847 14.1165C16.8485 13.7804 16.4208 13.6124 15.9013 13.6124C15.3819 13.6124 14.9541 13.7804 14.618 14.1165C14.2819 14.4526 14.1138 14.8804 14.1138 15.3999C14.1138 15.9193 14.2819 16.3471 14.618 16.6832L19.9347 21.9999L14.618 27.3165C14.2819 27.6527 14.1138 28.0804 14.1138 28.5999C14.1138 29.1193 14.2819 29.5471 14.618 29.8832C14.9541 30.2193 15.3819 30.3874 15.9013 30.3874C16.4208 30.3874 16.8485 30.2193 17.1847 29.8832L22.5013 24.5665ZM22.5013 40.3332C19.9652 40.3332 17.5819 39.8517 15.3513 38.8886C13.1208 37.9254 11.1805 36.6195 9.53048 34.9707C7.88048 33.3219 6.57453 31.3817 5.61264 29.1499C4.65075 26.9181 4.16919 24.5348 4.16797 21.9999C4.16675 19.465 4.64831 17.0816 5.61264 14.8499C6.57698 12.6181 7.88292 10.6778 9.53048 9.02901C11.178 7.38023 13.1183 6.07429 15.3513 5.11117C17.5843 4.14806 19.9677 3.6665 22.5013 3.6665C25.035 3.6665 27.4183 4.14806 29.6513 5.11117C31.8843 6.07429 33.8246 7.38023 35.4722 9.02901C37.1197 10.6778 38.4263 12.6181 39.3919 14.8499C40.3574 17.0816 40.8384 19.465 40.8347 21.9999C40.831 24.5348 40.3495 26.9181 39.39 29.1499C38.4306 31.3817 37.1246 33.3219 35.4722 34.9707C33.8197 36.6195 31.8795 37.9261 29.6513 38.8904C27.4232 39.8547 25.0399 40.3357 22.5013 40.3332Z" fill="#E60D0D"/>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="45"
+                                        height="44"
+                                        viewBox="0 0 45 44"
+                                        fill="none"
+                                    >
+                                        <path
+                                            d="M22.5013 24.5665L27.818 29.8832C28.1541 30.2193 28.5819 30.3874 29.1013 30.3874C29.6208 30.3874 30.0486 30.2193 30.3847 29.8832C30.7208 29.5471 30.8888 29.1193 30.8888 28.5999C30.8888 28.0804 30.7208 27.6527 30.3847 27.3165L25.068 21.9999L30.3847 16.6832C30.7208 16.3471 30.8888 15.9193 30.8888 15.3999C30.8888 14.8804 30.7208 14.4526 30.3847 14.1165C30.0486 13.7804 29.6208 13.6124 29.1013 13.6124C28.5819 13.6124 28.1541 13.7804 27.818 14.1165L22.5013 19.4332L17.1847 14.1165C16.8485 13.7804 16.4208 13.6124 15.9013 13.6124C15.3819 13.6124 14.9541 13.7804 14.618 14.1165C14.2819 14.4526 14.1138 14.8804 14.1138 15.3999C14.1138 15.9193 14.2819 16.3471 14.618 16.6832L19.9347 21.9999L14.618 27.3165C14.2819 27.6527 14.1138 28.0804 14.1138 28.5999C14.1138 29.1193 14.2819 29.5471 14.618 29.8832C14.9541 30.2193 15.3819 30.3874 15.9013 30.3874C16.4208 30.3874 16.8485 30.2193 17.1847 29.8832L22.5013 24.5665ZM22.5013 40.3332C19.9652 40.3332 17.5819 39.8517 15.3513 38.8886C13.1208 37.9254 11.1805 36.6195 9.53048 34.9707C7.88048 33.3219 6.57453 31.3817 5.61264 29.1499C4.65075 26.9181 4.16919 24.5348 4.16797 21.9999C4.16675 19.465 4.64831 17.0816 5.61264 14.8499C6.57698 12.6181 7.88292 10.6778 9.53048 9.02901C11.178 7.38023 13.1183 6.07429 15.3513 5.11117C17.5843 4.14806 19.9677 3.6665 22.5013 3.6665C25.035 3.6665 27.4183 4.14806 29.6513 5.11117C31.8843 6.07429 33.8246 7.38023 35.4722 9.02901C37.1197 10.6778 38.4263 12.6181 39.3919 14.8499C40.3574 17.0816 40.8384 19.465 40.8347 21.9999C40.831 24.5348 40.3495 26.9181 39.39 29.1499C38.4306 31.3817 37.1246 33.3219 35.4722 34.9707C33.8197 36.6195 31.8795 37.9261 29.6513 38.8904C27.4232 39.8547 25.0399 40.3357 22.5013 40.3332Z"
+                                            fill="#E60D0D"
+                                        />
                                     </svg>
                                 </div>
                             </div>

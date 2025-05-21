@@ -1,23 +1,27 @@
 import "./index.scss";
 import backBak from "../../../assets/Group42.png";
 import icon from "../../../assets/icob2.png";
-import main from "../../../assets/136fcdd4c523b8a0f94ae173624eade6675b9ef3.jpg";
 import xet from "../../../assets/Path (top).png";
 import xet1 from "../../../assets/Path (bottom).png";
 import xet2 from "../../../assets/Path (top1).png";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import flagAz from "../../../assets/azerbaijan.png";
 import flagEn from "../../../assets/uk.png";
 import flagRu from "../../../assets/circle.png";
 import { FaChevronDown } from "react-icons/fa";
+import { useGetOffersByIdQuery } from "../../../services/userApi.jsx";
+import {OFFER_IMAGES} from "../../../contants.js";
 
 function ServDetailPageTwo() {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const [langDropdownOpen, setLangDropdownOpen] = useState(false);
     const [langTimeoutId, setLangTimeoutId] = useState(null);
+    const { id } = useParams();
+    const { data: getOffersById, isLoading, error } = useGetOffersByIdQuery(id);
+    const offer = getOffersById?.data;
 
     const toggleLangDropdown = () => {
         setLangDropdownOpen(!langDropdownOpen);
@@ -25,19 +29,19 @@ function ServDetailPageTwo() {
 
     const handleLanguageChange = (lng) => {
         i18n.changeLanguage(lng);
-        localStorage.setItem('asteriasLang', lng);
+        localStorage.setItem("asteriasLang", lng);
         setLangDropdownOpen(false);
     };
 
     let currentFlag = flagAz;
     let currentTitle = "Az";
-    if (i18n.language?.startsWith('en')) {
+    if (i18n.language?.startsWith("en")) {
         currentTitle = "En";
         currentFlag = flagEn;
-    } else if (i18n.language?.startsWith('ru')) {
+    } else if (i18n.language?.startsWith("ru")) {
         currentTitle = "Ru";
         currentFlag = flagRu;
-    } else if (i18n.language?.startsWith('az')) {
+    } else if (i18n.language?.startsWith("az")) {
         currentTitle = "Az";
         currentFlag = flagAz;
     }
@@ -56,23 +60,64 @@ function ServDetailPageTwo() {
         setLangTimeoutId(timeout);
     };
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error || !offer) {
+        return <div>Error loading offer details or offer not found.</div>;
+    }
+
+    // Determine the text based on the current language
+    const offerName = i18n.language?.startsWith("en")
+        ? offer.nameEng
+        : i18n.language?.startsWith("ru")
+            ? offer.nameRu
+            : offer.name;
+    const offerDescription = i18n.language?.startsWith("en")
+        ? offer.descriptionEng
+        : i18n.language?.startsWith("ru")
+            ? offer.descriptionRu
+            : offer.description;
+    const offerPeriod = i18n.language?.startsWith("en")
+        ? offer.periodEng
+        : i18n.language?.startsWith("ru")
+            ? offer.periodRu
+            : offer.period;
+    const offerAgeLimit = offer.ageLimit;
+
+    // Construct image URLs for the offer, falling back to the default main image if needed
+    const images = offer.offerImageNames?.length
+        ? offer.offerImageNames.map((imageName) => `${imageName}`)
+        : [main, main, main]; // Fallback to main image if offerImageNames is empty
+
     return (
         <div id={"servDetailTwo"}>
             <div className={"container"}>
                 <div className={"back"} onClick={() => navigate("/")}>
                     <img src={backBak} alt="Back" />
                 </div>
-                <div className={"row"} style={{ alignItems: "center" }}>
+                <div className={"row"} style={{ alignItems: "start" }}>
                     <div className={"col-6 col-md-12 col-sm-12 col-xs-12"}>
                         <div className={"text"}>
                             <div className={"head"}>
                                 <h2>
-                                    <img src={icon} alt="icon" /> {t('servDetailTwo.header')}
+                                    <img src={icon} alt="Icon" /> {offerName}
                                 </h2>
                             </div>
-                            <p>{t('servDetailTwo.description')}</p>
+                            <p>{offerDescription}</p>
                             <div className={"functions"}>
-                                <div className={"function1"} style={{ width: i18n.language === 'az' ? '224px' : i18n.language === 'en' ? '224px' : '300px' }}>
+                                <div
+                                    className={"function1"}
+                                    style={{
+                                        width:
+                                            i18n.language === "az"
+                                                ? "224px"
+                                                : i18n.language === "en"
+                                                    ? "224px"
+                                                    : "300px",
+                                    }}
+                                >
                                     <div className={"overlay"}></div>
                                     <div className={"content"}>
                                         <svg
@@ -87,8 +132,8 @@ function ServDetailPageTwo() {
                                                 fill="#848484"
                                             />
                                         </svg>
-                                        {t('servDetailTwo.functions.duration_label')} :
-                                        <span>{t('servDetailTwo.functions.duration_value')}</span>
+                                        {t("servDetailTwo.functions.duration_label")} :
+                                        <span>{offerPeriod}</span>
                                     </div>
                                 </div>
                                 <div className={"function2"}>
@@ -106,38 +151,50 @@ function ServDetailPageTwo() {
                                                 fill="#676767"
                                             />
                                         </svg>
-                                        {t('servDetailTwo.functions.age_label')} :
-                                        <span>{t('servDetailTwo.functions.age_value')}</span>
+                                        {t("servDetailTwo.functions.age_label")} :
+                                        <span>{offerAgeLimit}</span>
                                     </div>
                                 </div>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="210" height="92" viewBox="0 0 210 92" fill="none" className={"arrow"}>
-                                <path d="M7.15094 14.1559C13.3897 11.1394 20.0796 8.90107 27.0499 7.49817C31.4797 6.52136 36.4521 5.62048 41.787 4.81244C47.4913 3.91847 53.2777 3.38927 59.1046 3.22867C62.2426 3.15261 65.3936 3.26479 68.5371 3.56449C71.8025 3.84029 75.0493 4.38175 78.2383 5.18233C81.5143 5.96889 84.6965 7.10114 87.7184 8.5554C90.7917 9.9859 93.6585 11.7801 96.2398 13.8888L96.6572 14.2477C96.495 14.3322 96.3037 14.3935 96.1251 14.4738C89.3964 17.5404 84.0604 22.5655 80.92 28.7934C79.3655 31.9694 78.5559 35.4342 78.5405 38.9765C78.5215 42.6869 79.5504 46.3895 81.5291 49.7309C82.5151 51.5186 83.8004 53.1668 85.3365 54.6133C87.0455 56.2453 89.1214 57.5205 91.4063 58.342C93.6439 59.0898 96.0055 59.4074 98.3366 59.2741C100.668 59.1407 102.916 58.5593 104.934 57.568C108.589 55.7704 111.368 52.8304 112.787 49.2592C114.108 45.9967 114.694 42.4955 114.512 38.9558C114.367 35.4753 113.631 32.008 112.333 28.6765C110.702 24.5214 108.318 20.6127 105.282 17.1183C106.316 16.8822 107.369 16.7098 108.435 16.6022C114.717 15.9257 121.159 16.5367 127.295 18.3912C133.027 20.0857 138.49 22.5469 143.497 25.6913C147.883 28.4174 151.915 31.6034 155.503 35.1785C158.478 38.277 161.154 41.5989 163.498 45.1038C167.225 50.5554 170.304 56.3314 172.68 62.3283C174.308 66.341 175.606 70.4444 176.561 74.6032C177.303 77.9445 177.715 80.3818 177.985 82.2784C178.249 83.9216 178.374 85.0094 178.511 85.8478L177.585 84.8701C174.944 82.0827 172.507 79.5994 170.398 77.5468C166.177 73.4566 163.294 71.0008 162.753 71.398C162.212 71.7952 164.101 74.7053 167.614 79.2287C169.367 81.5052 171.517 84.1513 173.967 87.0633L174.896 88.1678C175.29 88.6468 175.728 89.0961 176.203 89.5108C176.513 89.7727 176.845 90.0108 177.197 90.2224C177.645 90.4923 178.128 90.7062 178.633 90.8578C179.673 91.1702 180.779 91.1773 181.789 90.8782C183.044 90.4231 184.181 89.7522 185.14 88.9005L187.549 87.1068C200.694 76.9233 210.598 67.9423 209.6 67.0407C208.601 66.139 197.125 73.646 183.964 83.8253L182.246 85.1817C182.349 84.2889 182.386 83.3879 182.358 82.4844C182.334 79.7925 182.086 77.0953 181.614 74.4162C180.888 70.0016 179.719 65.6359 178.122 61.3745C175.791 54.9811 172.653 48.8205 168.773 43.02C166.236 39.1943 163.324 35.5739 160.075 32.2057C156.134 28.2356 151.687 24.7044 146.838 21.6944C141.26 18.1882 135.167 15.4535 128.771 13.5857C121.667 11.462 114.211 10.791 106.953 11.6221C104.861 11.8536 102.81 12.2787 100.833 12.8908C100.274 12.4009 99.7142 11.911 99.1269 11.4613C96.1985 9.134 92.9591 7.15975 89.4959 5.59166C86.144 4.05941 82.6273 2.87859 79.017 2.07308C75.5785 1.27551 72.0837 0.760215 68.5756 0.533557C65.2911 0.278511 62.003 0.22069 58.7327 0.360465C52.7778 0.634007 46.8763 1.30811 41.076 2.3773C35.6677 3.33461 30.7161 4.38264 26.2214 5.52139C19.1953 7.18276 12.5322 9.79273 6.44785 13.2668C4.84989 14.2094 3.34046 15.2661 1.93288 16.4276C1.00347 17.2452 0.565368 17.653 0.625054 17.7628C0.684739 17.8726 2.88589 16.3408 7.18391 14.1643L7.15094 14.1559ZM99.362 19.1156C99.8611 18.881 100.386 18.6845 100.91 18.4879C103.886 21.8421 106.183 25.6352 107.686 29.6766C108.776 32.6298 109.371 35.6939 109.451 38.7626C109.56 41.7747 109.014 44.7458 107.845 47.5051C106.749 50.1335 104.658 52.2837 101.932 53.5852C100.603 54.2393 99.1218 54.6237 97.5858 54.7136C96.0499 54.8035 94.4934 54.5967 93.0178 54.1068C90.1374 52.8581 87.816 50.7023 86.5057 48.0591C84.9727 45.3931 84.1968 42.4498 84.252 39.5096C84.3314 36.5929 85.0591 33.7515 86.3914 31.1556C87.7118 28.541 89.5071 26.1638 91.7057 24.1189C93.8952 22.0543 96.4726 20.3599 99.329 19.1072" fill="#595959"/>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="210"
+                                height="92"
+                                viewBox="0 0 210 92"
+                                fill="none"
+                                className={"arrow"}
+                            >
+                                <path
+                                    d="M7.15094 14.1559C13.3897 11.1394 20.0796 8.90107 27.0499 7.49817C31.4797 6.52136 36.4521 5.62048 41.787 4.81244C47.4913 3.91847 53.2777 3.38927 59.1046 3.22867C62.2426 3.15261 65.3936 3.26479 68.5371 3.56449C71.8025 3.84029 75.0493 4.38175 78.2383 5.18233C81.5143 5.96889 84.6965 7.10114 87.7184 8.5554C90.7917 9.9859 93.6585 11.7801 96.2398 13.8888L96.6572 14.2477C96.495 14.3322 96.3037 14.3935 96.1251 14.4738C89.3964 17.5404 84.0604 22.5655 80.92 28.7934C79.3655 31.9694 78.5559 35.4342 78.5405 38.9765C78.5215 42.6869 79.5504 46.3895 81.5291 49.7309C82.5151 51.5186 83.8004 53.1668 85.3365 54.6133C87.0455 56.2453 89.1214 57.5205 91.4063 58.342C93.6439 59.0898 96.0055 59.4074 98.3366 59.2741C100.668 59.1407 102.916 58.5593 104.934 57.568C108.589 55.7704 111.368 52.8304 112.787 49.2592C114.108 45.9967 114.694 42.4955 114.512 38.9558C114.367 35.4753 113.631 32.008 112.333 28.6765C110.702 24.5214 108.318 20.6127 105.282 17.1183C106.316 16.8822 107.369 16.7098 108.435 16.6022C114.717 15.9257 121.159 16.5367 127.295 18.3912C133.027 20.0857 138.49 22.5469 143.497 25.6913C147.883 28.4174 151.915 31.6034 155.503 35.1785C158.478 38.277 161.154 41.5989 163.498 45.1038C167.225 50.5554 170.304 56.3314 172.68 62.3283C174.308 66.341 175.606 70.4444 176.561 74.6032C177.303 77.9445 177.715 80.3818 177.985 82.2784C178.249 83.9216 178.374 85.0094 178.511 85.8478L177.585 84.8701C174.944 82.0827 172.507 79.5994 170.398 77.5468C166.177 73.4566 163.294 71.0008 162.753 71.398C162.212 71.7952 164.101 74.7053 167.614 79.2287C169.367 81.5052 171.517 84.1513 173.967 87.0633L174.896 88.1678C175.29 88.6468 175.728 89.0961 176.203 89.5108C176.513 89.7727 176.845 90.0108 177.197 90.2224C177.645 90.4923 178.128 90.7062 178.633 90.8578C179.673 91.1702 180.779 91.1773 181.789 90.8782C183.044 90.4231 184.181 89.7522 185.14 88.9005L187.549 87.1068C200.694 76.9233 210.598 67.9423 209.6 67.0407C208.601 66.139 197.125 73.646 183.964 83.8253L182.246 85.1817C182.349 84.2889 182.386 83.3879 182.358 82.4844C182.334 79.7925 182.086 77.0953 181.614 74.4162C180.888 70.0016 179.719 65.6359 178.122 61.3745C175.791 54.9811 172.653 48.8205 168.773 43.02C166.236 39.1943 163.324 35.5739 160.075 32.2057C156.134 28.2356 151.687 24.7044 146.838 21.6944C141.26 18.1882 135.167 15.4535 128.771 13.5857C121.667 11.462 114.211 10.791 106.953 11.6221C104.861 11.8536 102.81 12.2787 100.833 12.8908C100.274 12.4009 99.7142 11.911 99.1269 11.4613C96.1985 9.134 92.9591 7.15975 89.4959 5.59166C86.144 4.05941 82.6273 2.87859 79.017 2.07308C75.5785 1.27551 72.0837 0.760215 68.5756 0.533557C65.2911 0.278511 62.003 0.22069 58.7327 0.360465C52.7778 0.634007 46.8763 1.30811 41.076 2.3773C
+
+35.6677 3.33461 30.7161 4.38264 26.2214 5.52139C19.1953 7.18276 12.5322 9.79273 6.44785 13.2668C4.84989 14.2094 3.34046 15.2661 1.93288 16.4276C1.00347 17.2452 0.565368 17.653 0.625054 17.7628C0.684739 17.8726 2.88589 16.3408 7.18391 14.1643L7.15094 14.1559ZM99.362 19.1156C99.8611 18.881 100.386 18.6845 100.91 18.4879C103.886 21.8421 106.183 25.6352 107.686 29.6766C108.776 32.6298 109.371 35.6939 109.451 38.7626C109.56 41.7747 109.014 44.7458 107.845 47.5051C106.749 50.1335 104.658 52.2837 101.932 53.5852C100.603 54.2393 99.1218 54.6237 97.5858 54.7136C96.0499 54.8035 94.4934 54.5967 93.0178 54.1068C90.1374 52.8581 87.816 50.7023 86.5057 48.0591C84.9727 45.3931 84.1968 42.4498 84.252 39.5096C84.3314 36.5929 85.0591 33.7515 86.3914 31.1556C87.7118 28.541 89.5071 26.1638 91.7057 24.1189C93.8952 22.0543 96.4726 20.3599 99.329 19.1072"
+                                    fill="#595959"
+                                />
                             </svg>
                             <button onClick={() => navigate("/contact")}>
-                                {t('servDetailTwo.button')}
+                                {t("servDetailTwo.button")}
                             </button>
                         </div>
                     </div>
                     <div className={"col-6 col-md-12 col-sm-12 col-xs-12"}>
                         <div className={"images"}>
                             <div className={"image1"}>
-                                <img src={main} alt="Image 1" />
+                                <img src={OFFER_IMAGES + images[0]} alt={`${offerName} Image 1`} />
                             </div>
                             <div className={"image2"}>
-                                <img src={main} alt="Image 2" />
+                                <img src={OFFER_IMAGES + images[1] || images[0]} alt={`${offerName} Image 2`} />
                             </div>
                             <div className={"image3"}>
-                                <img src={main} alt="Image 3" />
+                                <img src={OFFER_IMAGES + images[2] || images[0]} alt={`${offerName} Image 3`} />
                             </div>
                             <div className={"image4"}>
-                                <img src={xet} alt={"Image 3"} />
+                                <img src={xet} alt="Decorative Top Path" />
                             </div>
                             <div className={"image5"}>
-                                <img src={xet1} alt={"Image 3"} />
+                                <img src={xet1} alt="Decorative Bottom Path" />
                             </div>
                             <div className={"image6"}>
-                                <img src={xet2} alt={"Image 3"} />
+                                <img src={xet2} alt="Decorative Top Path 1" />
                             </div>
                         </div>
                     </div>
@@ -150,22 +207,25 @@ function ServDetailPageTwo() {
                     onMouseEnter={handleLangMouseEnter}
                     onMouseLeave={handleLangMouseLeave}
                 >
-                    <button className="dropbtn" style={{
-                        cursor: 'pointer',
-                    }}>
+                    <button
+                        className="dropbtn"
+                        style={{
+                            cursor: "pointer",
+                        }}
+                    >
                         <img src={currentFlag} alt="Current Flag" />
                         {currentTitle}
                         <FaChevronDown className="zakirinChevronu" />
                     </button>
-                    <div className={`dropdown-content ${langDropdownOpen ? 'show' : ''}`}>
-                        <div onClick={() => handleLanguageChange('az')}>
-                            <img src={flagAz} alt="AZ Flag" /> {t('navbar.languages.az')}
+                    <div className={`dropdown-content ${langDropdownOpen ? "show" : ""}`}>
+                        <div onClick={() => handleLanguageChange("az")}>
+                            <img src={flagAz} alt="AZ Flag" /> {t("navbar.languages.az")}
                         </div>
-                        <div onClick={() => handleLanguageChange('en')}>
-                            <img src={flagEn} alt="EN Flag" /> {t('navbar.languages.en')}
+                        <div onClick={() => handleLanguageChange("en")}>
+                            <img src={flagEn} alt="EN Flag" /> {t("navbar.languages.en")}
                         </div>
-                        <div onClick={() => handleLanguageChange('ru')}>
-                            <img src={flagRu} alt="RU Flag" /> {t('navbar.languages.ru')}
+                        <div onClick={() => handleLanguageChange("ru")}>
+                            <img src={flagRu} alt="RU Flag" /> {t("navbar.languages.ru")}
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 .services-table-container {
-  padding: 32px 0;
+  padding: 32px 16px;
   position: relative;
   height: 100vh;
 
@@ -229,7 +229,7 @@
     flex-direction: row-reverse;
     width: 100%;
     background: #fafafa;
-
+    padding: 0 24px;
     .addBtn {
       display: flex;
       height: 40px;

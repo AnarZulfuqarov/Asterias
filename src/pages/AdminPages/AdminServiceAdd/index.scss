@@ -1,10 +1,11 @@
 #admin-services-create {
-  width: 100%;
+  width: 96%;
   background-color: white;
   padding: 32px;
   border-radius: 17px;
-  margin-top: 40px;
+  margin: 40px 16px 0;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+
   div {
     margin-bottom: 15px;
   }
@@ -35,7 +36,7 @@
 
   label {
     display: block;
-    color: #1C1C1C;
+    color: #1c1c1c;
     font-family: Lato, sans-serif;
     font-size: 14px;
     font-style: normal;
@@ -57,7 +58,7 @@
     align-items: flex-start;
     gap: 10px;
     align-self: stretch;
-    color: #5C5C5C;
+    color: #5c5c5c;
     font-family: Lato, sans-serif;
     font-size: 14px;
     font-style: normal;
@@ -65,7 +66,7 @@
     line-height: normal;
     border-radius: 5px;
     border: 0.5px solid #949494;
-    background: #FCFCFC;
+    background: #fcfcfc;
     outline: none;
   }
 
@@ -84,9 +85,19 @@
     width: 100%;
     font-family: Lato, sans-serif;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    &[disabled] {
+      background-color: #b0b0b0;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
   }
 
-  .button:hover {
+  .button:hover:not([disabled]) {
     background-color: #145252;
   }
 
@@ -124,5 +135,41 @@
     &:hover {
       border-color: #d9d9d9;
     }
+  }
+}
+
+/* Navigation Bar Styles */
+.navigation-bar {
+  display: flex;
+  align-items: center;
+
+  .nav-title {
+    margin: 0;
+    color: #1c1c1c;
+    font-family: Lato, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.72px;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-link {
+    color: #1c1c1c;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+      color: #145252;
+    }
+  }
+
+  .nav-divider {
+    margin: 0 8px;
+    color: #1c1c1c;
+  }
+
+  .nav-subtitle {
+    color: #1c1c1c;
   }
 }

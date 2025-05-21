@@ -1,8 +1,8 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import Cookies from 'js-cookie';
 import './index.scss';
-import {useNavigate} from "react-router-dom";
-import {usePostAdminLoginMutation} from "../../../services/userApi.jsx";
+import { useNavigate } from "react-router-dom";
+import { usePostAdminLoginMutation } from "../../../services/userApi.jsx";
 import showToast from "../../../components/ToastMessage.js";
 import star from "../../../assets/Mask group.svg";
 import starBack from "../../../assets/starBack.png";
@@ -11,17 +11,20 @@ import login from "../../../assets/Login12.png";
 function AdminLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // Added loading state
     const [postAdminLogin] = usePostAdminLoginMutation();
     const navigate = useNavigate();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true); // Set loading to true when request starts
         try {
             const response = await postAdminLogin({ email, password }).unwrap();
-            showToast("Giriş uğurlu oldu !","success")
-            setTimeout(navigate("/admin/services"), 2000);
+            showToast("Giriş uğurlu oldu !", "success");
+            setTimeout(() => navigate("/admin/services"), 2000);
             if (response?.statusCode === 200) {
                 const token = response?.data?.token;
-                console.log(response?.data?.token)
+                console.log(response?.data?.token);
                 const expireDate = new Date(response.data.expireDate);
                 Cookies.set('asteriasToken', token, {
                     expires: 1,
@@ -29,8 +32,10 @@ function AdminLogin() {
             } else {
                 Cookies.set('asteriasToken', 'null');
             }
-        } catch  {
+        } catch {
             alert('Giriş zamanı xəta baş verdi:');
+        } finally {
+            setIsLoading(false); // Reset loading state when request completes
         }
     };
 
@@ -65,7 +70,9 @@ function AdminLogin() {
                         />
                     </div>
 
-                    <button type="submit">Giriş et</button>
+                    <button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Loading...' : 'Giriş et'}
+                    </button>
                 </form>
             </div>
 

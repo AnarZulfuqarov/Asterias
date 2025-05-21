@@ -28,27 +28,27 @@ const CircleTextBlack = () => {
                 </defs>
 
                 {/* Text along the circular path */}
-                <text
-                    fill="#fff"
-                    fontSize={
-                        localStorage.getItem("asteriasLang") === "az"
-                            ? "13"
-                            : localStorage.getItem("asteriasLang") === "en"
-                                ? "13.5"
-                                : "11"
-                    }
-                    letterSpacing="1.6"
-                    fontFamily="sans-serif"
-                    fontWeight="bold" // Added for bold text
-                >
-                    <textPath
-                        xlinkHref="#circlePath"
-                        startOffset="50%"
-                        textAnchor="middle"
-                    >
-                        {t("circleText").replace(/\s/g, " * ")} {/* Add stars between words */}
-                    </textPath>
-                </text>
+                {/*<text*/}
+                {/*    fill="#fff"*/}
+                {/*    fontSize={*/}
+                {/*        localStorage.getItem("asteriasLang") === "az"*/}
+                {/*            ? "13"*/}
+                {/*            : localStorage.getItem("asteriasLang") === "en"*/}
+                {/*                ? "13.5"*/}
+                {/*                : "11"*/}
+                {/*    }*/}
+                {/*    letterSpacing="1.6"*/}
+                {/*    fontFamily="sans-serif"*/}
+                {/*    fontWeight="bold" // Added for bold text*/}
+                {/*>*/}
+                {/*    <textPath*/}
+                {/*        xlinkHref="#circlePath"*/}
+                {/*        startOffset="50%"*/}
+                {/*        textAnchor="middle"*/}
+                {/*    >*/}
+                {/*        {t("circleText").replace(/\s/g, " * ")} /!* Add stars between words *!/*/}
+                {/*    </textPath>*/}
+                {/*</text>*/}
             </svg>
 
             {/* Phone icon in the center */}

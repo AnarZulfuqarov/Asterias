@@ -12,6 +12,7 @@ import flagAz from '/src/assets/azerbaijan.png';
 import flagEn from '/src/assets/uk.png';
 import flagRu from '/src/assets/circle.png';
 import { FaChevronDown } from "react-icons/fa";
+import { useGetAllOffersQuery } from "../../../services/userApi.jsx";
 
 function HomePage() {
     const [rotation, setRotation] = useState(0);
@@ -20,30 +21,11 @@ function HomePage() {
     const { t, i18n } = useTranslation();
     const [langDropdownOpen, setLangDropdownOpen] = useState(false);
     const [langTimeoutId, setLangTimeoutId] = useState(null);
+    const { data: getAllOffers, isLoading } = useGetAllOffersQuery(); // Add isLoading
+    const offers = getAllOffers?.data;
 
     const fetchSegments = () => {
-        const backendResponse = {
-            labels: [
-                t('homepage.segments.training'),
-                t('homepage.segments.coaching'),
-                t('homepage.segments.public_speaking'),
-                t('homepage.segments.leadership'),
-                t('homepage.segments.team_building'),
-                t('homepage.segments.team_building'),
-                t('homepage.segments.team_building'),
-                t('homepage.segments.team_building'),
-                t('homepage.segments.team_building'),
-            ],
-            colors: [
-                "#FF6F61",
-                "#FF9800",
-                "#FFD700",
-                "#4CAF50",
-                "#2196F3",
-                "#2196F3",
-            ],
-            types: [1, 2, 1, 2, 1, 2, 1, 2, 1],
-        };
+        if (!offers) return; // Ensure offers data is available
 
         const defaultColors = [
             "#FF6F61",
@@ -56,23 +38,28 @@ function HomePage() {
             "#E91E63",
             "#FF5722",
         ];
-        const segmentCount = backendResponse.labels.length;
-        const colors = backendResponse.colors.length >= segmentCount
-            ? backendResponse.colors
-            : Array(segmentCount).fill().map((_, i) => defaultColors[i % defaultColors.length]);
+
+        const segmentCount = offers.length;
+        const colors = Array(segmentCount).fill().map((_, i) => defaultColors[i % defaultColors.length]);
 
         setSegments(
-            backendResponse.labels.map((label, index) => ({
-                label,
+            offers.map((offer, index) => ({
+                id: offer.id,
+                label:
+                    i18n.language?.startsWith('en')
+                        ? offer.nameEng
+                        : i18n.language?.startsWith('ru')
+                            ? offer.nameRu
+                            : offer.name, // Default to 'name' for 'az' or other languages
                 color: colors[index],
-                type: backendResponse.types[index],
+                type: parseInt(offer.templateId), // Convert templateId to number for type
             }))
         );
     };
 
     useEffect(() => {
         fetchSegments();
-    }, [t]);
+    }, [offers, t]); // Add offers as a dependency to refetch when data changes
 
     useEffect(() => {
         const animate = () => {
@@ -83,6 +70,7 @@ function HomePage() {
     }, []);
 
     const segmentAngle = segments.length > 0 ? 360 / segments.length : 0;
+
     const toggleLangDropdown = () => {
         setLangDropdownOpen(!langDropdownOpen);
     };
@@ -147,7 +135,7 @@ function HomePage() {
                     height="7.83vw"
                     viewBox="0 0 180 141"
                     fill="none"
-                    className={"arrow-svg"}
+                    className="arrow-svg"
                 >
                     <g clipPath="url(#clip0_189_538)">
                         <path
@@ -172,43 +160,50 @@ function HomePage() {
                 </svg>
             </div>
             <div className="spinner-container">
-                <div className="spinner">
-                    {segments.map((segment, index) => (
-                        <div
-                            key={index}
-                            className="segment"
-                            style={{
-                                backgroundColor: segment.color,
-                                transform: `rotate(${index * segmentAngle + rotation}deg)`,
-                                filter: `drop-shadow(0.3vw 0.3vw 0.5vw ${segment.color}80)`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                            }}
-                            onClick={() => handleSegmentClick(segment.label, segment.type)}
-                        >
-                            <span
-                                className="segment-label"
+                {isLoading ? (
+                    <div className="loading-spinner">
+                        <div className="spinner-circle"></div>
+                        <p>{t('homepage.loading')}</p>
+                    </div>
+                ) : (
+                    <div className="spinner">
+                        {segments.map((segment, index) => (
+                            <div
+                                key={index}
+                                className="segment"
                                 style={{
-                                    marginLeft: "0",
-                                    rotate: `${(-segmentAngle / 2) + 2}deg`,
-                                    width: "10vw",
-                                    transform: segments.length > 9 ? "rotate(-15deg)" : undefined,
+                                    backgroundColor: segment.color,
+                                    transform: `rotate(${index * segmentAngle + rotation}deg)`,
+                                    filter: `drop-shadow(0.3vw 0.3vw 0.5vw ${segment.color}80)`,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    cursor: "pointer",
                                 }}
+                                onClick={() => handleSegmentClick(segment.id, segment.type)}
                             >
-                                {segment.label}
-                            </span>
-                        </div>
-                    ))}
-                    <div className="center-circle">
-                        <div className="circleFirst">
-                            <div className="circleSecond">
-                                <span>{t('homepage.center_text')}</span>
+                                <span
+                                    className="segment-label"
+                                    style={{
+                                        marginLeft: "0",
+                                        rotate: `${(-segmentAngle / 2) + 2}deg`,
+                                        width: "10vw",
+                                        transform: segments.length > 9 ? "rotate(-15deg)" : undefined,
+                                    }}
+                                >
+                                    {segment.label}
+                                </span>
+                            </div>
+                        ))}
+                        <div className="center-circle">
+                            <div className="circleFirst">
+                                <div className="circleSecond">
+                                    <span>{t('homepage.center_text')}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
             <img src={star} className="star" alt="star" />
             <img src={starBack} className="starBack" alt="starBack" />
@@ -217,7 +212,6 @@ function HomePage() {
                 <div className="hr"></div>
                 <h5>{t('homepage.more_info')}</h5>
                 <CircleText />
-
             </div>
             <div className="language">
                 <div

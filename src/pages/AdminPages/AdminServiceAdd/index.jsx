@@ -1,10 +1,10 @@
 import "./index.scss";
 import { Upload, Switch, Image } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import image1 from "../../../assets/profile.png";
 import { useNavigate } from "react-router-dom";
-import {usePostOffersMutation} from "../../../services/userApi.jsx";
+import { usePostOffersMutation } from "../../../services/userApi.jsx";
 
 function AdminServCreate() {
     const [singleFileList, setSingleFileList] = useState([]);
@@ -88,7 +88,7 @@ function AdminServCreate() {
             tripleFileLists
                 .filter((list) => list.length > 0)
                 .forEach((list) => {
-                    offerData.append(`offerImages`, list[0].originFileObj);
+                    offerData.append("offerImages", list[0].originFileObj);
                 });
         }
 
@@ -96,7 +96,7 @@ function AdminServCreate() {
             // Send the request using the mutation
             await postOffers(offerData).unwrap();
             alert("Offer created successfully!");
-            navigate("/admin/services"); // Redirect to offers list or another page
+            navigate("/admin/services");
         } catch (err) {
             console.error("Failed to create offer:", err);
             alert(`Error: ${err?.data?.message || "Failed to create offer"}`);
@@ -104,7 +104,14 @@ function AdminServCreate() {
     };
 
     const uploadButton = (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
             <UploadOutlined style={{ fontSize: "24px" }} />
             <div style={{ marginTop: "8px" }}>Upload</div>
         </div>
@@ -114,15 +121,33 @@ function AdminServCreate() {
         <>
             <div className="right">
                 <div className="adminTopBar">
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-                        <img src={image1} alt="profile" />
+
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "10px",
+                        }}
+                    >
+                        <img src={image1} alt="Profile" />
                         <div>
                             <p>Admin</p>
-                            <p className="p">sabina.heidarovaa@gmail.com</p>
                         </div>
+                    </div>
+                    <div className="navigation-bar">
+                        <h2 className="nav-title">
+          <span className="nav-link" onClick={() => navigate("/admin/services")}>
+            Xidmətlər
+          </span>
+                            <span className="nav-divider"> — </span>
+                            <span className="nav-subtitle">Yeni xidmət əlavə et</span>
+                        </h2>
                     </div>
                 </div>
             </div>
+            {/* Navigation Bar */}
+
             <form id="admin-services-create" onSubmit={handleSubmit}>
                 <div>
                     <label>Xidmət (AZ):</label>
@@ -163,13 +188,27 @@ function AdminServCreate() {
                     </div>
                 </div>
                 <div className="row" style={{ marginTop: "16px" }}>
-                    <div className="col-6 pd00" style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                        className="col-6 pd00"
+                        style={{ display: "flex", alignItems: "center" }}
+                    >
                         <label>Xidmət şəhifəsi nümunə 1 (bir şəkilin olduğu)</label>
-                        <Switch checked={singleImageSwitch} onChange={handleSingleSwitchChange} style={{ marginLeft: "10px" }} />
+                        <Switch
+                            checked={singleImageSwitch}
+                            onChange={handleSingleSwitchChange}
+                            style={{ marginLeft: "10px" }}
+                        />
                     </div>
-                    <div className="col-6 pd01" style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                        className="col-6 pd01"
+                        style={{ display: "flex", alignItems: "center" }}
+                    >
                         <label>Xidmət şəhifəsi nümunə 2 (üç şəkilin olduğu)</label>
-                        <Switch checked={tripleImageSwitch} onChange={handleTripleSwitchChange} style={{ marginLeft: "10px" }} />
+                        <Switch
+                            checked={tripleImageSwitch}
+                            onChange={handleTripleSwitchChange}
+                            style={{ marginLeft: "10px" }}
+                        />
                     </div>
                 </div>
                 <div className="row" style={{ marginTop: "16px" }}>
@@ -213,9 +252,20 @@ function AdminServCreate() {
                     />
                 )}
                 <button type="submit" className="button" disabled={isLoading}>
-                    {isLoading ? "Submitting..." : "Yadda saxla"}
+                    {isLoading ? (
+                        <span>
+              <LoadingOutlined style={{ marginRight: "8px" }} />
+              Yadda saxlanılır...
+            </span>
+                    ) : (
+                        "Yadda saxla"
+                    )}
                 </button>
-                {isError && <p style={{ color: "red" }}>Error: {error?.data?.message || "Failed to submit"}</p>}
+                {isError && (
+                    <p style={{ color: "red" }}>
+                        Error: {error?.data?.message || "Failed to submit"}
+                    </p>
+                )}
             </form>
         </>
     );
