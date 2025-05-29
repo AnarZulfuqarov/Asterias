@@ -13,6 +13,7 @@ import elli from "../../../assets/Ellipse 2.png";
 import elli1 from "../../../assets/Decoration1.png";
 import { useGetOffersByIdQuery } from "../../../services/userApi.jsx";
 import {OFFER_IMAGES} from "../../../contants.js";
+import CircleTextAsterias from "../../../components/UserComponents/CircleTextWhite/index.jsx";
 
 function ServDetailPageOne() {
     const { id } = useParams();
@@ -197,13 +198,16 @@ function ServDetailPageOne() {
                             </button>
                         </div>
                     </div>
-                    <div className={"col-6 col-md-12 col-sm-12 col-xs-12"}>
+                    <div className={"col-6 col-md-12 col-sm-12 col-xs-12"} style={{textAlign: "end"}}>
                         <div className={"image"}>
                             <div className={"frame"}>
                                 <img src={frame} alt="Frame" />
                             </div>
                             <div className={"mainImage"}>
                                 <img src={OFFER_IMAGES + offerImage} alt={offerName} />
+                            </div>
+                            <div className={"circleee"}>
+                                <CircleTextAsterias/>
                             </div>
                         </div>
                     </div>
@@ -234,6 +238,7 @@ function ServDetailPageOne() {
                     </div>
                 </div>
             </div>
+
         </div>
     );
 }

@@ -63,5 +63,8 @@
     "header": "404 - Səhifə tapılmadı",
     "description": "Axtardığınız səhifə ya silinib, ya da ünvan səhvdir. Zəhmət olmasa, əsas səhifəyə qayıdın.",
     "button": "Geri qayıt"
-  }
+  },
+  "circleText": "Bizimlə əlaqəyə keç ",
+  "circleTextBlack": "Asterias Təlim Mərkəzi "
+
 }

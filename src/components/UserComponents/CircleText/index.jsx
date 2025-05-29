@@ -1,60 +1,63 @@
-import { useTranslation } from "react-i18next";
-import { FaPhone } from "react-icons/fa";
+import {useTranslation} from "react-i18next";
+import {FaPhone} from "react-icons/fa";
 import "./index.scss";
-import { useNavigate } from "react-router";
+import {useNavigate} from "react-router";
 
 const CircleText = () => {
-    const { t } = useTranslation();
+    const {t, i18n} = useTranslation();
     const navigate = useNavigate();
+
+    // Yıldızlarla birleştirilmiş metin
+    const circleText = t("circleText").split(" ").join(" * ");
+    const baseSize = i18n.language === "az" ? 17 : i18n.language === "en" ? 15 : 15;
+
     return (
-        <div className="circle-text-wrapper" onClick={() => navigate("/contact")} style={{ cursor: "pointer" }}>
+        <div
+            className="circle-text-wrapper"
+            onClick={() => navigate("/contact")}
+            style={{cursor: "pointer"}}
+        >
             <svg
                 className="circle-text-svg"
                 viewBox="0 0 200 200"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {/* Add a filled circle for the background */}
-                <circle cx="100" cy="100" r="80" fill="#AFFBA9" /> {/* Light green background */}
+                <circle cx="100" cy="100" r="80" fill="#AFFBA9"/>
 
                 <defs>
-                    {/* Circular path for the text */}
                     <path
                         id="circlePath"
                         d="
-                            M 100,100
-                            m -70,0
-                            a 70,70 0 1,1 140,0
-                            a 70,70 0 1,1 -140,0
-                        "
+              M100,100
+              m-50,0
+              a50,50 0 1,1 100,0
+              a50,50 0 1,1 -100,0
+            "
+                        fill="none"
+                        pathLength="314"
                     />
                 </defs>
 
-                {/* Text along the circular path */}
-                {/*<text*/}
-                {/*    fill="#333"*/}
-                {/*    fontSize={*/}
-                {/*        localStorage.getItem("sssLanguage") === "az"*/}
-                {/*            ? "13"*/}
-                {/*            : localStorage.getItem("sssLanguage") === "en"*/}
-                {/*                ? "13.5"*/}
-                {/*                : "11"*/}
-                {/*    }*/}
-                {/*    letterSpacing="1.4" // Adjusted for tighter spacing*/}
-                {/*    fontFamily="sans-serif"*/}
-                {/*    fontWeight="bold"*/}
-                {/*>*/}
-                {/*    <textPath*/}
-                {/*        xlinkHref="#circlePath"*/}
-                {/*        startOffset="48%" // Slight adjustment for better text positioning*/}
-                {/*        textAnchor="middle"*/}
-                {/*    >*/}
-                {/*        {t("circleText").replace(/\s/g, " * ")} /!* Add stars between words *!/*/}
-                {/*    </textPath>*/}
-                {/*</text>*/}
+                <text
+                    fill="#000"
+                    fontSize={baseSize}
+                    letterSpacing="1.4"
+                    fontFamily="sans-serif"
+                    fontWeight="italis"
+                >
+                    <textPath
+                        href="#circlePath"
+                        startOffset="50%"
+                        textAnchor="middle"
+                        textLength="314"
+                        lengthAdjust="spacingAndGlyphs"
+                        dy="0"
+                    >
+                        {circleText}
+                    </textPath>
+                </text>
             </svg>
-
-            {/* Phone icon in the center */}
-            <FaPhone className="center-icon" />
+            <FaPhone className="center-icon"/>
         </div>
     );
 };

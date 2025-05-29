@@ -97,18 +97,18 @@
 
   .text {
     position: relative;
-
+    margin-top: 50px;
     .arrow {
       position: absolute;
-      right: -150px;
-      bottom: 150px;
+      right: -100px;
+      bottom: 120px;
     }
 
     .head {
       display: flex;
       align-items: center;
       gap: 70px;
-      margin-bottom: 24px;
+      margin-bottom: 8px;
 
       h2 {
         display: flex;
@@ -116,12 +116,11 @@
         gap: 20px;
         color: #1F1F1F;
         text-align: center;
-        font-size: 40px;
+        font-size: 36px;
         font-style: normal;
         font-weight: 600;
         line-height: 76px; /* 158.333% */
         letter-spacing: -1.44px;
-
         img {
           width: 50px;
           height: 50px;
@@ -131,7 +130,7 @@
 
     p {
       color: #5B5B5B;
-      font-size: 18px;
+      font-size: 16px;
       font-style: normal;
       font-weight: 500;
       line-height: 35px; /* 194.444% */
@@ -459,8 +458,8 @@
 
     .text {
       .arrow {
-        right: -100px;
-        bottom: 120px;
+        right: -140px;
+        bottom: 100px;
         transform: scale(0.8);
       }
 

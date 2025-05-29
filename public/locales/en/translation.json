@@ -63,5 +63,8 @@
     "header": "404 - Page Not Found",
     "description": "The page you are looking for has either been deleted or the address is incorrect. Please return to the homepage.",
     "button": "Go Back"
-  }
+  },
+  "circleText": "Connect with us ",
+  "circleTextBlack": "Asterias Training Center "
+
 }

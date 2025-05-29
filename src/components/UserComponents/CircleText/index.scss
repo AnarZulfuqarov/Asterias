@@ -1,60 +1,36 @@
 .circle-text-wrapper {
   position: relative;
-  width: 120px; /* Circle width/height */
+  width: 120px;
   height: 120px;
   margin: 50px auto;
 }
 
-/* SVG styling with animation */
 .circle-text-svg {
   width: 100%;
   height: 100%;
   animation: spin 15s linear infinite;
-
 }
 
-/* Center the phone icon */
 .center-icon {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* No rotation needed for phone icon */
-  color: #333; /* Match the text color */
-  font-size: 30px; /* Icon size */
+  transform: translate(-50%, -50%);
+  color: #333;
+  font-size: 25px !important;
 }
 
-/* Spinning animation */
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-/* Tablet */
 @media (max-width: 768px) {
-  .circle-text-wrapper {
-    width: 120px;
-    height: 120px;
-    margin: 40px auto;
-  }
-
-  .center-icon {
-    font-size: 24px;
-  }
+  .circle-text-wrapper { width: 120px; height: 120px; margin: 40px auto; }
+  .center-icon { font-size: 24px; }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
-  .circle-text-wrapper {
-    width: 100px;
-    height: 100px;
-    margin: 30px auto;
-  }
-
-  .center-icon {
-    font-size: 18px;
-  }
+  .circle-text-wrapper { width: 100px; height: 100px; margin: 30px auto; }
+  .center-icon { font-size: 18px; }
 }

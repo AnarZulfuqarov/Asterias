@@ -101,7 +101,11 @@ function AdminLeftBar() {
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
-                        <button className="modal-close" onClick={handleCancelLogout}>×</button>
+                        <button className="modal-close" onClick={handleCancelLogout}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M12.8337 1.1665L1.16699 12.8332M1.16699 1.1665L12.8337 12.8332" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
                         <div className={"modal-iconback1"}>
                             <div className={"modal-iconback2"}>
 

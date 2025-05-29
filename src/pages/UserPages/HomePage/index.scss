@@ -276,12 +276,12 @@ body {
       transform: rotate(90deg);
     }
     &.lang-en {
-      bottom: clamp(64px, 100vh, 100px); /* 4rem * 16px, 100vh, 6.25rem * 16px */
+      bottom: clamp(64px, 100vh, 50px); /* 4rem * 16px, 100vh, 6.25rem * 16px */
       right: -58px; /* -3vw * 1920px / 100 */
       transform: rotate(90deg);
     }
     &.lang-ru {
-      bottom: clamp(96px, 100vh, 200px); /* 6rem * 16px, 100vh, 12.5rem * 16px */
+      bottom: 170px; /* 6rem * 16px, 100vh, 12.5rem * 16px */
       right: -173px; /* -9vw * 1920px / 100 */
       transform: rotate(90deg);
     }

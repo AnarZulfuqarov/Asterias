@@ -167,7 +167,7 @@ const ContactTable = () => {
                     dataSource={dataSource}
                     loading={isLoading}
                     pagination={{
-                        pageSize: 5,
+                        pageSize: 9,
                         className: "custom-pagination",
                     }}
                     className="custom-table"

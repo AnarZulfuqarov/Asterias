@@ -2,6 +2,7 @@
   padding: 32px 16px;
   position: relative;
   height: 100vh;
+  margin-top: 30px;
 
   * {
     font-family: "Noto Sans", sans-serif !important;
@@ -9,7 +10,7 @@
 
   .custom-table {
     display: grid;
-    grid-template-columns: 0.5fr .8fr 1fr 1.5fr 0.5fr 3.5fr .5fr; /* Proportional columns with fr units */
+    grid-template-columns: 0.5fr .8fr 1fr 1fr 0.5fr 3.5fr .5fr; /* Proportional columns with fr units */
     overflow: hidden;
     background: #fff;
     width: 100%;
@@ -24,6 +25,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 14px;
     }
 
     thead {
@@ -58,7 +60,8 @@
           td {
             padding: 20px;
             display: block; /* Override grid for expanded row */
-            grid-column: 1 / -1; /* Span all columns */
+            grid-column: 1 / -1;
+
           }
 
           .expanded-content {
@@ -115,7 +118,7 @@
         }
 
         td {
-          padding: 12px;
+          padding: 6px;
           text-align: center;
           vertical-align: middle;
 
@@ -229,7 +232,7 @@
     flex-direction: row-reverse;
     width: 100%;
     background: #fafafa;
-    padding: 0 24px;
+    padding: 24px 24px 0;
     .addBtn {
       display: flex;
       height: 40px;
@@ -321,8 +324,8 @@
 
 .modal-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 30px;
+  right: 35px;
   background: none;
   border: none;
   font-size: 18px;
