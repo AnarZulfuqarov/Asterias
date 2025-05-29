@@ -10,7 +10,7 @@
 
   .custom-table {
     display: grid;
-    grid-template-columns: 0.5fr .8fr 1fr 1fr 0.5fr 3.5fr .5fr; /* Proportional columns with fr units */
+    grid-template-columns: 0.5fr .8fr 1fr 1fr 0.5fr 3.5fr 1fr .5fr; /* Proportional columns with fr units */
     overflow: hidden;
     background: #fff;
     width: 100%;

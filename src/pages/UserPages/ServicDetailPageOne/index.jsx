@@ -8,6 +8,7 @@ import { useState } from "react";
 import flagAz from "../../../assets/azerbaijan.png";
 import flagEn from "../../../assets/uk.png";
 import flagRu from "../../../assets/circle.png";
+import flagTr from "../../../assets/turkey.png";
 import { FaChevronDown } from "react-icons/fa";
 import elli from "../../../assets/Ellipse 2.png";
 import elli1 from "../../../assets/Decoration1.png";
@@ -36,13 +37,16 @@ function ServDetailPageOne() {
 
     let currentFlag = flagAz;
     let currentTitle = "Az";
-    if (i18n.language?.startsWith("en")) {
+    if (i18n.language?.startsWith('en')) {
         currentTitle = "En";
         currentFlag = flagEn;
-    } else if (i18n.language?.startsWith("ru")) {
+    } else if (i18n.language?.startsWith('ru')) {
         currentTitle = "Ru";
         currentFlag = flagRu;
-    } else if (i18n.language?.startsWith("az")) {
+    } else if (i18n.language?.startsWith('tr')) { // Türkçe için ekleme
+        currentTitle = "Tr";
+        currentFlag = flagTr;
+    } else if (i18n.language?.startsWith('az')) {
         currentTitle = "Az";
         currentFlag = flagAz;
     }
@@ -70,21 +74,28 @@ function ServDetailPageOne() {
     }
 
     // Determine the text based on the current language
+    // Determine the text based on the current language
     const offerName = i18n.language?.startsWith("en")
         ? offer.nameEng
         : i18n.language?.startsWith("ru")
             ? offer.nameRu
-            : offer.name;
+            : i18n.language?.startsWith("tr")
+                ? offer.nameTur
+                : offer.name;
     const offerDescription = i18n.language?.startsWith("en")
         ? offer.descriptionEng
         : i18n.language?.startsWith("ru")
             ? offer.descriptionRu
-            : offer.description;
+            : i18n.language?.startsWith("tr")
+                ? offer.descriptionTur
+                : offer.description;
     const offerPeriod = i18n.language?.startsWith("en")
         ? offer.periodEng
         : i18n.language?.startsWith("ru")
             ? offer.periodRu
-            : offer.period;
+            : i18n.language?.startsWith("tr")
+                ? offer.periodTur
+                : offer.period;
     const offerAgeLimit = offer.ageLimit;
 
     // Construct the image URL for the offer
@@ -234,6 +245,9 @@ function ServDetailPageOne() {
                         </div>
                         <div onClick={() => handleLanguageChange("ru")}>
                             <img src={flagRu} alt="RU Flag" /> {t("navbar.languages.ru")}
+                        </div>
+                        <div onClick={() => handleLanguageChange('tr')}>
+                            <img src={flagTr} alt="TR Flag" /> {t('navbar.languages.tr')}
                         </div>
                     </div>
                 </div>

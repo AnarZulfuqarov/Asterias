@@ -1,0 +1,70 @@
+{
+  "navbar": {
+    "languages": {
+      "az": "Azerbaycanca",
+      "en": "İngilizce",
+      "ru": "Rusça",
+        "tr": "Türkçe"
+    }
+  },
+  "homepage": {
+    "title1": "Yeteneklerinizi ",
+    "title1.2": "Keşfedin",
+    "title2": "Güçlü Yönlerinizi ",
+    "title2.2": "Ortaya Çıkarın",
+    "more_info": "Daha fazla bilgi için",
+    "center_text": "Asterias Eğitim ve Gelişim Merkezi",
+    "segments": {
+      "training": "Eğitim",
+      "coaching": "Koçluk",
+      "public_speaking": "Halka Açık Konuşma",
+      "leadership": "Liderlik",
+      "team_building": "Takım Çalışması"
+    }
+  },
+  "contact": {
+    "header": "Bize Ulaşın",
+    "form": {
+      "first_name_label": "Ad",
+      "first_name_placeholder": "Adınızı girin",
+      "last_name_label": "Soyad",
+      "last_name_placeholder": "Soyadınızı girin",
+      "email_label": "E-posta",
+      "email_placeholder": "E-postanızı girin",
+      "phone_label": "Telefon",
+      "phone_placeholder": "+994 ** *** ** **",
+      "note_label": "Not",
+      "note_placeholder": "",
+      "submit_button": "Gönder"
+    }
+  },
+  "servDetailOne": {
+    "header": "Öğrenci Koçluğu",
+    "description": "Bir öğrenci ile koç arasında bireysel seanslardan oluşur; gençlerin kendilerini daha iyi anlamalarına, temel beceriler, bilgi ve deneyim kazanmalarına, yeteneklerini geliştirmelerine, bağımsız kararlar almayı öğrenmelerine ve hedeflerine ulaşmalarına yardımcı olmayı amaçlar.",
+    "functions": {
+      "duration_label": "Süre",
+      "duration_value": "3/6/9 ay",
+      "age_label": "Yaş",
+      "age_value": "11+"
+    },
+    "button": "Başvur"
+  },
+  "servDetailTwo": {
+    "header": "Kariyer Koçluğu",
+    "description": "Bir öğrenci ile koç arasında bireysel seanslardan oluşur; gençlerin kendilerini daha iyi anlamalarına, temel beceriler, bilgi ve deneyim kazanmalarına, yeteneklerini geliştirmelerine, bağımsız kararlar almayı öğrenmelerine ve kariyer hedeflerine ulaşmalarına yardımcı olmayı amaçlar.",
+    "functions": {
+      "duration_label": "Süre",
+      "duration_value": "3/6/9 ay",
+      "age_label": "Yaş",
+      "age_value": "11+"
+    },
+    "button": "Başvur"
+  },
+  "notFound": {
+    "header": "404 - Sayfa Bulunamadı",
+    "description": "Aradığınız sayfa ya silinmiş ya da adres yanlış. Lütfen anasayfaya geri dönün.",
+    "button": "Geri Dön"
+  },
+  "circleText": "Bizimle iletişim kurun ",
+  "circleTextBlack": "Asterias Eğitim Merkezi "
+}

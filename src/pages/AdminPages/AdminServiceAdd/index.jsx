@@ -1,10 +1,10 @@
 import "./index.scss";
-import { Upload, Switch, Image } from "antd";
+import { Upload, Switch, Image, Select } from "antd";
 import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import image1 from "../../../assets/profile.png";
 import { useNavigate } from "react-router-dom";
-import { usePostOffersMutation } from "../../../services/userApi.jsx";
+import { useGetAllOffersQuery, usePostOffersMutation } from "../../../services/userApi.jsx";
 
 function AdminServCreate() {
     const [singleFileList, setSingleFileList] = useState([]);
@@ -13,14 +13,19 @@ function AdminServCreate() {
     const [tripleImageSwitch, setTripleImageSwitch] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
+    const [isSubOffer, setIsSubOffer] = useState(false);
+    const [parentOfferId, setParentOfferId] = useState(null);
 
     const navigate = useNavigate();
     const [postOffers, { isLoading, isError, error }] = usePostOffersMutation();
+    const { data: offers, isLoading: offersLoading } = useGetAllOffersQuery();
 
+    // Handle single image change
     const handleSingleImageChange = ({ fileList: newFileList }) => {
         setSingleFileList(newFileList);
     };
 
+    // Handle triple image change
     const handleTripleImageChange = (index) => ({ fileList: newFileList }) => {
         setTripleFileLists((prev) => {
             const newLists = [...prev];
@@ -29,6 +34,7 @@ function AdminServCreate() {
         });
     };
 
+    // Handle single image switch
     const handleSingleSwitchChange = (checked) => {
         setSingleImageSwitch(checked);
         setTripleImageSwitch(!checked);
@@ -37,6 +43,7 @@ function AdminServCreate() {
         }
     };
 
+    // Handle triple image switch
     const handleTripleSwitchChange = (checked) => {
         setTripleImageSwitch(checked);
         setSingleImageSwitch(!checked);
@@ -45,23 +52,49 @@ function AdminServCreate() {
         }
     };
 
+    // Handle main/sub-offer switch
+    const handleSubOfferSwitch = (checked) => {
+        setIsSubOffer(checked);
+        if (checked) {
+            setSingleFileList([]); // Clear single image list
+            setTripleFileLists([[], [], []]); // Clear triple image lists
+            setSingleImageSwitch(true); // Reset to default template
+            setTripleImageSwitch(false);
+        } else {
+            setParentOfferId(null); // Reset parent offer ID
+        }
+    };
+
+    // Handle parent offer selection
+    const handleParentOfferChange = (value) => {
+        setParentOfferId(value);
+    };
+
+    // Handle image preview
     const handlePreview = (file) => {
         setPreviewImage(file.url || file.thumbUrl);
         setPreviewOpen(true);
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
 
-        // Validate image uploads
-        if (singleImageSwitch && singleFileList.length === 0) {
-            alert("Please upload a single image");
+        // Validate inputs
+        if (isSubOffer && !parentOfferId) {
+            alert("Please select a parent offer for the sub-offer");
             return;
         }
-        if (tripleImageSwitch && tripleFileLists.every((list) => list.length === 0)) {
-            alert("Please upload at least one image for triple image mode");
-            return;
+        if (!isSubOffer) {
+            if (singleImageSwitch && singleFileList.length === 0) {
+                alert("Please upload a single image for the main offer");
+                return;
+            }
+            if (tripleImageSwitch && tripleFileLists.every((list) => list.length === 0)) {
+                alert("Please upload at least one image for triple image mode");
+                return;
+            }
         }
 
         // Prepare FormData for backend
@@ -71,29 +104,38 @@ function AdminServCreate() {
         offerData.append("name", formData.get("name"));
         offerData.append("nameEng", formData.get("nameEng"));
         offerData.append("nameRu", formData.get("nameRu"));
+        offerData.append("nameTur", formData.get("nameTur"));
         offerData.append("description", formData.get("description"));
         offerData.append("descriptionEng", formData.get("descriptionEng"));
         offerData.append("descriptionRu", formData.get("descriptionRu"));
+        offerData.append("descriptionTur", formData.get("descriptionTur"));
         offerData.append("period", formData.get("period"));
         offerData.append("periodEng", formData.get("periodEng"));
         offerData.append("periodRu", formData.get("periodRu"));
+        offerData.append("periodTur", formData.get("periodTur"));
         offerData.append("ageLimit", formData.get("ageLimit"));
-        offerData.append("templateId", singleImageSwitch ? "1" : "2");
 
-        // Append images
-        if (singleImageSwitch && singleFileList.length > 0) {
-            offerData.append("offerImages", singleFileList[0].originFileObj);
+        // Append templateId and images only for main offers
+        if (!isSubOffer) {
+            offerData.append("templateId", singleImageSwitch ? "1" : "2");
+            if (singleImageSwitch && singleFileList.length > 0) {
+                offerData.append("offerImages", singleFileList[0].originFileObj);
+            }
+            if (tripleImageSwitch) {
+                tripleFileLists
+                    .filter((list) => list.length > 0)
+                    .forEach((list) => {
+                        offerData.append("offerImages", list[0].originFileObj);
+                    });
+            }
         }
-        if (tripleImageSwitch) {
-            tripleFileLists
-                .filter((list) => list.length > 0)
-                .forEach((list) => {
-                    offerData.append("offerImages", list[0].originFileObj);
-                });
+
+        // Append parentOfferId for sub-offers
+        if (isSubOffer && parentOfferId) {
+            offerData.append("parentOfferId", parentOfferId);
         }
 
         try {
-            // Send the request using the mutation
             await postOffers(offerData).unwrap();
             alert("Offer created successfully!");
             navigate("/admin/services");
@@ -121,7 +163,6 @@ function AdminServCreate() {
         <>
             <div className="right">
                 <div className="adminTopBar">
-
                     <div
                         style={{
                             display: "flex",
@@ -137,18 +178,46 @@ function AdminServCreate() {
                     </div>
                     <div className="navigation-bar">
                         <h2 className="nav-title">
-          <span className="nav-link" onClick={() => navigate("/admin/services")}>
-            Xidmətlər
-          </span>
+                            <span className="nav-link" onClick={() => navigate("/admin/services")}>
+                                Xidmətlər
+                            </span>
                             <span className="nav-divider"> — </span>
                             <span className="nav-subtitle">Yeni xidmət əlavə et</span>
                         </h2>
                     </div>
                 </div>
             </div>
-            {/* Navigation Bar */}
-
             <form id="admin-services-create" onSubmit={handleSubmit}>
+                <div>
+                    <label>Ana Xidmət / Alt Xidmət:</label>
+                    <Switch
+                        checked={isSubOffer}
+                        onChange={handleSubOfferSwitch}
+                        checkedChildren="Alt Xidmət"
+                        unCheckedChildren="Ana Xidmət"
+                        style={{ marginLeft: "10px" }}
+                    />
+                </div>
+                {isSubOffer && (
+                    <div>
+                        <label>Ana Xidmət Seçin:</label>
+                        <Select
+                            style={{ width: "100%" }}
+                            placeholder="Ana xidmət seçin"
+                            onChange={handleParentOfferChange}
+                            loading={offersLoading}
+                            disabled={offersLoading}
+                        >
+                            {offers?.data
+                                ?.filter((offer) => !offer.parentOfferId) // Only show main offers
+                                .map((offer) => (
+                                    <Select.Option key={offer.id} value={offer.id}>
+                                        {offer.name}
+                                    </Select.Option>
+                                ))}
+                        </Select>
+                    </div>
+                )}
                 <div>
                     <label>Xidmət (AZ):</label>
                     <input type="text" name="name" required />
@@ -162,6 +231,10 @@ function AdminServCreate() {
                     <input type="text" name="nameEng" required />
                 </div>
                 <div>
+                    <label>Xidmət (TR):</label>
+                    <input type="text" name="nameTur" required />
+                </div>
+                <div>
                     <label>Alt Başlıq (AZ):</label>
                     <textarea name="description" required />
                 </div>
@@ -173,6 +246,10 @@ function AdminServCreate() {
                     <label>Alt Başlıq (ENG):</label>
                     <textarea name="descriptionEng" required />
                 </div>
+                <div>
+                    <label>Alt Başlıq (TR):</label>
+                    <textarea name="descriptionTur" required />
+                </div>
                 <div className="row">
                     <div className="col-6 pd00">
                         <label>Keçirilmə müddəti (AZ):</label>
@@ -181,65 +258,71 @@ function AdminServCreate() {
                         <input type="text" name="periodRu" required />
                         <label>Keçirilmə müddəti (ENG):</label>
                         <input type="text" name="periodEng" required />
+                        <label>Keçirilmə müddəti (TR):</label>
+                        <input type="text" name="periodTur" required />
                     </div>
                     <div className="col-6 pd01">
                         <label>Yaş:</label>
                         <input type="text" name="ageLimit" required />
                     </div>
                 </div>
-                <div className="row" style={{ marginTop: "16px" }}>
-                    <div
-                        className="col-6 pd00"
-                        style={{ display: "flex", alignItems: "center" }}
-                    >
-                        <label>Xidmət şəhifəsi nümunə 1 (bir şəkilin olduğu)</label>
-                        <Switch
-                            checked={singleImageSwitch}
-                            onChange={handleSingleSwitchChange}
-                            style={{ marginLeft: "10px" }}
-                        />
-                    </div>
-                    <div
-                        className="col-6 pd01"
-                        style={{ display: "flex", alignItems: "center" }}
-                    >
-                        <label>Xidmət şəhifəsi nümunə 2 (üç şəkilin olduğu)</label>
-                        <Switch
-                            checked={tripleImageSwitch}
-                            onChange={handleTripleSwitchChange}
-                            style={{ marginLeft: "10px" }}
-                        />
-                    </div>
-                </div>
-                <div className="row" style={{ marginTop: "16px" }}>
-                    <div className="col-6 pd00">
-                        <Upload
-                            listType="picture-card"
-                            fileList={singleFileList}
-                            onPreview={handlePreview}
-                            onChange={handleSingleImageChange}
-                            beforeUpload={() => false}
-                            disabled={tripleImageSwitch}
-                        >
-                            {singleFileList.length >= 1 ? null : uploadButton}
-                        </Upload>
-                    </div>
-                    <div className="col-6 pd01" style={{ display: "flex", gap: "10px" }}>
-                        {[0, 1, 2].map((index) => (
-                            <Upload
-                                key={index}
-                                listType="picture-card"
-                                fileList={tripleFileLists[index]}
-                                onPreview={handlePreview}
-                                onChange={handleTripleImageChange(index)}
-                                beforeUpload={() => false}
-                                disabled={singleImageSwitch}
+                {!isSubOffer && (
+                    <>
+                        <div className="row" style={{ marginTop: "16px" }}>
+                            <div
+                                className="col-6 pd00"
+                                style={{ display: "flex", alignItems: "center" }}
                             >
-                                {tripleFileLists[index].length >= 1 ? null : uploadButton}
-                            </Upload>
-                        ))}
-                    </div>
-                </div>
+                                <label>Xidmət şəhifəsi nümunə 1 (bir şəkilin olduğu)</label>
+                                <Switch
+                                    checked={singleImageSwitch}
+                                    onChange={handleSingleSwitchChange}
+                                    style={{ marginLeft: "10px" }}
+                                />
+                            </div>
+                            <div
+                                className="col-6 pd01"
+                                style={{ display: "flex", alignItems: "center" }}
+                            >
+                                <label>Xidmət şəhifəsi nümunə 2 (üç şəkilin olduğu)</label>
+                                <Switch
+                                    checked={tripleImageSwitch}
+                                    onChange={handleTripleSwitchChange}
+                                    style={{ marginLeft: "10px" }}
+                                />
+                            </div>
+                        </div>
+                        <div className="row" style={{ marginTop: "16px" }}>
+                            <div className="col-6 pd00">
+                                <Upload
+                                    listType="picture-card"
+                                    fileList={singleFileList}
+                                    onPreview={handlePreview}
+                                    onChange={handleSingleImageChange}
+                                    beforeUpload={() => false}
+                                    disabled={tripleImageSwitch}
+                                >
+                                    {singleFileList.length >= 1 ? null : uploadButton}
+                                </Upload>
+                            </div>
+                            <div className="col-6 pd01" style={{ display: "flex", gap: "10px" }}>
+                                {[0, 1, 2].map((index) => (
+                                    <Upload
+                                        key={index}
+                                        listType="picture-card"
+                                        fileList={tripleFileLists[index]}
+                                        onPreview={handlePreview}
+                                        onChange={handleTripleImageChange(index)}
+                                        beforeUpload={() => false}
+                                        disabled={singleImageSwitch}
+                                    >
+                                        {tripleFileLists[index].length >= 1 ? null : uploadButton}
+                                    </Upload>
+                                ))}
+                            </div>
+                        </div>
+                    </>
+                )}
                 {previewImage && (
                     <Image
                         wrapperStyle={{ display: "none" }}
@@ -254,9 +337,9 @@ function AdminServCreate() {
                 <button type="submit" className="button" disabled={isLoading}>
                     {isLoading ? (
                         <span>
-              <LoadingOutlined style={{ marginRight: "8px" }} />
-              Yadda saxlanılır...
-            </span>
+                            <LoadingOutlined style={{ marginRight: "8px" }} />
+                            Yadda saxlanılır...
+                        </span>
                     ) : (
                         "Yadda saxla"
                     )}

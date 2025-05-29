@@ -3,7 +3,9 @@
     "languages": {
       "az": "Azərbaycanca",
       "en": "İngilis",
-      "ru": "Rus"
+      "ru": "Rus",
+      "tr": "Türkcə"
+
     }
   },
   "homepage": {
@@ -66,5 +68,4 @@
   },
   "circleText": "Bizimlə əlaqəyə keç ",
   "circleTextBlack": "Asterias Təlim Mərkəzi "
-
 }

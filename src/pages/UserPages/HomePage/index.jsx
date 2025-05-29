@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import flagAz from '/src/assets/azerbaijan.png';
 import flagEn from '/src/assets/uk.png';
 import flagRu from '/src/assets/circle.png';
+import flagTr from "../../../assets/turkey.png";
 import { FaChevronDown } from "react-icons/fa";
 import { useGetAllOffersQuery } from "../../../services/userApi.jsx";
 
@@ -45,11 +46,12 @@ function HomePage() {
         setSegments(
             offers.map((offer, index) => ({
                 id: offer.id,
-                label:
-                    i18n.language?.startsWith('en')
-                        ? offer.nameEng
-                        : i18n.language?.startsWith('ru')
-                            ? offer.nameRu
+                label: i18n.language?.startsWith('en')
+                    ? offer.nameEng
+                    : i18n.language?.startsWith('ru')
+                        ? offer.nameRu
+                        : i18n.language?.startsWith('tr')
+                            ? offer.nameTur || offer.name
                             : offer.name, // Default to 'name' for 'az' or other languages
                 color: colors[index],
                 type: parseInt(offer.templateId), // Convert templateId to number for type
@@ -99,6 +101,9 @@ function HomePage() {
     } else if (i18n.language?.startsWith('ru')) {
         currentTitle = "Ru";
         currentFlag = flagRu;
+    } else if (i18n.language?.startsWith('tr')) { // Türkçe için ekleme
+        currentTitle = "Tr";
+        currentFlag = flagTr;
     } else if (i18n.language?.startsWith('az')) {
         currentTitle = "Az";
         currentFlag = flagAz;
@@ -234,6 +239,9 @@ function HomePage() {
                         </div>
                         <div onClick={() => handleLanguageChange('ru')}>
                             <img src={flagRu} alt="RU Flag" /> {t('navbar.languages.ru')}
+                        </div>
+                        <div onClick={() => handleLanguageChange('tr')}>
+                            <img src={flagTr} alt="TR Flag" /> {t('navbar.languages.tr')}
                         </div>
                     </div>
                 </div>

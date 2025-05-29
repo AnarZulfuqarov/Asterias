@@ -6,6 +6,7 @@ import { FaChevronDown } from "react-icons/fa";
 import flagAz from "../../../assets/azerbaijan.png";
 import flagEn from "../../../assets/uk.png";
 import flagRu from "../../../assets/circle.png";
+import flagTr from "../../../assets/turkey.png";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { usePostContactMutation } from "../../../services/userApi.jsx";
@@ -43,6 +44,9 @@ function Contact() {
     } else if (i18n.language?.startsWith('ru')) {
         currentTitle = "Ru";
         currentFlag = flagRu;
+    } else if (i18n.language?.startsWith('tr')) { // Türkçe için ekleme
+        currentTitle = "Tr";
+        currentFlag = flagTr;
     } else if (i18n.language?.startsWith('az')) {
         currentTitle = "Az";
         currentFlag = flagAz;
@@ -256,6 +260,9 @@ function Contact() {
                         </div>
                         <div onClick={() => handleLanguageChange('ru')}>
                             <img src={flagRu} alt="RU Flag" /> {t('navbar.languages.ru')}
+                        </div>
+                        <div onClick={() => handleLanguageChange('tr')}>
+                            <img src={flagTr} alt="TR Flag" /> {t('navbar.languages.tr')}
                         </div>
                     </div>
                 </div>

@@ -1,61 +1,75 @@
 import { useEffect, useState } from "react";
-import { useDeleteOffersMutation, useGetAllOffersQuery } from "../../../services/userApi.jsx";
-import showToast from "../../../components/ToastMessage.js";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
-import { OFFER_CARD_IMAGES, OFFER_IMAGES } from "../../../contants.js";
 import { RxDividerVertical } from "react-icons/rx";
+import {useDeleteOffersMutation, useGetAllOffersQuery} from "../../../services/userApi.jsx";
+import {OFFER_CARD_IMAGES, OFFER_IMAGES} from "../../../contants.js";
+import showToast from "../../../components/ToastMessage.js";
 
 const ServicesTable = () => {
     const navigate = useNavigate();
     const { data: getAllOffers, refetch: getAllOffersRefetch, isLoading } = useGetAllOffersQuery();
-    const [deleteService] = useDeleteOffersMutation();
+    const [deleteOffer] = useDeleteOffersMutation();
     const [currentPage, setCurrentPage] = useState(1);
     const [expandedRows, setExpandedRows] = useState([]);
-    const [showModal, setShowModal] = useState(false); // State for modal visibility
-    const [recordToDelete, setRecordToDelete] = useState(null); // State to store the record to delete
-    const pageSize = 5;
+    const [showModal, setShowModal] = useState(false);
+    const [recordToDelete, setRecordToDelete] = useState(null);
+    const pageSize = 6;
 
-    const dataSource = getAllOffers?.data || [];
+    // Flatten data to include main offers and subOffers
+    const dataSource = (getAllOffers?.data || []).reduce((acc, mainOffer) => {
+        // Add main offer
+        acc.push({
+            ...mainOffer,
+            parentOfferName: "", // Main offers have no parent
+            isSubOffer: false
+        });
+        // Add subOffers
+        if (mainOffer.subOffers && mainOffer.subOffers.length > 0) {
+            mainOffer.subOffers.forEach((subOffer) => {
+                acc.push({
+                    ...subOffer,
+                    parentOfferName: mainOffer.name, // Set parent offer name for subOffer
+                    isSubOffer: true
+                });
+            });
+        }
+        return acc;
+    }, []);
 
     useEffect(() => {
         getAllOffersRefetch();
-    }, []);
+    }, [getAllOffersRefetch]);
 
     const handleDelete = async (record) => {
         try {
-            await deleteService(record.id).unwrap();
-            showToast("Service deleted successfully!", "success");
-
-            // Refetch data to get the updated list
+            await deleteOffer(record.id).unwrap();
+            showToast("Xidmət uğurla silindi!", "success");
             await getAllOffersRefetch();
 
             // Check if the current page is valid after deletion
-            const updatedData = getAllOffers?.data || [];
+            const updatedData = dataSource;
             const totalItems = updatedData.length;
             const totalPages = Math.ceil(totalItems / pageSize);
 
-            // If the current page exceeds the total pages after deletion, go to the last valid page
             if (currentPage > totalPages && totalPages > 0) {
                 setCurrentPage(totalPages);
-                setExpandedRows([]); // Reset expanded rows when changing pages
+                setExpandedRows([]);
             } else if (totalPages === 0) {
-                setCurrentPage(1); // If no data remains, reset to page 1
+                setCurrentPage(1);
                 setExpandedRows([]);
             }
         } catch (error) {
             console.error("Delete Error:", error);
-            showToast(error?.data?.message || "Error deleting service!", "error");
+            showToast(error?.data?.message || "Xidməti silmək alınmadı!", "error");
         }
     };
 
-    // Function to open the modal and set the record to delete
     const confirmDelete = (record) => {
         setRecordToDelete(record);
         setShowModal(true);
     };
 
-    // Function to handle the deletion after confirmation
     const handleConfirmDelete = async () => {
         if (recordToDelete) {
             await handleDelete(recordToDelete);
@@ -64,7 +78,6 @@ const ServicesTable = () => {
         setRecordToDelete(null);
     };
 
-    // Function to cancel the deletion
     const handleCancelDelete = () => {
         setShowModal(false);
         setRecordToDelete(null);
@@ -99,18 +112,22 @@ const ServicesTable = () => {
                     <th>Keçirilmə müddəti</th>
                     <th>Yaş</th>
                     <th>Alt başlıq</th>
+                    <th>Ana Xidmət</th>
                     <th>Fəaliyyətlər</th>
                 </tr>
                 </thead>
                 <tbody>
                 {isLoading ? (
                     <tr>
-                        <td colSpan={8}>Loading...</td>
+                        <td colSpan={8}>Yüklənir...</td>
                     </tr>
                 ) : paginatedData.length > 0 ? (
                     paginatedData.map((record, index) => (
                         <>
-                            <tr key={record.id}>
+                            <tr
+                                key={record.id}
+                                className={record.isSubOffer ? "subOffer-row" : ""}
+                            >
                                 <td>{(currentPage - 1) * pageSize + index + 1}</td>
                                 <td>
                                     {record.offerImageNames && record.offerImageNames.length > 0 ? (
@@ -121,18 +138,20 @@ const ServicesTable = () => {
                                             onError={(e) => {
                                                 e.target.src = "/src/assets/services/placeholder.png";
                                             }}
-                                            style={{
-                                                borderRadius: "10px",
-                                            }}
+                                            style={{ borderRadius: "10px" }}
                                         />
                                     ) : (
-                                        <span>No Image</span>
+                                        <span>Şəkil yoxdur</span>
                                     )}
                                 </td>
-                                <td>{record.name}</td>
-                                <td>{record.period}</td>
+                                <td>
+                                    {record.isSubOffer && <span style={{ marginLeft: "10px" }}>
+                      ↳ </span>}{record.name}
+                                </td>
+                                <td>{record.period || "N/A"}</td>
                                 <td>{record.ageLimit || "N/A"}</td>
                                 <td>{record.description || "N/A"}</td>
+                                <td>{record.parentOfferName || "Yoxdur"}</td>
                                 <td>
                                     <div className="editdeleteDiv">
                                         <button
@@ -152,10 +171,10 @@ const ServicesTable = () => {
                                                 />
                                             </svg>
                                         </button>
-                                        <RxDividerVertical className={"icon"} />
+                                        <RxDividerVertical className="icon" />
                                         <button
                                             className="editDelete"
-                                            onClick={() => confirmDelete(record)} // Trigger modal instead of direct deletion
+                                            onClick={() => confirmDelete(record)}
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -190,33 +209,41 @@ const ServicesTable = () => {
                                             <div className="language-section">
                                                 <h4>English</h4>
                                                 <p><strong>Name:</strong> {record.nameEng || "N/A"}</p>
-                                                <p><strong>Description:</strong> {record.descriptionEng || "N/A"}</p>
+                                                <p>
+                                                    <strong>Description:</strong>{" "}
+                                                    {record.descriptionEng || "N/A"}
+                                                </p>
                                                 <p><strong>Period:</strong> {record.periodEng || "N/A"}</p>
                                             </div>
                                             <div className="language-section">
                                                 <h4>Russian</h4>
                                                 <p><strong>Name:</strong> {record.nameRu || "N/A"}</p>
-                                                <p><strong>Description:</strong> {record.descriptionRu || "N/A"}</p>
+                                                <p>
+                                                    <strong>Description:</strong>{" "}
+                                                    {record.descriptionRu || "N/A"}
+                                                </p>
                                                 <p><strong>Period:</strong> {record.periodRu || "N/A"}</p>
                                             </div>
-                                            {record.offerImages && record.offerImages.length > 1 && (
-                                                <div className="image-section">
-                                                    <h4>Additional Images</h4>
-                                                    <div className="image-gallery">
-                                                        {record.offerImages.slice(1).map((image, idx) => (
-                                                            <img
-                                                                key={idx}
-                                                                src={OFFER_CARD_IMAGES + image}
-                                                                alt={`Additional ${idx + 1}`}
-                                                                className="additional-image"
-                                                                onError={(e) => {
-                                                                    e.target.src = "/src/assets/services/placeholder.png";
-                                                                }}
-                                                            />
-                                                        ))}
+                                            {record.offerImageNames &&
+                                                record.offerImageNames.length > 1 && (
+                                                    <div className="image-section">
+                                                        <h4>Additional Images</h4>
+                                                        <div className="image-gallery">
+                                                            {record.offerImageNames.slice(1).map((image, idx) => (
+                                                                <img
+                                                                    key={idx}
+                                                                    src={OFFER_CARD_IMAGES + image}
+                                                                    alt={`Additional ${idx + 1}`}
+                                                                    className="additional-image"
+                                                                    onError={(e) => {
+                                                                        e.target.src =
+                                                                            "/src/assets/services/placeholder.png";
+                                                                    }}
+                                                                />
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )}
+                                                )}
                                         </div>
                                     </td>
                                 </tr>
@@ -225,7 +252,7 @@ const ServicesTable = () => {
                     ))
                 ) : (
                     <tr>
-                        <td colSpan={8}>No data available</td>
+                        <td colSpan={8}>Məlumat yoxdur</td>
                     </tr>
                 )}
                 </tbody>
@@ -236,7 +263,7 @@ const ServicesTable = () => {
                     disabled={currentPage === 1}
                     onClick={() => handlePageChange(currentPage - 1)}
                 >
-                    Previous
+                    Əvvəlki
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <button
@@ -252,7 +279,7 @@ const ServicesTable = () => {
                     disabled={currentPage === totalPages}
                     onClick={() => handlePageChange(currentPage + 1)}
                 >
-                    Next
+                    Növbəti
                 </button>
             </div>
 
@@ -277,8 +304,8 @@ const ServicesTable = () => {
                                 />
                             </svg>
                         </button>
-                        <div className={"modal-iconback1"}>
-                            <div className={"modal-iconback2"}>
+                        <div className="modal-iconback1">
+                            <div className="modal-iconback2">
                                 <div className="modal-icon">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -296,7 +323,10 @@ const ServicesTable = () => {
                             </div>
                         </div>
                         <h3>Bu xidməti silmək istədiyinizə əminsiniz?</h3>
-                        <p>Xidmət silindikdən sonra onunla bağlı bütün məlumatlar daimi olaraq silinəcək.</p>
+                        <p>
+                            Xidmət silindikdən sonra onunla bağlı bütün məlumatlar daimi olaraq
+                            silinəcək.
+                        </p>
                         <div className="modal-actions">
                             <button className="modal-cancel" onClick={handleCancelDelete}>
                                 Ləğv et
