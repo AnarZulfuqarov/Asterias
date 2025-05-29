@@ -47,11 +47,29 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
       &.left-column {
+        overflow: hidden;
         background: #e5f1f2;
+        position: relative;
+        img{
+          width: 222px;
+          height: 222px;
+          position: absolute;
+          right: -50px;
+          top:-70px;
+        }
       }
 
       &.right-column {
+        overflow: hidden;
         background: #fff2ec;
+        position: relative;
+        img{
+          width: 222px;
+          height: 222px;
+          position: absolute;
+          right: -0px;
+          top:-70px;
+        }
       }
 
       h3 {
@@ -114,6 +132,15 @@
     padding: 40px ;
     margin-top: 100px;
     background: #F3FAFF;
+    position: relative;
+    overflow: hidden;
+    img{
+      width: 222px;
+      height: 222px;
+      position: absolute;
+      right: -50px;
+      top:-70px;
+    }
     button{
       margin-top: 40px;
       display: flex;
@@ -265,94 +292,116 @@
     }
 
     .functions {
+
       display: flex;
       align-items: center;
-      gap: 56px;
+      gap: 70px;
+      margin-top: 50px;
       margin-bottom: 48px;
-
-      .function1 {
-        width: 224px;
-        height: 67px;
-        border-radius: 33px;
+      position: relative;
+      .icon1 {
+        border-radius: 8.373px;
+        width: 59.373px;
+        height: 51px;
+        flex-shrink: 0;
         position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
+        top: 70px;
         .overlay {
           width: 100%;
           height: 100%;
-          position: absolute;
+          position: relative;
           z-index: 1;
-          background: #DBFF93;
-          filter: blur(11.75px);
+          background: #E5F1F2;
+          filter: blur(8.944029808044434px);
         }
 
         .content {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 5px;
-          color: #848484;
-          text-align: center;
-          font-size: 15px;
-          font-style: normal;
-          font-weight: 500;
-          line-height: normal;
-          letter-spacing: -0.64px;
-          position: relative;
-          z-index: 2;
-
-          span {
-            color: #535353;
-            font-weight: 600;
-          }
+          position: absolute;
+          z-index: 3;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
       }
 
-      .function2 {
-        width: 197px;
-        height: 67px;
-        border-radius: 11px;
+      .icon2 {
+        border-radius: 8.373px;
+        width: 59.373px;
+        height: 51px;
+        flex-shrink: 0;
         position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
 
         .overlay {
           width: 100%;
           height: 100%;
-          position: absolute;
+          position: relative;
           z-index: 1;
+          border-radius: 8.373px;
           background: #FBFFC1;
-          filter: blur(11.75px);
+          filter: blur(8.944029808044434px);
         }
 
         .content {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 5px;
-          color: #848484;
-          text-align: center;
-          font-size: 16px;
-          font-style: normal;
-          font-weight: 500;
-          line-height: normal;
-          letter-spacing: -0.64px;
-          position: relative;
-          z-index: 2;
-
-          span {
-            color: #535353;
-            font-weight: 600;
-          }
+          position: absolute;
+          z-index: 3;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
       }
+
+      .icon3 {
+        border-radius: 8.373px;
+        width: 59.373px;
+        height: 51px;
+        flex-shrink: 0;
+        position: relative;
+        top: 70px;
+        .overlay {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          z-index: 1;
+          border-radius: 27.09px;
+          background: rgba(255, 140, 91, 0.53);
+          filter: blur(12.600746154785156px);
+        }
+
+        .content {
+          position: absolute;
+          z-index: 3;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      .icon4 {
+        border-radius: 8.373px;
+        width: 59.373px;
+        height: 51px;
+        flex-shrink: 0;
+        position: relative;
+
+        .overlay {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          z-index: 1;
+          border-radius: 28.567px;
+          background: #EFC;
+          filter: blur(10.17164134979248px);
+        }
+
+        .content {
+          position: absolute;
+          z-index: 3;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+
     }
 
     button {
