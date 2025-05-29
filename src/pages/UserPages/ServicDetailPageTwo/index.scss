@@ -1,6 +1,5 @@
 #servDetailTwo {
   width: 100%;
-  height: 100vh;
   overflow: hidden;
   padding: 60px 16px;
   //background-image: url("/src/assets/Service detail 2.png");
@@ -9,7 +8,133 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  .sub-offers-section {
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    .header-sub{
+      position: relative;
 
+      .ox-1{
+        position: absolute;
+        left: 45%;
+        transform: translateX(-50%);
+        top:90px;
+      }
+      .ox-2{
+        position: absolute;
+        right: 35%;
+        transform: translateX(-40%);
+        top:90px;
+      }
+    }
+    h1{
+      color: #1F1F1F;
+      text-align: center;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 48px; /* 200% */
+      letter-spacing: -0.72px;
+      text-transform: capitalize;
+      margin-bottom: 100px;
+    }
+    .sub-offer-column {
+      width: 48%;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+      &.left-column {
+        background: #e5f1f2;
+      }
+
+      &.right-column {
+        background: #fff2ec;
+      }
+
+      h3 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1f1f1f;
+        margin-bottom: 20px;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+          font-size: 16px;
+          color: #5b5b5b;
+          margin-bottom: 15px;
+          position: relative;
+          padding-left: 20px;
+
+          &:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #007781;
+            font-size: 20px;
+          }
+        }
+      }
+
+      button {
+        display: flex;
+        width: 100%;
+        height: 50px;
+        padding: 9px 44px;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        border-radius: 19px;
+        background: #007781;
+        color: #fff;
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 24px;
+        cursor: pointer;
+        border: none;
+        margin-top: 20px;
+
+      }
+      .last-btn{
+        border-radius: 19px;
+        background: #EF926A;
+      }
+    }
+  }
+  .description-section{
+    width: 100%;
+    border-radius: 20px;
+    padding: 40px ;
+    margin-top: 100px;
+    background: #F3FAFF;
+    button{
+      margin-top: 40px;
+      display: flex;
+      height: 52px;
+      padding: 9px 44px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      align-self: stretch;
+      border-radius: 19px;
+      background: #007781;
+      width: 100%;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; /* 150% */
+    }
+  }
   .zakirinChevronu {
     font-size: 14px;
     margin-left: 5px;
@@ -101,7 +226,7 @@
     .arrow {
       position: absolute;
       right: -100px;
-      bottom: 120px;
+      bottom: 0px;
     }
 
     .head {
