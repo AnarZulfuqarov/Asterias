@@ -1,87 +1,109 @@
 import "./index.scss";
 import { Upload, Switch, Image, Select } from "antd";
 import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 import image1 from "../../../assets/profile.png";
 import { useNavigate } from "react-router-dom";
 import { useGetAllOffersQuery, usePostOffersMutation } from "../../../services/userApi.jsx";
 
 function AdminServCreate() {
+    // Image/template states
     const [singleFileList, setSingleFileList] = useState([]);
     const [tripleFileLists, setTripleFileLists] = useState([[], [], []]);
     const [singleImageSwitch, setSingleImageSwitch] = useState(true);
     const [tripleImageSwitch, setTripleImageSwitch] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
+
+    // Offer type state
     const [isSubOffer, setIsSubOffer] = useState(false);
     const [parentOfferId, setParentOfferId] = useState(null);
+
+    // Rich-text states for subtitles
+    const [subTitleAz, setSubTitleAz] = useState("");
+    const [subTitleRu, setSubTitleRu] = useState("");
+    const [subTitleEng, setSubTitleEng] = useState("");
+    const [subTitleTur, setSubTitleTur] = useState("");
 
     const navigate = useNavigate();
     const [postOffers, { isLoading, isError, error }] = usePostOffersMutation();
     const { data: offers, isLoading: offersLoading } = useGetAllOffersQuery();
 
-    // Handle single image change
-    const handleSingleImageChange = ({ fileList: newFileList }) => {
-        setSingleFileList(newFileList);
+    // ReactQuill toolbar configuration
+    const quillModules = {
+        toolbar: [
+            ["bold", "italic", "underline"],
+            [{ header: [1, 2, false] }],
+            ["link", "image"],
+            [{ list: "ordered" }, { list: "bullet" }],
+        ],
     };
+    const quillFormats = [
+        "header",
+        "bold",
+        "italic",
+        "underline",
+        "link",
+        "image",
+        "list",
+        "bullet",
+    ];
 
-    // Handle triple image change
-    const handleTripleImageChange = (index) => ({ fileList: newFileList }) => {
-        setTripleFileLists((prev) => {
-            const newLists = [...prev];
-            newLists[index] = newFileList;
-            return newLists;
-        });
-    };
-
-    // Handle single image switch
+    // Handlers for template switches
     const handleSingleSwitchChange = (checked) => {
         setSingleImageSwitch(checked);
         setTripleImageSwitch(!checked);
-        if (checked) {
-            setTripleFileLists([[], [], []]);
-        }
+        if (checked) setTripleFileLists([[], [], []]);
     };
-
-    // Handle triple image switch
     const handleTripleSwitchChange = (checked) => {
         setTripleImageSwitch(checked);
         setSingleImageSwitch(!checked);
-        if (checked) {
-            setSingleFileList([]);
-        }
+        if (checked) setSingleFileList([]);
     };
 
-    // Handle main/sub-offer switch
+    // Handlers for image uploads
+    const handleSingleImageChange = ({ fileList }) => {
+        setSingleFileList(fileList);
+    };
+    const handleTripleImageChange = (index) => ({ fileList }) => {
+        setTripleFileLists((prev) => {
+            const lists = [...prev];
+            lists[index] = fileList;
+            return lists;
+        });
+    };
+
+    // Offer type switch
     const handleSubOfferSwitch = (checked) => {
         setIsSubOffer(checked);
         if (checked) {
-            setSingleFileList([]); // Clear single image list
-            setTripleFileLists([[], [], []]); // Clear triple image lists
-            setSingleImageSwitch(true); // Reset to default template
+            setSingleFileList([]);
+            setTripleFileLists([[], [], []]);
+            setSingleImageSwitch(true);
             setTripleImageSwitch(false);
         } else {
-            setParentOfferId(null); // Reset parent offer ID
+            setParentOfferId(null);
         }
     };
 
-    // Handle parent offer selection
     const handleParentOfferChange = (value) => {
         setParentOfferId(value);
     };
 
-    // Handle image preview
+    // Preview handler
     const handlePreview = (file) => {
         setPreviewImage(file.url || file.thumbUrl);
         setPreviewOpen(true);
     };
 
-    // Handle form submission
+    // Form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
 
-        // Validate inputs
+        // Validations
         if (isSubOffer && !parentOfferId) {
             alert("Please select a parent offer for the sub-offer");
             return;
@@ -97,10 +119,9 @@ function AdminServCreate() {
             }
         }
 
-        // Prepare FormData for backend
+        // Prepare FormData
         const offerData = new FormData();
-
-        // Append text fields
+        // Text fields
         offerData.append("name", formData.get("name"));
         offerData.append("nameEng", formData.get("nameEng"));
         offerData.append("nameRu", formData.get("nameRu"));
@@ -109,16 +130,16 @@ function AdminServCreate() {
         offerData.append("descriptionEng", formData.get("descriptionEng"));
         offerData.append("descriptionRu", formData.get("descriptionRu"));
         offerData.append("descriptionTur", formData.get("descriptionTur"));
-        offerData.append("period", formData.get("period"));
-        offerData.append("periodEng", formData.get("periodEng"));
-        offerData.append("periodRu", formData.get("periodRu"));
-        offerData.append("periodTur", formData.get("periodTur"));
-        offerData.append("ageLimit", formData.get("ageLimit"));
+        // Rich-text subtitles as HTML
+        offerData.append("subTitle", subTitleAz);
+        offerData.append("subTitleEng", subTitleEng);
+        offerData.append("subTitleRu", subTitleRu);
+        offerData.append("subTitleTur", subTitleTur);
 
-        // Append templateId and images only for main offers
+        // Template & images for main offers
         if (!isSubOffer) {
             offerData.append("templateId", singleImageSwitch ? "1" : "2");
-            if (singleImageSwitch && singleFileList.length > 0) {
+            if (singleImageSwitch && singleFileList[0]?.originFileObj) {
                 offerData.append("offerImages", singleFileList[0].originFileObj);
             }
             if (tripleImageSwitch) {
@@ -129,8 +150,7 @@ function AdminServCreate() {
                     });
             }
         }
-
-        // Append parentOfferId for sub-offers
+        // Parent for sub-offer
         if (isSubOffer && parentOfferId) {
             offerData.append("parentOfferId", parentOfferId);
         }
@@ -146,16 +166,9 @@ function AdminServCreate() {
     };
 
     const uploadButton = (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-            }}
-        >
-            <UploadOutlined style={{ fontSize: "24px" }} />
-            <div style={{ marginTop: "8px" }}>Upload</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <UploadOutlined style={{ fontSize: 24 }} />
+            <div style={{ marginTop: 8 }}>Upload</div>
         </div>
     );
 
@@ -163,30 +176,20 @@ function AdminServCreate() {
         <>
             <div className="right">
                 <div className="adminTopBar">
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "10px",
-                        }}
-                    >
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <img src={image1} alt="Profile" />
-                        <div>
-                            <p>Admin</p>
-                        </div>
+                        <div><p>Admin</p></div>
                     </div>
                     <div className="navigation-bar">
                         <h2 className="nav-title">
-                            <span className="nav-link" onClick={() => navigate("/admin/services")}>
-                                Xidmətlər
-                            </span>
+                            <span className="nav-link" onClick={() => navigate("/admin/services")}>Xidmətlər</span>
                             <span className="nav-divider"> — </span>
                             <span className="nav-subtitle">Yeni xidmət əlavə et</span>
                         </h2>
                     </div>
                 </div>
             </div>
+
             <form id="admin-services-create" onSubmit={handleSubmit}>
                 <div>
                     <label>Ana Xidmət / Alt Xidmət:</label>
@@ -195,104 +198,101 @@ function AdminServCreate() {
                         onChange={handleSubOfferSwitch}
                         checkedChildren="Alt Xidmət"
                         unCheckedChildren="Ana Xidmət"
-                        style={{ marginLeft: "10px" }}
+                        style={{ marginLeft: 10 }}
                     />
                 </div>
+
                 {isSubOffer && (
                     <div>
                         <label>Ana Xidmət Seçin:</label>
                         <Select
-                            style={{ width: "100%" }}
+                            style={{ width: '100%' }}
                             placeholder="Ana xidmət seçin"
                             onChange={handleParentOfferChange}
                             loading={offersLoading}
                             disabled={offersLoading}
                         >
                             {offers?.data
-                                ?.filter((offer) => !offer.parentOfferId) // Only show main offers
-                                .map((offer) => (
-                                    <Select.Option key={offer.id} value={offer.id}>
-                                        {offer.name}
+                                ?.filter((o) => !o.parentOfferId)
+                                .map((o) => (
+                                    <Select.Option key={o.id} value={o.id}>
+                                        {o.name}
                                     </Select.Option>
                                 ))}
                         </Select>
                     </div>
                 )}
-                <div>
-                    <label>Xidmət (AZ):</label>
-                    <input type="text" name="name" required />
-                </div>
-                <div>
-                    <label>Xidmət (RU):</label>
-                    <input type="text" name="nameRu" required />
-                </div>
-                <div>
-                    <label>Xidmət (ENG):</label>
-                    <input type="text" name="nameEng" required />
-                </div>
-                <div>
-                    <label>Xidmət (TR):</label>
-                    <input type="text" name="nameTur" required />
-                </div>
+
+                <div><label>Xidmət (AZ):</label><input type="text" name="name" required /></div>
+                <div><label>Xidmət (RU):</label><input type="text" name="nameRu" required /></div>
+                <div><label>Xidmət (ENG):</label><input type="text" name="nameEng" required /></div>
+                <div><label>Xidmət (TR):</label><input type="text" name="nameTur" required /></div>
+
+                <div><label>Açıqlama (AZ):</label><textarea name="description" required /></div>
+                <div><label>Açıqlama (RU):</label><textarea name="descriptionRu" required /></div>
+                <div><label>Açıqlama (ENG):</label><textarea name="descriptionEng" required /></div>
+                <div><label>Açıqlama (TR):</label><textarea name="descriptionTur" required /></div>
+
+                {/* Rich-text editors */}
                 <div>
                     <label>Alt Başlıq (AZ):</label>
-                    <textarea name="description" required />
+                    <ReactQuill
+                        theme="snow"
+                        value={subTitleAz}
+                        onChange={setSubTitleAz}
+                        modules={quillModules}
+                        formats={quillFormats}
+                        placeholder="Mətn daxil edin..."
+                    />
                 </div>
                 <div>
                     <label>Alt Başlıq (RU):</label>
-                    <textarea name="descriptionRu" required />
+                    <ReactQuill
+                        theme="snow"
+                        value={subTitleRu}
+                        onChange={setSubTitleRu}
+                        modules={quillModules}
+                        formats={quillFormats}
+                        placeholder="Введите текст..."
+                    />
                 </div>
                 <div>
                     <label>Alt Başlıq (ENG):</label>
-                    <textarea name="descriptionEng" required />
+                    <ReactQuill
+                        theme="snow"
+                        value={subTitleEng}
+                        onChange={setSubTitleEng}
+                        modules={quillModules}
+                        formats={quillFormats}
+                        placeholder="Enter text..."
+                    />
                 </div>
                 <div>
                     <label>Alt Başlıq (TR):</label>
-                    <textarea name="descriptionTur" required />
+                    <ReactQuill
+                        theme="snow"
+                        value={subTitleTur}
+                        onChange={setSubTitleTur}
+                        modules={quillModules}
+                        formats={quillFormats}
+                        placeholder="Metin girin..."
+                    />
                 </div>
-                <div className="row">
-                    <div className="col-6 pd00">
-                        <label>Keçirilmə müddəti (AZ):</label>
-                        <input type="text" name="period" required />
-                        <label>Keçirilmə müddəti (RU):</label>
-                        <input type="text" name="periodRu" required />
-                        <label>Keçirilmə müddəti (ENG):</label>
-                        <input type="text" name="periodEng" required />
-                        <label>Keçirilmə müddəti (TR):</label>
-                        <input type="text" name="periodTur" required />
-                    </div>
-                    <div className="col-6 pd01">
-                        <label>Yaş:</label>
-                        <input type="text" name="ageLimit" required />
-                    </div>
-                </div>
+
+                {/* Template switches & uploads */}
                 {!isSubOffer && (
                     <>
-                        <div className="row" style={{ marginTop: "16px" }}>
-                            <div
-                                className="col-6 pd00"
-                                style={{ display: "flex", alignItems: "center" }}
-                            >
-                                <label>Xidmət şəhifəsi nümunə 1 (bir şəkilin olduğu)</label>
-                                <Switch
-                                    checked={singleImageSwitch}
-                                    onChange={handleSingleSwitchChange}
-                                    style={{ marginLeft: "10px" }}
-                                />
+                        <div className="row" style={{ marginTop: 16 }}>
+                            <div className="col-6 pd00" style={{ display: 'flex', alignItems: 'center' }}>
+                                <label>Şəkil şablonu 1 (1 şəkil)</label>
+                                <Switch checked={singleImageSwitch} onChange={handleSingleSwitchChange} style={{ marginLeft: 10 }} />
                             </div>
-                            <div
-                                className="col-6 pd01"
-                                style={{ display: "flex", alignItems: "center" }}
-                            >
-                                <label>Xidmət şəhifəsi nümunə 2 (üç şəkilin olduğu)</label>
-                                <Switch
-                                    checked={tripleImageSwitch}
-                                    onChange={handleTripleSwitchChange}
-                                    style={{ marginLeft: "10px" }}
-                                />
+                            <div className="col-6 pd01" style={{ display: 'flex', alignItems: 'center' }}>
+                                <label>Şəkil şablonu 2 (3 şəkil)</label>
+                                <Switch checked={tripleImageSwitch} onChange={handleTripleSwitchChange} style={{ marginLeft: 10 }} />
                             </div>
                         </div>
-                        <div className="row" style={{ marginTop: "16px" }}>
+                        <div className="row" style={{ marginTop: 16 }}>
                             <div className="col-6 pd00">
                                 <Upload
                                     listType="picture-card"
@@ -305,50 +305,39 @@ function AdminServCreate() {
                                     {singleFileList.length >= 1 ? null : uploadButton}
                                 </Upload>
                             </div>
-                            <div className="col-6 pd01" style={{ display: "flex", gap: "10px" }}>
-                                {[0, 1, 2].map((index) => (
+                            <div className="col-6 pd01" style={{ display: 'flex', gap: 10 }}>
+                                {[0,1,2].map((i) => (
                                     <Upload
-                                        key={index}
+                                        key={i}
                                         listType="picture-card"
-                                        fileList={tripleFileLists[index]}
+                                        fileList={tripleFileLists[i]}
                                         onPreview={handlePreview}
-                                        onChange={handleTripleImageChange(index)}
+                                        onChange={handleTripleImageChange(i)}
                                         beforeUpload={() => false}
                                         disabled={singleImageSwitch}
                                     >
-                                        {tripleFileLists[index].length >= 1 ? null : uploadButton}
+                                        {tripleFileLists[i].length >= 1 ? null : uploadButton}
                                     </Upload>
                                 ))}
                             </div>
                         </div>
                     </>
                 )}
+
+                {/* Preview (hidden wrapper) */}
                 {previewImage && (
                     <Image
-                        wrapperStyle={{ display: "none" }}
-                        preview={{
-                            visible: previewOpen,
-                            onVisibleChange: (visible) => setPreviewOpen(visible),
-                            afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                        }}
+                        wrapperStyle={{ display: 'none' }}
+                        preview={{ visible: previewOpen, onVisibleChange: v => !v && setPreviewImage("") }}
                         src={previewImage}
                     />
                 )}
+
+                {/* Submit */}
                 <button type="submit" className="button" disabled={isLoading}>
-                    {isLoading ? (
-                        <span>
-                            <LoadingOutlined style={{ marginRight: "8px" }} />
-                            Yadda saxlanılır...
-                        </span>
-                    ) : (
-                        "Yadda saxla"
-                    )}
+                    {isLoading ? (<><LoadingOutlined style={{ marginRight: 8 }} />Yadda saxlanılır…</>) : "Yadda saxla"}
                 </button>
-                {isError && (
-                    <p style={{ color: "red" }}>
-                        Error: {error?.data?.message || "Failed to submit"}
-                    </p>
-                )}
+                {isError && <p style={{ color: 'red' }}>Error: {error?.data?.message || "Failed to submit"}</p>}
             </form>
         </>
     );

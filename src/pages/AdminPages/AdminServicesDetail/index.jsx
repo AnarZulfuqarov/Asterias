@@ -2,80 +2,88 @@ import "./index.scss";
 import { Upload, Switch, Image, Button, Select } from "antd";
 import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 import image1 from "/src/assets/profile.png";
 import { useNavigate, useParams } from "react-router-dom";
-import {useGetAllOffersQuery, useGetOffersByIdQuery, usePutOffersMutation} from "../../../services/userApi.jsx";
-import {OFFER_IMAGES} from "../../../contants.js";
+import { useGetAllOffersQuery, useGetOffersByIdQuery, usePutOffersMutation } from "../../../services/userApi.jsx";
+import { OFFER_IMAGES } from "../../../contants.js";
 
+const quillModules = {
+    toolbar: [
+        ["bold", "italic", "underline"],
+        [{ header: [1, 2, false] }],
+        ["link", "image"],
+        [{ list: "ordered" }, { list: "bullet" }],
+    ],
+};
+const quillFormats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "link",
+    "image",
+    "list",
+    "bullet",
+];
 
 function AdminServDetail() {
     const { id } = useParams();
-    const { data: getOffersById, refetch: getAllOffersRefetch, isLoading: isOfferLoading } =
-        useGetOffersByIdQuery(id);
+    const { data: getOffersById, refetch: getAllOffersRefetch, isLoading: isOfferLoading } = useGetOffersByIdQuery(id);
     const { data: offers, isLoading: offersLoading } = useGetAllOffersQuery();
     const offer = getOffersById?.data;
     const [putOffer, { isLoading: isSubmitting, isError, error }] = usePutOffersMutation();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        getAllOffersRefetch();
-    }, [getAllOffersRefetch]);
-
-    // State for form fields
+    // Form fields
     const [formData, setFormData] = useState({
-        name: "",
-        nameEng: "",
-        nameRu: "",
-        nameTur: "",
-        description: "",
-        descriptionEng: "",
-        descriptionRu: "",
-        descriptionTur: "",
-        period: "",
-        periodEng: "",
-        periodRu: "",
-        periodTur: "",
-        ageLimit: "",
-        templateId: "",
-        parentOfferId: "",
+        name: "", nameEng: "", nameRu: "", nameTur: "",
+        description: "", descriptionEng: "", descriptionRu: "", descriptionTur: "",
+        templateId: "", parentOfferId: ""
     });
-
-    // State for initial data to track changes
     const [initialData, setInitialData] = useState({});
+
+    // Rich-text subtitle states
+    const [subTitleAz, setSubTitleAz] = useState("");
+    const [subTitleRu, setSubTitleRu] = useState("");
+    const [subTitleEng, setSubTitleEng] = useState("");
+    const [subTitleTur, setSubTitleTur] = useState("");
+
+    // Image/template handling
     const [singleImageSwitch, setSingleImageSwitch] = useState(true);
     const [tripleImageSwitch, setTripleImageSwitch] = useState(false);
     const [singleFileList, setSingleFileList] = useState([]);
     const [tripleFileLists, setTripleFileLists] = useState([[], [], []]);
     const [deleteOfferImageNames, setDeleteOfferImageNames] = useState([]);
-    const [previewImage, setPreviewImage] = useState("");
-    const [previewOpen, setPreviewOpen] = useState(false);
     const [initialSingleFileList, setInitialSingleFileList] = useState([]);
     const [initialTripleFileLists, setInitialTripleFileLists] = useState([[], [], []]);
+
+    // Sub-offer flag and saved template data
     const [isSubOffer, setIsSubOffer] = useState(false);
+    const [savedTemplateData, setSavedTemplateData] = useState({ templateId: "", singleFileList: [], tripleFileLists: [[], [], []], deleteOfferImageNames: [] });
 
-    // New state to store template and images when switching to sub-offer
-    const [savedTemplateData, setSavedTemplateData] = useState({
-        templateId: "",
-        singleFileList: [],
-        tripleFileLists: [[], [], []],
-        deleteOfferImageNames: [],
-    });
+    // Preview
+    const [previewImage, setPreviewImage] = useState("");
+    const [previewOpen, setPreviewOpen] = useState(false);
 
-    // Initialize form data and file lists when offer data is fetched
+    // Refetch all offers on mount
+    useEffect(() => {
+        getAllOffersRefetch();
+    }, [getAllOffersRefetch]);
+
+    // Initialize when offer loads
     useEffect(() => {
         if (offer && offers?.data) {
-            // Determine parentOfferId by checking if the offer is a subOffer
-            let parentOfferId = offer.parentOfferId || "";
-            if (!parentOfferId) {
-                const parentOffer = offers.data.find((mainOffer) =>
-                    mainOffer.subOffers?.some((subOffer) => subOffer.id === id)
-                );
-                if (parentOffer) {
-                    parentOfferId = parentOffer.id;
-                }
+            // Figure out parentOfferId
+            let parentId = offer.parentOfferId || "";
+            if (!parentId) {
+                const parent = offers.data.find(o => o.subOffers?.some(s => s.id === id));
+                if (parent) parentId = parent.id;
             }
 
-            const newFormData = {
+            // Base form data
+            const baseData = {
                 name: offer.name || "",
                 nameEng: offer.nameEng || "",
                 nameRu: offer.nameRu || "",
@@ -84,297 +92,199 @@ function AdminServDetail() {
                 descriptionEng: offer.descriptionEng || "",
                 descriptionRu: offer.descriptionRu || "",
                 descriptionTur: offer.descriptionTur || "",
-                period: offer.period || "",
-                periodEng: offer.periodEng || "",
-                periodRu: offer.periodRu || "",
-                periodTur: offer.periodTur || "",
-                ageLimit: offer.ageLimit || "",
                 templateId: offer.templateId || "",
-                parentOfferId,
+                parentOfferId: parentId,
             };
-            setFormData(newFormData);
-            setInitialData(newFormData);
-            const isSub = !!parentOfferId;
-            setIsSubOffer(isSub);
+            setFormData(baseData);
+            setInitialData(baseData);
 
-            // Update switches and file lists only if not a sub-offer
-            if (!isSub) {
+            // Subtitle fields
+            setSubTitleAz(offer.subTitle || "");
+            setSubTitleRu(offer.subTitleRu || "");
+            setSubTitleEng(offer.subTitleEng || "");
+            setSubTitleTur(offer.subTitleTur || "");
+
+            // Sub-offer toggle
+            const sub = !!parentId;
+            setIsSubOffer(sub);
+
+            if (!sub) {
+                // Template switches
                 setSingleImageSwitch(offer.templateId === "1");
                 setTripleImageSwitch(offer.templateId === "2");
 
-                let newSingleFileList = [];
-                let newTripleFileLists = [[], [], []];
-                if (offer?.offerImageNames && offer.offerImageNames.length > 0) {
-                    if (offer.templateId === "1") {
-                        newSingleFileList = [
-                            {
-                                uid: "-1",
-                                name: offer.offerImageNames[0],
-                                url: `${OFFER_IMAGES}${offer.offerImageNames[0]}`,
-                            },
-                        ];
-                    } else if (offer.templateId === "2") {
-                        offer.offerImageNames.slice(0, 3).forEach((image, index) => {
-                            newTripleFileLists[index] = [
-                                { uid: `-${index + 1}`, name: image, url: `${OFFER_IMAGES}${image}` },
-                            ];
-                        });
-                    }
+                // Single image list
+                const sf = offer.offerImageNames?.slice(0, 1).map(name => ({ uid: '-1', name, url: OFFER_IMAGES + name })) || [];
+                // Triple image lists
+                const tf = [[], [], []];
+                if (offer.templateId === "2") {
+                    offer.offerImageNames.slice(0, 3).forEach((name, idx) => {
+                        tf[idx] = [{ uid: `-${idx+1}`, name, url: OFFER_IMAGES + name }];
+                    });
                 }
-                setSingleFileList(newSingleFileList);
-                setTripleFileLists(newTripleFileLists);
-                setInitialSingleFileList(newSingleFileList);
-                setInitialTripleFileLists(newTripleFileLists);
-
-                // Save template data
-                setSavedTemplateData({
-                    templateId: offer.templateId || "",
-                    singleFileList: newSingleFileList,
-                    tripleFileLists: newTripleFileLists,
-                    deleteOfferImageNames: [],
-                });
+                setSingleFileList(sf);
+                setTripleFileLists(tf);
+                setInitialSingleFileList(sf);
+                setInitialTripleFileLists(tf);
+                setSavedTemplateData({ templateId: offer.templateId, singleFileList: sf, tripleFileLists: tf, deleteOfferImageNames: [] });
             } else {
-                // Clear template-related data for sub-offer
+                // Clear if sub-offer
                 setSingleFileList([]);
                 setTripleFileLists([[], [], []]);
                 setSingleImageSwitch(true);
                 setTripleImageSwitch(false);
-                setFormData((prev) => ({ ...prev, templateId: "" }));
             }
         }
-    }, [offer, offers]);
+    }, [offer, offers, id]);
 
-    // Handle input changes
+    // Input change
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Handle main/sub-offer switch
+    // Main/sub-offer switch
     const handleSubOfferSwitch = (checked) => {
         setIsSubOffer(checked);
         if (checked) {
-            // Save current template data before switching to sub-offer
-            setSavedTemplateData({
-                templateId: formData.templateId,
-                singleFileList: singleFileList,
-                tripleFileLists: tripleFileLists,
-                deleteOfferImageNames: deleteOfferImageNames,
-            });
-            // Clear template-related data
-            setFormData((prev) => ({ ...prev, templateId: "", parentOfferId: prev.parentOfferId }));
+            setSavedTemplateData({ templateId: formData.templateId, singleFileList, tripleFileLists, deleteOfferImageNames });
+            setFormData(prev => ({ ...prev, templateId: "" }));
             setSingleFileList([]);
             setTripleFileLists([[], [], []]);
-            setSingleImageSwitch(true);
-            setTripleImageSwitch(false);
             setDeleteOfferImageNames([]);
         } else {
-            // Restore saved template data when switching to main offer
-            setFormData((prev) => ({ ...prev, templateId: savedTemplateData.templateId, parentOfferId: "" }));
+            setFormData(prev => ({ ...prev, templateId: savedTemplateData.templateId, parentOfferId: "" }));
             setSingleFileList(savedTemplateData.singleFileList);
             setTripleFileLists(savedTemplateData.tripleFileLists);
+            setDeleteOfferImageNames(savedTemplateData.deleteOfferImageNames);
             setSingleImageSwitch(savedTemplateData.templateId === "1");
             setTripleImageSwitch(savedTemplateData.templateId === "2");
-            setDeleteOfferImageNames(savedTemplateData.deleteOfferImageNames);
         }
     };
 
-    // Handle parent offer selection
-    const handleParentOfferChange = (value) => {
-        setFormData((prev) => ({ ...prev, parentOfferId: value || "" }));
-    };
+    // Parent offer select
+    const handleParentOfferChange = (val) => setFormData(prev => ({ ...prev, parentOfferId: val || "" }));
 
-    // Handle single image switch
+    // Switch toggles
     const handleSingleSwitchChange = (checked) => {
         if (!isSubOffer) {
             setSingleImageSwitch(checked);
             setTripleImageSwitch(!checked);
-            setFormData((prev) => ({ ...prev, templateId: checked ? "1" : "2" }));
-            if (checked) {
-                setTripleFileLists([[], [], []]);
-                setDeleteOfferImageNames((prev) =>
-                    tripleFileLists.flat().length > 0
-                        ? [...prev, ...tripleFileLists.flat().map((file) => file.name)]
-                        : prev
-                );
+            setFormData(prev => ({ ...prev, templateId: checked ? "1" : "2" }));
+            if (checked && tripleFileLists.flat().length) {
+                setDeleteOfferImageNames(prev => [...prev, ...tripleFileLists.flat().map(f => f.name)]);
             }
         }
     };
 
-    // Handle triple image switch
     const handleTripleSwitchChange = (checked) => {
         if (!isSubOffer) {
             setTripleImageSwitch(checked);
             setSingleImageSwitch(!checked);
-            setFormData((prev) => ({ ...prev, templateId: checked ? "2" : "1" }));
-            if (checked) {
-                setSingleFileList([]);
-                setDeleteOfferImageNames((prev) =>
-                    singleFileList.length > 0 ? [...prev, ...singleFileList.map((file) => file.name)] : prev
-                );
+            setFormData(prev => ({ ...prev, templateId: checked ? "2" : "1" }));
+            if (checked && singleFileList.length) {
+                setDeleteOfferImageNames(prev => [...prev, ...singleFileList.map(f => f.name)]);
             }
         }
     };
 
-    // Handle single image change
-    const handleSingleImageChange = ({ fileList: newFileList }) => {
+    // Image changes
+    const handleSingleImageChange = ({ fileList }) => {
         if (!isSubOffer) {
-            const newList = newFileList.slice(0, 1);
-            setSingleFileList(newList);
-            if (newList.length === 0 && singleFileList.length > 0) {
-                setDeleteOfferImageNames((prev) => [...prev, singleFileList[0].name]);
+            if (!fileList.length && singleFileList.length) {
+                setDeleteOfferImageNames(prev => [...prev, singleFileList[0].name]);
             }
+            setSingleFileList(fileList.slice(0,1));
         }
     };
 
-    // Handle triple image change
-    const handleTripleImageChange = (index) => ({ fileList: newFileList }) => {
+    const handleTripleImageChange = idx => ({ fileList }) => {
         if (!isSubOffer) {
-            setTripleFileLists((prev) => {
-                const newLists = [...prev];
-                newLists[index] = newFileList.slice(0, 1);
-                if (newFileList.length === 0 && prev[index].length > 0) {
-                    setDeleteOfferImageNames((prevNames) => [...prevNames, prev[index][0].name]);
+            setTripleFileLists(prev => {
+                const copy = [...prev];
+                if (!fileList.length && prev[idx].length) {
+                    setDeleteOfferImageNames(p => [...p, prev[idx][0].name]);
                 }
-                return newLists;
+                copy[idx] = fileList.slice(0,1);
+                return copy;
             });
         }
     };
 
-    // Handle image preview
-    const handlePreview = (file) => {
+    // Preview
+    const handlePreview = file => {
         setPreviewImage(file.url || file.thumbUrl);
         setPreviewOpen(true);
     };
 
-    // Construct payload with changed fields only as FormData
+    // Build payload
     const getChangedFields = () => {
-        const formDataPayload = new FormData();
-        formDataPayload.append("id", id);
-
-        // Include changed string fields
-        const stringFields = [
-            "name",
-            "nameEng",
-            "nameRu",
-            "nameTur",
-            "description",
-            "descriptionEng",
-            "descriptionRu",
-            "descriptionTur",
-            "period",
-            "periodEng",
-            "periodRu",
-            "periodTur",
-            "ageLimit",
-            // Only include templateId and parentOfferId based on isSubOffer
-            ...(isSubOffer ? ["parentOfferId"] : ["templateId", "parentOfferId"]),
-        ];
-        stringFields.forEach((key) => {
-            if (formData[key] !== initialData[key]) {
-                formDataPayload.append(key, formData[key]);
-            }
+        const payload = new FormData();
+        payload.append("id", id);
+        // text & subtitle fields
+        [
+            "name","nameEng","nameRu","nameTur",
+            "description","descriptionEng","descriptionRu","descriptionTur",
+            "subTitle","subTitleEng","subTitleRu","subTitleTur",
+            ...(isSubOffer? ["parentOfferId"] : ["templateId","parentOfferId"])
+        ].forEach(key => {
+            const val = key.startsWith('subTitle')
+                ? { subTitle: subTitleAz, subTitleEng, subTitleRu, subTitleTur }[key]
+                : formData[key];
+            if (val !== initialData[key]) payload.append(key, val || "");
         });
 
-        // Handle images only if not a sub-offer
         if (!isSubOffer) {
+            // images
             if (formData.templateId === "1") {
-                const currentImages = singleFileList.map((file) => file.originFileObj || file.name);
-                const initialImages = initialSingleFileList.map((file) => file.name);
-                if (JSON.stringify(currentImages) !== JSON.stringify(initialImages)) {
-                    singleFileList.forEach((file) => {
-                        if (file.originFileObj) {
-                            formDataPayload.append("OfferImageNames", file.originFileObj);
-                        } else {
-                            formDataPayload.append("OfferImageNames", file.name);
-                        }
-                    });
-                }
-            } else if (formData.templateId === "2") {
-                const currentImages = tripleFileLists
-                    .flat()
-                    .map((file) => file.originFileObj || file.name)
-                    .filter(Boolean);
-                const initialImages = initialTripleFileLists.flat().map((file) => file.name);
-                if (JSON.stringify(currentImages) !== JSON.stringify(initialImages)) {
-                    tripleFileLists.flat().forEach((file) => {
-                        if (file.originFileObj) {
-                            formDataPayload.append("OfferImageNames", file.originFileObj);
-                        } else {
-                            formDataPayload.append("OfferImageNames", file.name);
-                        }
-                    });
+                const curr = singleFileList.map(f => f.originFileObj || f.name);
+                const init = initialSingleFileList.map(f => f.name);
+                if (JSON.stringify(curr) !== JSON.stringify(init)) {
+                    singleFileList.forEach(f => payload.append("OfferImageNames", f.originFileObj || f.name));
                 }
             }
-
-            // Include deleted images if any
-            if (deleteOfferImageNames.length > 0) {
-                deleteOfferImageNames.forEach((name) => {
-                    formDataPayload.append("DeleteOfferImageNames", name);
-                });
+            if (formData.templateId === "2") {
+                const curr = tripleFileLists.flat().map(f => f.originFileObj || f.name);
+                const init = initialTripleFileLists.flat().map(f => f.name);
+                if (JSON.stringify(curr) !== JSON.stringify(init)) {
+                    tripleFileLists.flat().forEach(f => payload.append("OfferImageNames", f.originFileObj || f.name));
+                }
             }
+            deleteOfferImageNames.forEach(name => payload.append("DeleteOfferImageNames", name));
         }
 
-        return formDataPayload;
+        return payload;
     };
 
-    // Handle form submission
+    // Submit
     const handleSubmit = async () => {
         if (isSubOffer && !formData.parentOfferId) {
             alert("Zəhmət olmasa alt xidmət üçün ana xidmət seçin");
             return;
         }
-
         const payload = getChangedFields();
-        // Log payload entries for debugging
-        console.log("Payload:", Object.fromEntries(payload));
-        if (
-            payload.has("name") ||
-            payload.has("nameEng") ||
-            payload.has("nameRu") ||
-            payload.has("nameTur") ||
-            payload.has("description") ||
-            payload.has("descriptionEng") ||
-            payload.has("descriptionRu") ||
-            payload.has("descriptionTur") ||
-            payload.has("period") ||
-            payload.has("periodEng") ||
-            payload.has("periodRu") ||
-            payload.has("periodTur") ||
-            payload.has("ageLimit") ||
-            (!isSubOffer && payload.has("templateId")) ||
-            payload.has("parentOfferId") ||
-            (!isSubOffer && payload.has("OfferImageNames")) ||
-            (!isSubOffer && payload.has("DeleteOfferImageNames"))
-        ) {
-            try {
-                const response = await putOffer(payload).unwrap();
-                if (response?.statusCode === 200) {
-                    alert("Dəyişikliklər uğurla yadda saxlanıldı!");
-                    navigate("/admin/services");
-                } else {
-                    alert("Dəyişiklikləri yadda saxlamaq alınmadı.");
-                }
-            } catch (error) {
-                console.error("Dəyişiklikləri yadda saxlamaq alınmadı:", error);
-                alert(`Xəta: ${error?.data?.message || "Dəyişiklikləri yadda saxlamaq alınmadı"}`);
-            }
-        } else {
+        const hasChanges = Array.from(payload.keys()).length > 1;
+        if (!hasChanges) {
             alert("Heç bir dəyişiklik aşkar edilmədi.");
+            return;
+        }
+        try {
+            const res = await putOffer(payload).unwrap();
+            if (res.statusCode === 200) {
+                alert("Dəyişikliklər uğurla yadda saxlanıldı!");
+                navigate("/admin/services");
+            } else {
+                alert("Dəyişiklikləri yadda saxlamaq alınmadı.");
+            }
+        } catch (err) {
+            alert(`Xəta: ${err?.data?.message || "Dəyişiklikləri yadda saxlamaq alınmadı"}`);
         }
     };
 
     const uploadButton = (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-            }}
-        >
-            <UploadOutlined style={{ fontSize: "24px" }} />
-            <div style={{ marginTop: "8px" }}>Yüklə</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <UploadOutlined style={{ fontSize: 24 }} />
+            <div style={{ marginTop: 8 }}>Yüklə</div>
         </div>
     );
 
@@ -382,51 +292,42 @@ function AdminServDetail() {
         <>
             <div className="right">
                 <div className="adminTopBar">
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "10px",
-                        }}
-                    >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
                         <img src={image1} alt="profile" />
-                        <div>
-                            <p>Admin</p>
-                        </div>
+                        <p>Admin</p>
                     </div>
                     <div className="navigation-bar">
                         <h2 className="nav-title">
-              <span className="nav-link" onClick={() => navigate("/admin/services")}>
-                Xidmətlər
-              </span>
+                            <span className="nav-link" onClick={() => navigate("/admin/services")}>Xidmətlər</span>
                             <span className="nav-divider"> — </span>
                             <span className="nav-subtitle">{offer?.name || "Yüklənir..."}</span>
                         </h2>
                     </div>
                 </div>
             </div>
+
             <div id="admin-services-detail">
                 {isOfferLoading ? (
                     <div className="loading-spinner">
-                        <LoadingOutlined style={{ fontSize: "24px", marginBottom: "16px" }} />
+                        <LoadingOutlined style={{ fontSize: 24, marginBottom: 16 }} />
                         <p>Yüklənir...</p>
                     </div>
                 ) : (
                     <>
-                        <div style={{ marginBottom: "16px" }}>
+                        <div style={{ marginBottom: 16 }}>
                             <label>Ana Xidmət / Alt Xidmət:</label>
                             <Switch
                                 checked={isSubOffer}
                                 onChange={handleSubOfferSwitch}
                                 checkedChildren="Alt Xidmət"
                                 unCheckedChildren="Ana Xidmət"
-                                style={{ marginLeft: "10px" }}
+                                style={{ marginLeft: 10 }}
                                 disabled={isSubmitting}
                             />
                         </div>
+
                         {isSubOffer && (
-                            <div style={{ marginBottom: "16px" }}>
+                            <div style={{ marginBottom: 16 }}>
                                 <label>Ana Xidmət Seçin:</label>
                                 <Select
                                     style={{ width: "100%" }}
@@ -438,227 +339,77 @@ function AdminServDetail() {
                                     allowClear
                                 >
                                     {offers?.data
-                                        ?.filter((offer) => offer.id !== id && !offer.parentOfferId)
-                                        .map((offer) => (
-                                            <Select.Option key={offer.id} value={offer.id}>
-                                                {offer.name}
-                                            </Select.Option>
-                                        ))}
+                                        ?.filter(o => o.id !== id && !o.parentOfferId)
+                                        .map(o => <Select.Option key={o.id} value={o.id}>{o.name}</Select.Option>)}
                                 </Select>
                             </div>
                         )}
-                        <div>
-                            <label>Xidmət (AZ):</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                            />
-                        </div>
-                        <div>
-                            <label>Xidmət (RU):</label>
-                            <input
-                                type="text"
-                                name="nameRu"
-                                value={formData.nameRu}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                            />
-                        </div>
-                        <div>
-                            <label>Xidmət (ENG):</label>
-                            <input
-                                type="text"
-                                name="nameEng"
-                                value={formData.nameEng}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                            />
-                        </div>
-                        <div>
-                            <label>Xidmət (TR):</label>
-                            <input
-                                type="text"
-                                name="nameTur"
-                                value={formData.nameTur}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                            />
-                        </div>
+
+                        <div><label>Xidmət (AZ):</label><input type="text" name="name" value={formData.name} onChange={handleInputChange} disabled={isSubmitting} /></div>
+                        <div><label>Xidmət (RU):</label><input type="text" name="nameRu" value={formData.nameRu} onChange={handleInputChange} disabled={isSubmitting} /></div>
+                        <div><label>Xidmət (ENG):</label><input type="text" name="nameEng" value={formData.nameEng} onChange={handleInputChange} disabled={isSubmitting} /></div>
+                        <div><label>Xidmət (TR):</label><input type="text" name="nameTur" value={formData.nameTur} onChange={handleInputChange} disabled={isSubmitting} /></div>
+
+                        <div><label>Açıqlama (AZ):</label><textarea name="description" value={formData.description} onChange={handleInputChange} disabled={isSubmitting} /></div>
+                        <div><label>Açıqlama (RU):</label><textarea name="descriptionRu" value={formData.descriptionRu} onChange={handleInputChange} disabled={isSubmitting} /></div>
+                        <div><label>Açıqlama (ENG):</label><textarea name="descriptionEng" value={formData.descriptionEng} onChange={handleInputChange} disabled={isSubmitting} /></div>
+                        <div><label>Açıqlama (TR):</label><textarea name="descriptionTur" value={formData.descriptionTur} onChange={handleInputChange} disabled={isSubmitting} /></div>
+
+                        {/* Rich-text subtitles */}
                         <div>
                             <label>Alt Başlıq (AZ):</label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                            />
+                            <ReactQuill theme="snow" value={subTitleAz} onChange={setSubTitleAz} modules={quillModules} formats={quillFormats} placeholder="Mətn daxil edin..." />
                         </div>
                         <div>
                             <label>Alt Başlıq (RU):</label>
-                            <textarea
-                                name="descriptionRu"
-                                value={formData.descriptionRu}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                            />
+                            <ReactQuill theme="snow" value={subTitleRu} onChange={setSubTitleRu} modules={quillModules} formats={quillFormats} placeholder="Введите текст..." />
                         </div>
                         <div>
                             <label>Alt Başlıq (ENG):</label>
-                            <textarea
-                                name="descriptionEng"
-                                value={formData.descriptionEng}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                            />
+                            <ReactQuill theme="snow" value={subTitleEng} onChange={setSubTitleEng} modules={quillModules} formats={quillFormats} placeholder="Enter text..." />
                         </div>
                         <div>
                             <label>Alt Başlıq (TR):</label>
-                            <textarea
-                                name="descriptionTur"
-                                value={formData.descriptionTur}
-                                onChange={handleInputChange}
-                                disabled={isSubmitting}
-                            />
+                            <ReactQuill theme="snow" value={subTitleTur} onChange={setSubTitleTur} modules={quillModules} formats={quillFormats} placeholder="Metin girin..." />
                         </div>
-                        <div className="row">
-                            <div className="col-6 pd00">
-                                <label>Keçirilmə müddəti (AZ):</label>
-                                <input
-                                    type="text"
-                                    name="period"
-                                    value={formData.period}
-                                    onChange={handleInputChange}
-                                    disabled={isSubmitting}
-                                />
-                                <label>Keçirilmə müddəti (RU):</label>
-                                <input
-                                    type="text"
-                                    name="periodRu"
-                                    value={formData.periodRu}
-                                    onChange={handleInputChange}
-                                    disabled={isSubmitting}
-                                />
-                                <label>Keçirilmə müddəti (ENG):</label>
-                                <input
-                                    type="text"
-                                    name="periodEng"
-                                    value={formData.periodEng}
-                                    onChange={handleInputChange}
-                                    disabled={isSubmitting}
-                                />
-                                <label>Keçirilmə müddəti (TR):</label>
-                                <input
-                                    type="text"
-                                    name="periodTur"
-                                    value={formData.periodTur}
-                                    onChange={handleInputChange}
-                                    disabled={isSubmitting}
-                                />
-                            </div>
-                            <div className="col-6 pd01">
-                                <label>Yaş:</label>
-                                <input
-                                    type="text"
-                                    name="ageLimit"
-                                    value={formData.ageLimit}
-                                    onChange={handleInputChange}
-                                    disabled={isSubmitting}
-                                />
-                            </div>
-                        </div>
-                        {/* Show template and image sections only for main offer */}
+
                         {!isSubOffer && (
-                            <>
-                                <div className="row" style={{ marginTop: "16px" }}>
-                                    <div className="col-6 pd00" style={{ display: "flex", alignItems: "center" }}>
-                                        <label>Xidmət şəhifəsi nümunə 1 (bir şəkilin olduğu)</label>
-                                        <Switch
-                                            checked={singleImageSwitch}
-                                            onChange={handleSingleSwitchChange}
-                                            style={{ marginLeft: "10px" }}
-                                            disabled={isSubmitting}
-                                        />
+                            <>  {/* Template switches & uploads */}
+                                <div className="row" style={{ marginTop: 16 }}>
+                                    <div className="col-6 pd00" style={{ display: 'flex', alignItems: 'center' }}>
+                                        <label>Şəkil şablonu 1 (1 şəkil)</label>
+                                        <Switch checked={singleImageSwitch} onChange={handleSingleSwitchChange} style={{ marginLeft: 10 }} disabled={isSubmitting} />
                                     </div>
-                                    <div className="col-6 pd01" style={{ display: "flex", alignItems: "center" }}>
-                                        <label>Xidmət şəhifəsi nümunə 2 (üç şəkilin olduğu)</label>
-                                        <Switch
-                                            checked={tripleImageSwitch}
-                                            onChange={handleTripleSwitchChange}
-                                            style={{ marginLeft: "10px" }}
-                                            disabled={isSubmitting}
-                                        />
+                                    <div className="col-6 pd01" style={{ display: 'flex', alignItems: 'center' }}>
+                                        <label>Şəkil şablonu 2 (3 şəkil)</label>
+                                        <Switch checked={tripleImageSwitch} onChange={handleTripleSwitchChange} style={{ marginLeft: 10 }} disabled={isSubmitting} />
                                     </div>
                                 </div>
-                                <div className="row" style={{ marginTop: "16px" }}>
+                                <div className="row" style={{ marginTop: 16 }}>
                                     <div className="col-6 pd00">
-                                        <Upload
-                                            listType="picture-card"
-                                            fileList={singleFileList}
-                                            onPreview={handlePreview}
-                                            onChange={handleSingleImageChange}
-                                            beforeUpload={() => false}
-                                            disabled={tripleImageSwitch || isSubmitting}
-                                        >
+                                        <Upload listType="picture-card" fileList={singleFileList} onPreview={handlePreview} onChange={handleSingleImageChange} beforeUpload={() => false} disabled={tripleImageSwitch || isSubmitting}>
                                             {singleFileList.length >= 1 ? null : uploadButton}
                                         </Upload>
                                     </div>
-                                    <div className="col-6 pd01" style={{ display: "flex", gap: "10px" }}>
-                                        {[0, 1, 2].map((index) => (
-                                            <Upload
-                                                key={index}
-                                                listType="picture-card"
-                                                fileList={tripleFileLists[index]}
-                                                onPreview={handlePreview}
-                                                onChange={handleTripleImageChange(index)}
-                                                beforeUpload={() => false}
-                                                disabled={singleImageSwitch || isSubmitting}
-                                            >
-                                                {tripleFileLists[index].length >= 1 ? null : uploadButton}
+                                    <div className="col-6 pd01" style={{ display: 'flex', gap: 10 }}>
+                                        {tripleFileLists.map((list, i) => (
+                                            <Upload key={i} listType="picture-card" fileList={list} onPreview={handlePreview} onChange={handleTripleImageChange(i)} beforeUpload={() => false} disabled={singleImageSwitch || isSubmitting}>
+                                                {list.length >= 1 ? null : uploadButton}
                                             </Upload>
                                         ))}
                                     </div>
                                 </div>
                             </>
                         )}
-                        {/* Optional message when sub-offer is selected */}
-                        {isSubOffer && (
-                            <p style={{ color: "#888", marginTop: "16px" }}>
-                                Alt xidmətlər üçün şəkil yükləmə və şablon seçimi deaktivdir.
-                            </p>
-                        )}
-                        {previewImage && (
-                            <Image
-                                wrapperStyle={{ display: "none" }}
-                                preview={{
-                                    visible: previewOpen,
-                                    onVisibleChange: (visible) => setPreviewOpen(visible),
-                                    afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                                }}
-                                src={previewImage}
-                            />
-                        )}
-                        {isError && (
-                            <p style={{ color: "red", marginTop: "16px" }}>
-                                Xəta: {error?.data?.message || "Dəyişiklikləri yadda saxlamaq alınmadı"}
-                            </p>
-                        )}
-                        <Button
-                            type="primary"
-                            onClick={handleSubmit}
-                            className="button"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? (
-                                <span>
-                  <LoadingOutlined style={{ marginRight: "8px" }} />
-                  Dəyişikliklər saxlanılır...
-                </span>
-                            ) : (
-                                "Dəyişiklikləri yadda saxla"
-                            )}
+
+                        {isSubOffer && <p style={{ color: '#888', marginTop: 16 }}>Alt xidmətlər üçün şəkil yükləmə və şablon seçimi deaktivdir.</p>}
+
+                        {previewImage && <Image wrapperStyle={{ display: 'none' }} preview={{ visible: previewOpen, onVisibleChange: v => { if (!v) setPreviewImage(''); setPreviewOpen(v); }}} src={previewImage} />}
+
+                        {isError && <p style={{ color: 'red', marginTop: 16 }}>Xəta: {error?.data?.message || 'Dəyişiklikləri yadda saxlamaq alınmadı'}</p>}
+
+                        <Button type="primary" onClick={handleSubmit} className="button" disabled={isSubmitting}>
+                            {isSubmitting ? (<><LoadingOutlined style={{ marginRight: 8 }} />Dəyişikliklər saxlanılır...</>) : 'Dəyişiklikləri yadda saxla'}
                         </Button>
                     </>
                 )}

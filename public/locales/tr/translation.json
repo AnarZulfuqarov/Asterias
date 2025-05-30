@@ -66,5 +66,8 @@
     "button": "Geri Dön"
   },
   "circleText": "Bizimle iletişim kurun ",
-  "circleTextBlack": "Asterias Eğitim Merkezi "
+  "circleTextBlack": "Asterias Eğitim Merkezi ",
+  "subOffers":{
+    "title": "Bu hizmet çeşitli yönleri birleştirir"
+  }
 }

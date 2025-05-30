@@ -14,6 +14,7 @@ import flagRu from '/src/assets/circle.png';
 import flagTr from "../../../assets/turkey.png";
 import { FaChevronDown } from "react-icons/fa";
 import { useGetAllOffersQuery } from "../../../services/userApi.jsx";
+import {Circles} from "react-loader-spinner";
 
 function HomePage() {
     const [rotation, setRotation] = useState(0);
@@ -168,7 +169,15 @@ function HomePage() {
                 {isLoading ? (
                     <div className="loading-spinner">
                         <div className="spinner-circle"></div>
-                        <p>{t('homepage.loading')}</p>
+                        <Circles
+                            height="80"
+                            width="80"
+                            color="#4fa94d"
+                            ariaLabel="circles-loading"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                            visible={true}
+                        />
                     </div>
                 ) : (
                     <div className="spinner">

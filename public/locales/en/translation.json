@@ -66,6 +66,9 @@
     "button": "Go Back"
   },
   "circleText": "Connect with us ",
-  "circleTextBlack": "Asterias Training Center "
+  "circleTextBlack": "Asterias Training Center ",
+  "subOffers":{
+    "title": "This service combines various directions"
+  }
 
 }
