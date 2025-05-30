@@ -109,8 +109,7 @@ const ServicesTable = () => {
                     <th>№</th>
                     <th>Şəkil</th>
                     <th>Xidmətin adı</th>
-                    <th>Keçirilmə müddəti</th>
-                    <th>Yaş</th>
+
                     <th>Alt başlıq</th>
                     <th>Ana Xidmət</th>
                     <th>Fəaliyyətlər</th>
@@ -148,8 +147,7 @@ const ServicesTable = () => {
                                     {record.isSubOffer && <span style={{ marginLeft: "10px" }}>
                       ↳ </span>}{record.name}
                                 </td>
-                                <td>{record.period || "N/A"}</td>
-                                <td>{record.ageLimit || "N/A"}</td>
+
                                 <td>{record.description || "N/A"}</td>
                                 <td>{record.parentOfferName || "Yoxdur"}</td>
                                 <td>

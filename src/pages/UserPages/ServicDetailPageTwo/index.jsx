@@ -25,7 +25,7 @@ function ServDetailPageTwo() {
     const { id } = useParams();
     const { data: getOffersById, isLoading, error } = useGetOffersByIdQuery(id);
     const offer = getOffersById?.data;
-
+    console.log(offer);
     const toggleLangDropdown = () => {
         setLangDropdownOpen(!langDropdownOpen);
     };
@@ -259,12 +259,12 @@ function ServDetailPageTwo() {
                                         className="sub-title"
                                         dangerouslySetInnerHTML={{
                                             __html: i18n.language?.startsWith("en")
-                                                ? offer.subOffers[0].subTitleEng || offer.subOffers[0].subTitle
+                                                ? offer.subOffers[0]?.subTitleEng || offer.subOffers[0]?.subTitle
                                                 : i18n.language?.startsWith("ru")
-                                                    ? offer.subOffers[0].subTitleRu || offer.subOffers[0].subTitle
+                                                    ? offer.subOffers[0]?.subTitleRu || offer.subOffers[0]?.subTitle
                                                     : i18n.language?.startsWith("tr")
-                                                        ? offer.subOffers[0].subTitleTur || offer.subOffers[0].subTitle
-                                                        : offer.subOffers[0].subTitle
+                                                        ? offer.subOffers[0]?.subTitleTur || offer.subOffers[0]?.subTitle
+                                                        : offer.subOffers[0]?.subTitle
                                         }}
                                     />
                                 )}
@@ -294,12 +294,12 @@ function ServDetailPageTwo() {
                                         className="sub-title"
                                         dangerouslySetInnerHTML={{
                                             __html: i18n.language?.startsWith("en")
-                                                ? offer.subOffers[1].subTitleEng || offer.subOffers[1].subTitle
+                                                ? offer.subOffers[1]?.subTitleEng || offer.subOffers[1]?.subTitle
                                                 : i18n.language?.startsWith("ru")
-                                                    ? offer.subOffers[1].subTitleRu || offer.subOffers[1].subTitle
+                                                    ? offer.subOffers[1]?.subTitleRu || offer.subOffers[1]?.subTitle
                                                     : i18n.language?.startsWith("tr")
-                                                        ? offer.subOffers[1].subTitleTur || offer.subOffers[1].subTitle
-                                                        : offer.subOffers[1].subTitle
+                                                        ? offer.subOffers[1]?.subTitleTur || offer.subOffers[1]?.subTitle
+                                                        : offer.subOffers[1]?.subTitle
                                         }}
                                     />
                                 )}
@@ -313,17 +313,17 @@ function ServDetailPageTwo() {
                     <div className={"description-section row"}>
                         <img src={icon2}/>
                         <div className={"col-12 description-column"}>
-                            {offer.subTitle && (
+                            {offer?.subTitle && (
                                 <div
                                     className="sub-title"
                                     dangerouslySetInnerHTML={{
                                         __html: i18n.language?.startsWith("en")
-                                            ? offer.subOffers[0].subTitleEng || offer.subOffers[0].subTitle
+                                            ? offer?.subTitleEng || offer?.subTitle
                                             : i18n.language?.startsWith("ru")
-                                                ? offer.subOffers[0].subTitleRu || offer.subOffers[0].subTitle
+                                                ? offer?.subTitleRu || offer?.subTitle
                                                 : i18n.language?.startsWith("tr")
-                                                    ? offer.subOffers[0].subTitleTur || offer.subOffers[0].subTitle
-                                                    : offer.subOffers[0].subTitle
+                                                    ? offer?.subTitleTur || offer?.subTitle
+                                                    : offer?.subTitle
                                     }}
                                 />
                             )}

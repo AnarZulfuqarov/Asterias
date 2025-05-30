@@ -406,7 +406,11 @@
       padding: 30px 50px;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: column;
       &.left-column {
         overflow: hidden;
         background: #F3FAFF;
@@ -414,6 +418,7 @@
         .contentt{
           position: relative;
           z-index: 2;
+
         }
         img{
           width: 222px;
@@ -488,6 +493,8 @@
         cursor: pointer;
         border: none;
         margin-top: 20px;
+        position: relative;
+        bottom: 0;
 
       }
 
@@ -519,7 +526,7 @@
       z-index: -1;
     }
     button {
-      margin-top: 40px;
+      margin: 40px auto auto;
       display: flex;
       height: 52px;
       padding: 9px 44px;
@@ -530,7 +537,7 @@
       align-self: stretch;
       border-radius: 19px;
       background: #EF926A;
-      width: 100%;
+      width: 80%;
       border: none;
       color: #fff;
       font-size: 16px;

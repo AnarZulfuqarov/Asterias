@@ -45,7 +45,10 @@
       padding: 30px;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: column;
       &.left-column {
         overflow: hidden;
         background: #F3FAFF;
@@ -151,7 +154,7 @@
       top:-70px;
     }
     button{
-      margin-top: 40px;
+      margin: 40px auto 0;
       display: flex;
       height: 52px;
       padding: 9px 44px;
@@ -162,7 +165,7 @@
       align-self: stretch;
       border-radius: 19px;
       background: #007781;
-      width: 100%;
+      width: 80%;
       border: none;
       color: #fff;
       font-size: 16px;
