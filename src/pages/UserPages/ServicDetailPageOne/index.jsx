@@ -390,8 +390,7 @@ function ServDetailPageOne() {
                     <div className={"description-section row"}>
                         <img src={icon3}/>
                         <div className={"col-12 description-column"}>
-                            <p>{offerDescription}</p>
-                            {offer.subOffers[0]?.subTitle && (
+                            {offer.subTitle && (
                                 <div
                                     className="sub-title"
                                     dangerouslySetInnerHTML={{

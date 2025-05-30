@@ -239,12 +239,10 @@ function ServDetailPageTwo() {
                             </div>
                         </div>
                         <div className={"col-6 col-md-12 col-sm-12 col-xs-12 sub-offer-column left-column"}>
-                            <h3>{t("subOffers.for_whom") || "YOŞ üçün uyğundur"}</h3>
-                            <img src={icon2} />
-
-                            <ul>
-                                {offer.subOffers.slice(0, Math.ceil(offer.subOffers.length / 2)).map((subOffer, index) => (
-                                    <li key={index}>
+                            <img src={icon2}/>
+                            <div className={"contentt"}>
+                                <h3>{offer.subOffers.slice(0, Math.ceil(offer.subOffers.length / 2)).map((subOffer, index) => (
+                                    <h2 style={{fontWeight: "bold"}} key={index}>
                                         {i18n.language?.startsWith("en")
                                             ? subOffer.nameEng || subOffer.name
                                             : i18n.language?.startsWith("ru")
@@ -252,43 +250,85 @@ function ServDetailPageTwo() {
                                                 : i18n.language?.startsWith("tr")
                                                     ? subOffer.nameTur || subOffer.name
                                                     : subOffer.name}
-                                    </li>
-                                ))}
-                            </ul>
+                                    </h2>
+                                ))}</h3>
+
+
+                                {offer.subOffers[0]?.subTitle && (
+                                    <div
+                                        className="sub-title"
+                                        dangerouslySetInnerHTML={{
+                                            __html: i18n.language?.startsWith("en")
+                                                ? offer.subOffers[0].subTitleEng || offer.subOffers[0].subTitle
+                                                : i18n.language?.startsWith("ru")
+                                                    ? offer.subOffers[0].subTitleRu || offer.subOffers[0].subTitle
+                                                    : i18n.language?.startsWith("tr")
+                                                        ? offer.subOffers[0].subTitleTur || offer.subOffers[0].subTitle
+                                                        : offer.subOffers[0].subTitle
+                                        }}
+                                    />
+                                )}
+                            </div>
                             <button onClick={() => navigate("/contact")}>
-                                {t("servDetailTwo.button")}
+                                {t("servDetailOne.button") || "Əlaqə"}
                             </button>
                         </div>
                         <div className={"col-6 col-md-12 col-sm-12 col-xs-12 sub-offer-column right-column"}>
-                            <h3>{t("subOffers.what_to_know") || "Başlayarkən nəyi bilməliyəm?"}</h3>
-                            <img src={icon3} />
-                            <ul>
-                                {offer.subOffers.slice(Math.ceil(offer.subOffers.length / 2)).map((subOffer, index) => (
-                                    <li key={index}>
+                            <img src={icon3}/>
+                            <div className={"contentt"}>
+                                <h3>{offer.subOffers.slice(Math.ceil(offer.subOffers.length / 2)).map((subOffer, index) => (
+                                    <h2 key={index}>
                                         {i18n.language?.startsWith("en")
-                                            ? subOffer.descriptionEng || subOffer.description
+                                            ? subOffer.nameEng || subOffer.name
                                             : i18n.language?.startsWith("ru")
-                                                ? subOffer.descriptionRu || subOffer.description
+                                                ? subOffer.nameRu || subOffer.name
                                                 : i18n.language?.startsWith("tr")
-                                                    ? subOffer.descriptionTur || subOffer.description
-                                                    : subOffer.description}
-                                    </li>
-                                ))}
-                            </ul>
+                                                    ? subOffer.nameTur || subOffer.name
+                                                    : subOffer.name}
+                                    </h2>
+                                ))}</h3>
+
+
+                                {offer.subOffers[1]?.subTitle && (
+                                    <div
+                                        className="sub-title"
+                                        dangerouslySetInnerHTML={{
+                                            __html: i18n.language?.startsWith("en")
+                                                ? offer.subOffers[1].subTitleEng || offer.subOffers[1].subTitle
+                                                : i18n.language?.startsWith("ru")
+                                                    ? offer.subOffers[1].subTitleRu || offer.subOffers[1].subTitle
+                                                    : i18n.language?.startsWith("tr")
+                                                        ? offer.subOffers[1].subTitleTur || offer.subOffers[1].subTitle
+                                                        : offer.subOffers[1].subTitle
+                                        }}
+                                    />
+                                )}
+                            </div>
                             <button className={"last-btn"} onClick={() => navigate("/contact")}>
-                                {t("servDetailTwo.button")}
+                                {t("servDetailOne.button") || "Əlaqə"}
                             </button>
                         </div>
                     </div>
                 ) : (
                     <div className={"description-section row"}>
-                        <img src={icon2} />
-                        <div className={"col-12 header-sub"}>
-                        </div>
+                        <img src={icon2}/>
                         <div className={"col-12 description-column"}>
-                            <p>{offerDescription}</p>
+                            {offer.subTitle && (
+                                <div
+                                    className="sub-title"
+                                    dangerouslySetInnerHTML={{
+                                        __html: i18n.language?.startsWith("en")
+                                            ? offer.subOffers[0].subTitleEng || offer.subOffers[0].subTitle
+                                            : i18n.language?.startsWith("ru")
+                                                ? offer.subOffers[0].subTitleRu || offer.subOffers[0].subTitle
+                                                : i18n.language?.startsWith("tr")
+                                                    ? offer.subOffers[0].subTitleTur || offer.subOffers[0].subTitle
+                                                    : offer.subOffers[0].subTitle
+                                    }}
+                                />
+                            )}
                             <button onClick={() => navigate("/contact")}>
-                                {t("servDetailTwo.button")}
+                                {t("servDetailOne.button") || "Əlaqə"}
                             </button>
                         </div>
                     </div>

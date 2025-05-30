@@ -48,8 +48,12 @@
 
       &.left-column {
         overflow: hidden;
-        background: #e5f1f2;
+        background: #F3FAFF;
         position: relative;
+        .contentt{
+          position: relative;
+          z-index: 2;
+        }
         img{
           width: 222px;
           height: 222px;
@@ -61,14 +65,19 @@
 
       &.right-column {
         overflow: hidden;
-        background: #fff2ec;
+        background: #FFECE3;
         position: relative;
+        .contentt{
+          position: relative;
+          z-index: 2;
+        }
         img{
           width: 222px;
           height: 222px;
           position: absolute;
           right: -0px;
           top:-70px;
+
         }
       }
 
