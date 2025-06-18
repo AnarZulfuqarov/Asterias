@@ -11,6 +11,7 @@ import AdminServDetail from "../pages/AdminPages/AdminServicesDetail/index.jsx";
 import AdminLogin from "../pages/AdminPages/AdminLogin/index.jsx";
 import NotFound from "../pages/UserPages/NotFound/index.jsx";
 import AdminServiceAdd from "../pages/AdminPages/AdminServiceAdd/index.jsx";
+import ServDetailPageThree from "../pages/UserPages/ServicDetailPageThree/index.jsx";
 
 const router = [
     {
@@ -32,6 +33,10 @@ const router = [
             {
                 path: "/serviceDetailTwo/:id",
                 element: <ServDetailPageTwo/>
+            },
+            {
+                path: "/serviceDetailThree/:id",
+                element: <ServDetailPageThree/>
             }
         ]
     },

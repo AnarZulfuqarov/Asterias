@@ -1,0 +1,48 @@
+#footer {
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-direction: row;
+  padding: 0 16px 8px;
+
+  .text {
+    font-family: Noto Sansm, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 100%;
+    vertical-align: middle;
+    color: #474747;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 200px;
+    width: 100%;
+    gap: 10px;
+
+    span {
+      min-width: 150px;
+      width: 100%;
+    }
+
+    .line {
+      height: 1px;
+      width: 80px;
+      background-color: #474747;
+    }
+  }
+
+  .circlePhone {
+    background: #affba8;
+    height: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+  }
+
+  @media screen and (max-width: 1100px) {
+    .text {
+      font-size: 12px;
+    }
+  }
+}

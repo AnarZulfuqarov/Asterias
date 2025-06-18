@@ -1,12 +1,15 @@
 import "./index.scss";
-import { Upload, Switch, Image, Select } from "antd";
-import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import {Upload, Switch, Image, Select} from "antd";
+import {UploadOutlined, LoadingOutlined, DeleteOutlined, PlusOutlined} from "@ant-design/icons";
+import {useState} from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import image1 from "../../../assets/profile.png";
-import { useNavigate } from "react-router-dom";
-import { useGetAllOffersQuery, usePostOffersMutation } from "../../../services/userApi.jsx";
+import {useNavigate} from "react-router-dom";
+import {useGetAllOffersQuery, usePostOffersMutation} from "../../../services/userApi.jsx";
+
+const {Panel} = Collapse;
+import {Collapse, Button, Space} from "antd";
 
 function AdminServCreate() {
     // Image/template states
@@ -16,28 +19,34 @@ function AdminServCreate() {
     const [tripleImageSwitch, setTripleImageSwitch] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
-
+    const [templateId, setTemplateId] = useState("1");
+    const [multiFileLists, setMultiFileLists] = useState({
+        2: [[], [], []],
+        3: [[], [], [], [], []],
+    });
     // Offer type state
     const [isSubOffer, setIsSubOffer] = useState(false);
     const [parentOfferId, setParentOfferId] = useState(null);
-
-    // Rich-text states for subtitles
-    const [subTitleAz, setSubTitleAz] = useState("");
-    const [subTitleRu, setSubTitleRu] = useState("");
-    const [subTitleEng, setSubTitleEng] = useState("");
-    const [subTitleTur, setSubTitleTur] = useState("");
-
+    const [galleryTemplateId, setGalleryTemplateId] = useState("1");
+    const [galleryFileList, setGalleryFileList] = useState([]);
+    const [galleryMultiple, setGalleryMultiple] = useState(false);
+// sponsor (icon) üçün
+    const [iconsMultiple, setIconsMultiple] = useState(false);
+    const [iconFileLists, setIconFileLists] = useState([[], [], [], []]);
+    const [subTitles, setSubTitles] = useState([
+        {text: "", textEng: "", textRu: "", textTur: ""}
+    ]);
     const navigate = useNavigate();
-    const [postOffers, { isLoading, isError, error }] = usePostOffersMutation();
-    const { data: offers, isLoading: offersLoading } = useGetAllOffersQuery();
+    const [postOffers, {isLoading, isError, error}] = usePostOffersMutation();
+    const {data: offers, isLoading: offersLoading} = useGetAllOffersQuery();
 
     // ReactQuill toolbar configuration
     const quillModules = {
         toolbar: [
             ["bold", "italic", "underline"],
-            [{ header: [1, 2, false] }],
+            [{header: [1, 2, 3, 4, false]}],
             ["link", "image"],
-            [{ list: "ordered" }, { list: "bullet" }],
+            [{list: "ordered"}, {list: "bullet"}],
         ],
     };
     const quillFormats = [
@@ -50,31 +59,35 @@ function AdminServCreate() {
         "list",
         "bullet",
     ];
+    const handleMultiChange = (template, idx) => ({fileList}) => {
+        setMultiFileLists((prev) => ({
+            ...prev,
+            [template]: prev[template].map((list, i) => (i === idx ? fileList : list)),
+        }));
+    };
+    const handleIconChange = (idx) => ({fileList}) => {
+        setIconFileLists((prev) => prev.map((list, i) => (i === idx ? fileList : list)));
+    };
 
     // Handlers for template switches
-    const handleSingleSwitchChange = (checked) => {
-        setSingleImageSwitch(checked);
-        setTripleImageSwitch(!checked);
-        if (checked) setTripleFileLists([[], [], []]);
-    };
-    const handleTripleSwitchChange = (checked) => {
-        setTripleImageSwitch(checked);
-        setSingleImageSwitch(!checked);
-        if (checked) setSingleFileList([]);
-    };
 
-    // Handlers for image uploads
-    const handleSingleImageChange = ({ fileList }) => {
-        setSingleFileList(fileList);
-    };
-    const handleTripleImageChange = (index) => ({ fileList }) => {
-        setTripleFileLists((prev) => {
-            const lists = [...prev];
-            lists[index] = fileList;
-            return lists;
+    const updateSubtitle = (index, lang, value) => {
+        setSubTitles(prev => {
+            const copy = [...prev];
+            copy[index] = {...copy[index], [lang]: value};
+            return copy;
         });
     };
 
+    const addSubtitle = () => {
+        setSubTitles(prev => [
+            ...prev,
+            {text: "", textEng: "", textRu: "", textTur: ""}
+        ]);
+    };
+    const removeSubtitle = idx => {
+        setSubTitles(prev => prev.filter((_, i) => i !== idx));
+    };
     // Offer type switch
     const handleSubOfferSwitch = (checked) => {
         setIsSubOffer(checked);
@@ -93,10 +106,7 @@ function AdminServCreate() {
     };
 
     // Preview handler
-    const handlePreview = (file) => {
-        setPreviewImage(file.url || file.thumbUrl);
-        setPreviewOpen(true);
-    };
+
 
     // Form submission
     const handleSubmit = async (e) => {
@@ -131,25 +141,32 @@ function AdminServCreate() {
         offerData.append("descriptionRu", formData.get("descriptionRu"));
         offerData.append("descriptionTur", formData.get("descriptionTur"));
         // Rich-text subtitles as HTML
-        offerData.append("subTitle", subTitleAz);
-        offerData.append("subTitleEng", subTitleEng);
-        offerData.append("subTitleRu", subTitleRu);
-        offerData.append("subTitleTur", subTitleTur);
+        offerData.append("subTitleJson", JSON.stringify(subTitles));
+        offerData.append("templateId", templateId);
 
         // Template & images for main offers
-        if (!isSubOffer) {
-            offerData.append("templateId", singleImageSwitch ? "1" : "2");
-            if (singleImageSwitch && singleFileList[0]?.originFileObj) {
-                offerData.append("offerImages", singleFileList[0].originFileObj);
-            }
-            if (tripleImageSwitch) {
-                tripleFileLists
-                    .filter((list) => list.length > 0)
-                    .forEach((list) => {
-                        offerData.append("offerImages", list[0].originFileObj);
-                    });
-            }
+        if (templateId === "1" && singleFileList[0]?.originFileObj) {
+            offerData.append("offerImages", singleFileList[0].originFileObj);
         }
+        if (templateId === "2" || templateId === "3") {
+            multiFileLists[templateId]
+                .filter((list) => list.length > 0)
+                .forEach((list) => offerData.append("offerImages", list[0].originFileObj));
+        }
+
+        // Gallery Images
+        offerData.append("galaryTemplateId", galleryTemplateId);
+        galleryFileList.forEach((file) => {
+            if (file.originFileObj) {
+                offerData.append("offerIGalary", file.originFileObj);
+            }
+        });
+
+        // Icons
+        iconFileLists
+            .filter((list) => list.length > 0)
+            .forEach((list) => offerData.append("offerIcons", list[0].originFileObj));
+
         // Parent for sub-offer
         if (isSubOffer && parentOfferId) {
             offerData.append("parentOfferId", parentOfferId);
@@ -166,9 +183,9 @@ function AdminServCreate() {
     };
 
     const uploadButton = (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <UploadOutlined style={{ fontSize: 24 }} />
-            <div style={{ marginTop: 8 }}>Upload</div>
+        <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+            <UploadOutlined style={{fontSize: 24}}/>
+            <div style={{marginTop: 8}}>Upload</div>
         </div>
     );
 
@@ -176,8 +193,8 @@ function AdminServCreate() {
         <>
             <div className="right">
                 <div className="adminTopBar">
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <img src={image1} alt="Profile" />
+                    <div style={{display: "flex", alignItems: "center", gap: 10}}>
+                        <img src={image1} alt="Profile"/>
                         <div><p>Admin</p></div>
                     </div>
                     <div className="navigation-bar">
@@ -198,7 +215,7 @@ function AdminServCreate() {
                         onChange={handleSubOfferSwitch}
                         checkedChildren="Alt Xidmət"
                         unCheckedChildren="Ana Xidmət"
-                        style={{ marginLeft: 10 }}
+                        style={{marginLeft: 10}}
                     />
                 </div>
 
@@ -206,7 +223,7 @@ function AdminServCreate() {
                     <div>
                         <label>Ana Xidmət Seçin:</label>
                         <Select
-                            style={{ width: '100%' }}
+                            style={{width: '100%'}}
                             placeholder="Ana xidmət seçin"
                             onChange={handleParentOfferChange}
                             loading={offersLoading}
@@ -223,121 +240,190 @@ function AdminServCreate() {
                     </div>
                 )}
 
-                <div><label>Xidmət (AZ):</label><input type="text" name="name" required /></div>
-                <div><label>Xidmət (RU):</label><input type="text" name="nameRu" required /></div>
-                <div><label>Xidmət (ENG):</label><input type="text" name="nameEng" required /></div>
-                <div><label>Xidmət (TR):</label><input type="text" name="nameTur" required /></div>
+                <div><label>Xidmət (AZ):</label><input type="text" name="name" required/></div>
+                <div><label>Xidmət (RU):</label><input type="text" name="nameRu" required/></div>
+                <div><label>Xidmət (ENG):</label><input type="text" name="nameEng" required/></div>
+                <div><label>Xidmət (TR):</label><input type="text" name="nameTur" required/></div>
 
-                <div><label>Açıqlama (AZ):</label><textarea name="description" required /></div>
-                <div><label>Açıqlama (RU):</label><textarea name="descriptionRu" required /></div>
-                <div><label>Açıqlama (ENG):</label><textarea name="descriptionEng" required /></div>
-                <div><label>Açıqlama (TR):</label><textarea name="descriptionTur" required /></div>
+                <div><label>Açıqlama (AZ):</label><textarea name="description" required/></div>
+                <div><label>Açıqlama (RU):</label><textarea name="descriptionRu" required/></div>
+                <div><label>Açıqlama (ENG):</label><textarea name="descriptionEng" required/></div>
+                <div><label>Açıqlama (TR):</label><textarea name="descriptionTur" required/></div>
 
                 {/* Rich-text editors */}
-                <div>
-                    <label>Alt Başlıq (AZ):</label>
-                    <ReactQuill
-                        theme="snow"
-                        value={subTitleAz}
-                        onChange={setSubTitleAz}
-                        modules={quillModules}
-                        formats={quillFormats}
-                        placeholder="Mətn daxil edin..."
+                <label>Alt Başlıqlar:</label>
+                <Collapse accordion>
+                    {subTitles.map((item, idx) => (
+                        <Panel
+                            key={idx}
+                            header={
+                                <Space>
+                                    Alt Başlıq #{idx + 1}
+                                    <DeleteOutlined
+                                        style={{color: "red"}}
+                                        onClick={e => {
+                                            e.stopPropagation(); // panelin açılmasını önlə
+                                            removeSubtitle(idx);
+                                        }}
+                                    />
+                                </Space>
+                            }
+                        >
+                            {/* Daxildəki redaktorlar */}
+                            <div style={{marginBottom: 16}}>
+                                <h4>AZ</h4>
+                                <ReactQuill
+                                    value={item.text}
+                                    onChange={html => updateSubtitle(idx, "text", html)}
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                    placeholder="AZ mətn daxil edin…"
+                                />
+                            </div>
+                            <div style={{marginBottom: 16}}>
+                                <h4>RU</h4>
+                                <ReactQuill
+                                    value={item.textRu}
+                                    onChange={html => updateSubtitle(idx, "textRu", html)}
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                    placeholder="RU mətn daxil edin…"
+                                />
+                            </div>
+                            <div style={{marginBottom: 16}}>
+                                <h4>ENG</h4>
+                                <ReactQuill
+                                    value={item.textEng}
+                                    onChange={html => updateSubtitle(idx, "textEng", html)}
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                    placeholder="ENG mətn daxil edin…"
+                                />
+                            </div>
+                            <div style={{marginBottom: 16}}>
+                                <h4>TR</h4>
+                                <ReactQuill
+                                    value={item.textTur}
+                                    onChange={html => updateSubtitle(idx, "textTur", html)}
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                    placeholder="TR mətn daxil edin…"
+                                />
+                            </div>
+                        </Panel>
+                    ))}
+
+                    {/* Yeni alt başlıq düyməsi */}
+                    <Panel
+                        key="add"
+                        header={
+                            <Button
+                                type="dashed"
+                                block
+                                icon={<PlusOutlined/>}
+                                onClick={addSubtitle}
+                            >
+                                Yeni Alt Başlıq
+                            </Button>
+                        }
                     />
-                </div>
-                <div>
-                    <label>Alt Başlıq (RU):</label>
-                    <ReactQuill
-                        theme="snow"
-                        value={subTitleRu}
-                        onChange={setSubTitleRu}
-                        modules={quillModules}
-                        formats={quillFormats}
-                        placeholder="Введите текст..."
-                    />
-                </div>
-                <div>
-                    <label>Alt Başlıq (ENG):</label>
-                    <ReactQuill
-                        theme="snow"
-                        value={subTitleEng}
-                        onChange={setSubTitleEng}
-                        modules={quillModules}
-                        formats={quillFormats}
-                        placeholder="Enter text..."
-                    />
-                </div>
-                <div>
-                    <label>Alt Başlıq (TR):</label>
-                    <ReactQuill
-                        theme="snow"
-                        value={subTitleTur}
-                        onChange={setSubTitleTur}
-                        modules={quillModules}
-                        formats={quillFormats}
-                        placeholder="Metin girin..."
-                    />
-                </div>
+                </Collapse>
 
                 {/* Template switches & uploads */}
                 {!isSubOffer && (
                     <>
-                        <div className="row" style={{ marginTop: 16 }}>
-                            <div className="col-6 pd00" style={{ display: 'flex', alignItems: 'center' }}>
-                                <label>Şəkil şablonu 1 (1 şəkil)</label>
-                                <Switch checked={singleImageSwitch} onChange={handleSingleSwitchChange} style={{ marginLeft: 10 }} />
-                            </div>
-                            <div className="col-6 pd01" style={{ display: 'flex', alignItems: 'center' }}>
-                                <label>Şəkil şablonu 2 (3 şəkil)</label>
-                                <Switch checked={tripleImageSwitch} onChange={handleTripleSwitchChange} style={{ marginLeft: 10 }} />
-                            </div>
+                        <div>
+                            <label>Şablon Tipi:</label>
+                            <Select
+                                value={templateId}
+                                onChange={setTemplateId}
+                                style={{width: 200}}
+                            >
+                                <Option value="1">Şablon 1 (1 Image)</Option>
+                                <Option value="2">Şablon 2 (3 Images)</Option>
+                                <Option value="3">Şablon 3 (5 Images)</Option>
+                            </Select>
                         </div>
-                        <div className="row" style={{ marginTop: 16 }}>
-                            <div className="col-6 pd00">
-                                <Upload
-                                    listType="picture-card"
-                                    fileList={singleFileList}
-                                    onPreview={handlePreview}
-                                    onChange={handleSingleImageChange}
-                                    beforeUpload={() => false}
-                                    disabled={tripleImageSwitch}
-                                >
-                                    {singleFileList.length >= 1 ? null : uploadButton}
-                                </Upload>
-                            </div>
-                            <div className="col-6 pd01" style={{ display: 'flex', gap: 10 }}>
-                                {[0,1,2].map((i) => (
+                        {/* Image Uploads for Template */}
+                        {templateId === "1" && (
+                            <Upload
+                                listType="picture-card"
+                                fileList={singleFileList}
+                                onChange={({fileList}) => setSingleFileList(fileList)}
+                                beforeUpload={() => false}
+                            >
+                                {singleFileList.length >= 1 ? null : uploadButton}
+                            </Upload>
+                        )}
+                        {(templateId === "2" || templateId === "3") && (
+                            <div className="row" style={{display: 'flex', gap: 10}}>
+                                {multiFileLists[templateId].map((list, idx) => (
                                     <Upload
-                                        key={i}
+                                        key={idx}
                                         listType="picture-card"
-                                        fileList={tripleFileLists[i]}
-                                        onPreview={handlePreview}
-                                        onChange={handleTripleImageChange(i)}
+                                        fileList={list}
+                                        onChange={handleMultiChange(templateId, idx)}
                                         beforeUpload={() => false}
-                                        disabled={singleImageSwitch}
                                     >
-                                        {tripleFileLists[i].length >= 1 ? null : uploadButton}
+                                        {list.length >= 1 ? null : uploadButton}
                                     </Upload>
                                 ))}
                             </div>
-                        </div>
+                        )}
                     </>
                 )}
 
                 {/* Preview (hidden wrapper) */}
                 {previewImage && (
                     <Image
-                        wrapperStyle={{ display: 'none' }}
-                        preview={{ visible: previewOpen, onVisibleChange: v => !v && setPreviewImage("") }}
+                        wrapperStyle={{display: 'none'}}
+                        preview={{visible: previewOpen, onVisibleChange: v => !v && setPreviewImage("")}}
                         src={previewImage}
                     />
                 )}
+                <div>
+                    <label>Galeri və ya Sponsor Şablonu: </label>
+                    <Select
+                        value={galleryTemplateId}
+                        onChange={setGalleryTemplateId}
+                        style={{width: 200}}
+                    >
+                        <Option value="1">Galeri</Option>
+                        <Option value="2">Sponsor Logoları</Option>
+                    </Select>
+                </div>
+                <Upload
+                    multiple                     // sadece çoklu yüklemeyi aktif et
+                    listType="picture-card"
+                    fileList={galleryFileList}
+                    onChange={({fileList}) => setGalleryFileList(fileList)}
+                    beforeUpload={() => false}
+                >
+                    {uploadButton}
+                </Upload>
 
+
+                <div>
+                    <label>Offer Icons:</label>
+                    <div className="row" style={{display: 'flex', gap: 10}}>
+                        {iconFileLists?.map((list, idx) => (
+                            <Upload
+                                key={idx}
+                                listType="picture-card"
+                                fileList={list}
+                                onChange={handleIconChange(idx)}
+                                beforeUpload={() => false}
+                            >
+                                {list.length >= 1 ? null : uploadButton}
+                            </Upload>
+                        ))}
+                    </div>
+                </div>
                 {/* Submit */}
                 <button type="submit" className="button" disabled={isLoading}>
-                    {isLoading ? (<><LoadingOutlined style={{ marginRight: 8 }} />Yadda saxlanılır…</>) : "Yadda saxla"}
+                    {isLoading ? (<><LoadingOutlined style={{marginRight: 8}}/>Yadda saxlanılır…</>) : "Yadda saxla"}
                 </button>
-                {isError && <p style={{ color: 'red' }}>Error: {error?.data?.message || "Failed to submit"}</p>}
+                {isError && <p style={{color: 'red'}}>Error: {error?.data?.message || "Failed to submit"}</p>}
             </form>
         </>
     );

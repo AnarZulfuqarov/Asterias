@@ -1,0 +1,21 @@
+/* src/components/PhotoGallery/PhotoGallery.scss */
+.photo-gallery {
+  text-align: center;
+  margin: 60px 0;
+
+  .pg-title {
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: #1f1f1f;
+  }
+
+  .pg-item {
+    padding: 0 8px;
+    img {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+  }
+}

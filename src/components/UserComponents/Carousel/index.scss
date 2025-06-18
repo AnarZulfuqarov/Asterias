@@ -1,0 +1,69 @@
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 300px; // dilediğin yüksekliği ayarla
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+
+  .nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.4);
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 1000;
+    &.left { left: 1rem; }
+    &.right { right: 1rem; }
+  }
+
+  .carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+
+  .item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: center center;
+    transition: transform 0.5s ease, z-index 0s linear;
+    img {
+      display: block;
+      width: 200px;  // merkezdeki normal genişlik
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    &.edge {
+      cursor: pointer;
+      .overlay {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+        color: white;
+        font-size: 2rem;
+      }
+      &:hover .overlay {
+        opacity: 1;
+      }
+    }
+  }
+}
