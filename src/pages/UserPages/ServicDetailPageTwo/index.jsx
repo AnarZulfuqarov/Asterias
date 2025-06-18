@@ -27,7 +27,6 @@ function ServDetailPageTwo() {
     const { id } = useParams();
     const { data: getOffersById, isLoading, error } = useGetOffersByIdQuery(id);
     const offer = getOffersById?.data;
-    console.log(offer);
     const toggleLangDropdown = () => {
         setLangDropdownOpen(!langDropdownOpen);
     };
@@ -389,13 +388,15 @@ function ServDetailPageTwo() {
                 </div>
             </div>
         </div>
-            {galleryTemplateId == "1" && (
-                <PhotoGallery images={offer.offerGalaryNames.map(name => `${OFFER_GALERY}${name}`)}/>
-            )}
+            <div className={"container"}>
+                {galleryTemplateId == "1" && (
+                    <PhotoGallery images={offer?.offerGalaryNames?.map(name => `${OFFER_GALERY}${name}`)}/>
+                )}
 
-            {galleryTemplateId == "2" && (
-                <PartnerBubbles logos={offer.offerGalaryNames.map(name => `${OFFER_GALERY}${name}`)}/>
-            )}
+                {galleryTemplateId == "2" && (
+                    <PartnerBubbles logos={offer?.offerGalaryNames?.map(name => `${OFFER_GALERY}${name}`)}/>
+                )}
+            </div>
         </>
     );
 }

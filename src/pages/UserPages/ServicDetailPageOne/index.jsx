@@ -12,7 +12,7 @@ import flagTr from "../../../assets/turkey.png";
 import {FaChevronDown} from "react-icons/fa";
 import elli from "../../../assets/Ellipse 2.png";
 import {useGetOffersByIdQuery} from "../../../services/userApi.jsx";
-import {OFFER_IMAGES} from "../../../contants.js";
+import {OFFER_GALERY, OFFER_IMAGES} from "../../../contants.js";
 import CircleTextAsterias from "../../../components/UserComponents/CircleTextWhite/index.jsx";
 import icon2 from "/src//assets/Star25.png";
 import icon3 from "/src//assets/Rectangle477.png";
@@ -462,11 +462,11 @@ function ServDetailPageOne() {
 
         </div>
     {galleryTemplateId == "1" && (
-        <PhotoGallery images={offer.offerGalaryNames.map(name => `${OFFER_IMAGES}${name}`)}/>
+        <PhotoGallery images={offer.offerGalaryNames.map(name => `${OFFER_GALERY}${name}`)}/>
     )}
 
     {galleryTemplateId == "2" && (
-        <PartnerBubbles logos={/* örn: partner logoları dizisi */[]}/>
+        <PartnerBubbles logos={offer.offerGalaryNames.map(name => `${OFFER_GALERY}${name}`)}/>
     )}
     </>
     );

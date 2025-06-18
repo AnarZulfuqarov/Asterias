@@ -1,22 +1,41 @@
-// src/components/PhotoGallery/PhotoGallery.jsx
-import React from 'react'
-import Carousel from '../Carousel' // Mevcut Carousel’ini kullanıyoruz
-import './index.scss'
+import React, { useState } from 'react';
+import './index.scss';
 
-export default function PhotoGallery({ images }) {
+const PhotoGallery = ({ images }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const visibleImages = images.slice(currentIndex, currentIndex + 6);
+
+    const handlePrev = () => {
+        if (currentIndex > 0) {
+            setCurrentIndex(currentIndex - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (currentIndex + 6 < images.length) {
+            setCurrentIndex(currentIndex + 1);
+        }
+    };
+
     return (
         <div className="photo-gallery">
-            <h3 className="pg-title">Foto Qalereya</h3>
-            <Carousel
-                items={images?.map((src, i) => (
-                    <div key={i} className="pg-item">
-                        <img src={src} alt={`gallery-${i}`} />
-                    </div>
-                ))}
-                curved={true}
-                arrowPrevLabel="« Əvvəlki"
-                arrowNextLabel="Sonrakı »"
-            />
+            <h2>Foto Qalereya</h2>
+            <div className="gallery-row">
+                {visibleImages.map((image, i) => {
+                    const positionClass = ['far-left', 'left', 'center-left', 'center-right', 'right', 'far-right'];
+
+                    return (
+                        <div className={`gallery-item ${positionClass[i]}`} key={i}>
+                            <img src={image} alt={`img-${i}`} />
+                            {i === 0 && <button className="nav-btn left" onClick={handlePrev}>Əvvəlki</button>}
+                            {i === 5 && <button className="nav-btn right" onClick={handleNext}>Sonraki</button>}
+                        </div>
+                    );
+                })}
+            </div>
         </div>
-    )
-}
+    );
+};
+
+export default PhotoGallery;

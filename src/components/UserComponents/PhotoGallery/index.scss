@@ -1,21 +1,85 @@
-/* src/components/PhotoGallery/PhotoGallery.scss */
 .photo-gallery {
+  padding: 40px;
   text-align: center;
-  margin: 60px 0;
 
-  .pg-title {
-    font-size: 24px;
-    margin-bottom: 16px;
-    color: #1f1f1f;
+  h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
   }
 
-  .pg-item {
-    padding: 0 8px;
+  .gallery-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+    gap: 16px;
+    overflow: hidden;
+  }
+
+  .gallery-item {
+    width: 180px;
+    height: 200px;
+    position: relative;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    border-radius: 10px;
+    overflow: hidden;
+
     img {
       width: 100%;
-      max-width: 200px;
-      border-radius: 8px;
+      height: 100%;
       object-fit: cover;
+      border-radius: 10px;
+      display: block;
     }
+
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      padding: 6px 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+
+      &.left { left: 10px; }
+      &.right { right: 10px; }
+    }
+
+    &:hover .nav-btn {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  // Position-based transform styles
+  .far-left {
+    transform: rotateY(35deg) scale(0.85);
+    opacity: 0.6;
+  }
+
+  .left {
+    transform: rotateY(20deg) scale(0.9);
+    opacity: 0.8;
+  }
+
+  .center-left,
+  .center-right {
+    transform: rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+
+  .right {
+    transform: rotateY(-20deg) scale(0.9);
+    opacity: 0.8;
+  }
+
+  .far-right {
+    transform: rotateY(-35deg) scale(0.85);
+    opacity: 0.6;
   }
 }
