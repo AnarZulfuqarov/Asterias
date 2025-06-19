@@ -84,8 +84,8 @@ export default function PartnerBubbles({ logos }) {
     return (
         <div className="partner-bubbles">
             <div className="container">
-                <div className="row">
-                    <div className="col-5">
+                <div className="row" style={{justifyContent:"space-between"}}>
+                    <div className="col-5 col-md-12 col-sm-12 col-xs-12">
                         <div className="content">
                             <h2>Tərəfdaşlarımızla Güclüyük</h2>
                             <p>
@@ -93,7 +93,7 @@ export default function PartnerBubbles({ logos }) {
                             </p>
                         </div>
                     </div>
-                    <div className="col-7" style={{ position: 'relative', height: '400px' }}>
+                    <div className="col-6 col-md-12 col-sm-12 col-xs-12 sponsorr" style={{ position: 'relative', height: '400px' }}>
                         {logos?.map((logo, i) => (
                             <div key={i} className="bubble" style={bubbleStyle(i)}>
                                 <img src={logo} alt={`partner-${i}`} />

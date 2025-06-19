@@ -1,11 +1,95 @@
 .photo-gallery {
   padding: 40px;
   text-align: center;
+  .gallery-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 
-  h2 {
-    font-size: 26px;
-    margin-bottom: 20px;
+    .gallery-row {
+      display: flex;
+      gap: 16px;
+      perspective: 1200px;
+      overflow: hidden;
+    }
+
+    .nav-button {
+      display: none;
+
+      @media (max-width: 992px) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10;
+        transition: background 0.3s ease;
+
+        &:disabled {
+          background-color: rgba(0, 0, 0, 0.2);
+          cursor: not-allowed;
+        }
+
+        svg {
+          font-size: 18px;
+        }
+
+        &.left {
+          left: -0px;
+        }
+
+        &.right {
+          right: -0px;
+          padding: 0;
+        }
+      }
+    }
   }
+
+    .gallery-header {
+      position: relative;
+      text-align: center;
+      width: max-content;
+      margin: 0 auto 20px;
+      padding: 20px 40px;
+      border-radius: 12px;
+      z-index: 25;
+
+      h2 {
+        font-size: 42px;
+        font-weight: 600;
+        color: #111;
+        position: relative;
+        z-index: 25;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 420px;
+        height: 220px;
+        background: radial-gradient(circle at left, #E5F1F2 0%, transparent 50%),
+        radial-gradient(circle at right, #FF8C5B57 0%, transparent 50%);
+        filter: blur(70px);
+        z-index: 0;
+        border-radius: 50%;
+      }
+    }
+
+
+
 
   .gallery-row {
     display: flex;
@@ -17,69 +101,142 @@
   }
 
   .gallery-item {
-    width: 180px;
-    height: 200px;
+    width: 200px;
+    height: 300px;
     position: relative;
-    transition: transform 0.5s ease, opacity 0.5s ease;
+    transition: opacity 0.5s ease, filter 0.3s ease;
     border-radius: 10px;
     overflow: hidden;
+    cursor: pointer; // Indicate clickable area
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 10px;
       display: block;
+      transition: filter 0.3s ease;
     }
 
-    .nav-btn {
+    // Darken effect and "Sonraki" text for far-left and far-right
+    &.far-left:hover img,
+    &.far-right:hover img {
+      filter: brightness(50%);
+    }
+
+    &.far-left:hover::after,
+    &.far-right:hover::after {
+      content: "Sonraki";
       position: absolute;
       top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255, 255, 255, 0.9);
-      border: none;
-      padding: 6px 10px;
-      font-size: 14px;
-      border-radius: 5px;
-      cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-
-      &.left { left: 10px; }
-      &.right { right: 10px; }
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      z-index: 10;
     }
-
-    &:hover .nav-btn {
-      opacity: 1;
-      pointer-events: auto;
+    &.far-left:hover::after{
+      content: "Əvvəlki";
+    }
+    &.far-left:active::after {
+      content: "Əvvəlki"; // Change to "Əvvəlki" on click
     }
   }
 
-  // Position-based transform styles
   .far-left {
-    transform: rotateY(35deg) scale(0.85);
+    transform: rotateY(35deg) scale(0.95);
     opacity: 0.6;
   }
 
   .left {
-    transform: rotateY(20deg) scale(0.9);
+    transform: rotateY(20deg) scale(0.85);
     opacity: 0.8;
   }
 
-  .center-left,
+  .center-left {
+    transform: rotateY(0deg) scaleY(0.8);
+    opacity: 1;
+  }
+
   .center-right {
-    transform: rotateY(0deg) scale(1);
+    transform: rotateY(0deg) scaleY(0.8);
     opacity: 1;
   }
 
   .right {
-    transform: rotateY(-20deg) scale(0.9);
+    transform: rotateY(-20deg) scale(0.85);
     opacity: 0.8;
   }
 
   .far-right {
-    transform: rotateY(-35deg) scale(0.85);
+    transform: rotateY(-35deg) scale(0.95);
     opacity: 0.6;
+  }
+
+}
+@media (max-width: 991px) {
+  .gallery-row {
+    gap: 12px;
+    flex-wrap: wrap;
+    perspective: none;
+  }
+
+  .gallery-item {
+    width: 160px;
+    height: 240px;
+    transform: none !important;
+    opacity: 1 !important;
+
+    &.far-left,
+    &.left,
+    &.center-left,
+    &.center-right,
+    &.right,
+    &.far-right {
+      transform: none !important;
+    }
+
+    &:hover::after {
+      content: none !important;
+    }
+
+    &:hover img {
+      filter: none !important;
+    }
+  }
+
+  .gallery-header h2 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 576px) {
+  .photo-gallery {
+    padding: 20px 12px;
+  }
+
+  .gallery-header {
+    padding: 16px 24px;
+
+    &::before {
+      width: 280px;
+      height: 140px;
+      filter: blur(50px);
+    }
+
+    h2 {
+      font-size: 24px;
+    }
+  }
+
+  .gallery-row {
+    gap: 10px;
+  }
+
+  .gallery-item {
+    width: 130px;
+    height: 180px;
+    border-radius: 8px;
   }
 }

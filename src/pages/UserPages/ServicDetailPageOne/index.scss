@@ -15,8 +15,36 @@
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 24px;
     margin-top: 100px;
+    @media screen and (max-width: 576px) {
+      padding: 0 16px;
+    }
   }
-
+  .yeniButton{
+    width: 100%;
+    margin: 50px auto;
+    text-align: center;
+    button{
+      display: flex;
+      width: 422px;
+      padding: 14px 0;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0 auto;
+      border: none;
+      border-radius: 19px;
+      background: #007781;
+      color: #FFF;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; /* 150% */
+      @media screen and (max-width: 576px) {
+        width: 90%;
+      }
+    }
+  }
   .sub-title-card {
     padding: 24px;
     border-radius: 12px;
@@ -201,22 +229,20 @@
       margin-top: 50px;
       position: relative;
 
-      .icon1 {
+      .icon-dynamic {
         border-radius: 8.373px;
         width: 59.373px;
         height: 51px;
         flex-shrink: 0;
         position: relative;
-        top: 70px;
-        animation: float 3s ease-in-out infinite; /* Added animation */
+        animation: float 3s ease-in-out infinite;
 
         .overlay {
           width: 100%;
           height: 100%;
           position: relative;
           z-index: 1;
-          background: #E5F1F2;
-          filter: blur(8.944029808044434px);
+          filter: blur(8px);
         }
 
         .content {
@@ -225,94 +251,16 @@
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-        }
-      }
 
-      .icon2 {
-        border-radius: 8.373px;
-        width: 59.373px;
-        height: 51px;
-        flex-shrink: 0;
-        position: relative;
-        animation: float 3s ease-in-out infinite; /* Added animation */
-        animation-delay: 0.2s; /* Slight delay for staggered effect */
-
-        .overlay {
-          width: 100%;
-          height: 100%;
-          position: relative;
-          z-index: 1;
-          border-radius: 8.373px;
-          background: #FBFFC1;
-          filter: blur(8.944029808044434px);
-        }
-
-        .content {
-          position: absolute;
-          z-index: 3;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-      }
-
-      .icon3 {
-        border-radius: 8.373px;
-        width: 59.373px;
-        height: 51px;
-        flex-shrink: 0;
-        position: relative;
-        top: 70px;
-        animation: float 3s ease-in-out infinite; /* Added animation */
-        animation-delay: 0.4s; /* Slight delay for staggered effect */
-
-        .overlay {
-          width: 100%;
-          height: 100%;
-          position: relative;
-          z-index: 1;
-          border-radius: 27.09px;
-          background: rgba(255, 140, 91, 0.53);
-          filter: blur(12.600746154785156px);
-        }
-
-        .content {
-          position: absolute;
-          z-index: 3;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-      }
-
-      .icon4 {
-        border-radius: 8.373px;
-        width: 59.373px;
-        height: 51px;
-        flex-shrink: 0;
-        position: relative;
-        animation: float 3s ease-in-out infinite; /* Added animation */
-        animation-delay: 0.6s; /* Slight delay for staggered effect */
-
-        .overlay {
-          width: 100%;
-          height: 100%;
-          position: relative;
-          z-index: 1;
-          border-radius: 28.567px;
-          background: #EFC;
-          filter: blur(10.17164134979248px);
-        }
-
-        .content {
-          position: absolute;
-          z-index: 3;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
+          img {
+            width: 22px;
+            height: 22px;
+          }
         }
       }
     }
+
+
 
     /* Keyframe animation for subtle up-and-down movement */
     @keyframes float {
@@ -397,6 +345,9 @@
     display: flex;
     justify-content: space-between;
     gap: 30px;
+    @media screen and (max-width: 576px){
+      padding: 0 16px;
+    }
 
     .header-sub {
       position: relative;
@@ -406,6 +357,18 @@
         left: 45%;
         transform: translateX(-50%);
         top: 90px;
+        @media only screen and (max-width: 375px) and (max-height: 667px) {
+          left: 35%;
+          top: 150px;
+        }
+        @media only screen and (max-width: 390px) and (max-height: 844px) {
+          left: 35%;
+          top: 150px;
+        }
+        @media only screen and (max-width: 430px) and (max-height: 932px) {
+          left: 37%;
+          top: 120px;
+        }
       }
 
       .ox-2 {
@@ -413,6 +376,18 @@
         right: 35%;
         transform: translateX(-40%);
         top: 90px;
+        @media only screen and (max-width: 375px) and (max-height: 667px) {
+          right: 0%;
+          top: 150px;
+        }
+        @media only screen and (max-width: 390px) and (max-height: 844px) {
+          right: 0%;
+          top: 150px;
+        }
+        @media only screen and (max-width: 430px) and (max-height: 932px) {
+          right: 7%;
+          top: 120px;
+        }
       }
     }
 
@@ -540,6 +515,10 @@
     margin-top: 100px;
     position: relative;
     overflow: hidden;
+    @media screen and (max-width: 576px){
+      width: 90%;
+      margin:100px auto 50px;
+    }
     .description-column{
       position: relative;
       z-index: 2;
@@ -780,6 +759,10 @@
         bottom: -60px;
         left: 55px;
         z-index: 9;
+        @media screen and (max-width: 576px){
+          left: 10px;
+          bottom: -105px;
+        }
       }
 
       .frame,

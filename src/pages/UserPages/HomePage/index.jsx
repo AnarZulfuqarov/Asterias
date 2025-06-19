@@ -9,25 +9,36 @@ import mavi from '/src/assets/mavi.png';
 import Footer from '../../../components/UserComponents/components/Footer/index.jsx';
 import Navbar from '../../../components/Navbar/index.jsx';
 import { useGetAllOffersQuery } from '../../../services/userApi.jsx';
-import CircleText from "../../../components/UserComponents/CircleText/index.jsx";
+import CircleText from '../../../components/UserComponents/CircleText/index.jsx';
+import { useTranslation } from 'react-i18next'; // i18n hook
 
 function HomePage() {
-    const [isMobile, setIsMobile] = useState(false); // Mobil cihaz yoxlaması
-    const navigate = useNavigate(); // Naviqasiya üçün hook
+    const [isMobile, setIsMobile] = useState(false);
+    const navigate = useNavigate();
+    const { t, i18n } = useTranslation(); // Çeviri hook'u
+    const currentLanguage = i18n.language; // Mevcut dil
 
-    // Offerləri çəkmək üçün RTK Query istifadəsi
+    // Offerleri çek
     const { data: getAllOffers, isLoading, isError } = useGetAllOffersQuery();
-    const offers = getAllOffers?.data || []; // Data null/undefined olarsa boş array
+    const offers = getAllOffers?.data || [];
 
+    // Offer isimlerini dil seçimine göre wedges'e map et
     const wedges = offers
-        .map(offer => ({
-            name: offer.name,
+        .map((offer) => ({
+            name:
+                currentLanguage === 'en'
+                    ? offer.nameEng
+                    : currentLanguage === 'ru'
+                        ? offer.nameRu
+                        : currentLanguage === 'tr'
+                            ? offer.nameTur
+                            : offer.name, // Varsayılan: Azerbaycan dili
             id: offer.id,
             templateId: offer.templateId,
         }))
         .slice(0, offers?.length);
 
-    // Ekran ölçüsünü yoxlamaq üçün useEffect
+    // Ekran boyutunu kontrol et
     useEffect(() => {
         const checkScreenSize = () => {
             setIsMobile(window.innerWidth <= 1100);
@@ -36,15 +47,14 @@ function HomePage() {
         checkScreenSize();
         window.addEventListener('resize', checkScreenSize);
 
-        // Komponent unmount olduqda event listener-i təmizləyirik
         return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
 
-    // Dilim klik edildikdə naviqasiya funksiyası
+    // Dilim tıklama işlevi
     const handleWedgeClick = (id, templateId) => {
-        console.log('Klik olundu:', { id, templateId }); // Debug üçün
+        console.log('Tıklandı:', { id, templateId });
         if (!id || !templateId) {
-            console.error('ID və ya templateId yoxdur:', { id, templateId });
+            console.error('ID veya templateId eksik:', { id, templateId });
             return;
         }
         if (templateId === '1') {
@@ -52,17 +62,17 @@ function HomePage() {
         } else if (templateId === '2') {
             navigate(`/serviceDetailTwo/${id}`);
         } else {
-            console.error('Naməlum templateId:', templateId);
+            console.error('Bilinmeyen templateId:', templateId);
         }
     };
 
-    // Data yüklənərkən və ya xəta olduqda UI
+    // Yükleniyor ve hata durumları
     if (isLoading) {
-        return <div>Yüklənir...</div>;
+        return <div>{t('loading')}</div>;
     }
 
     if (isError) {
-        return <div>Offerləri çəkməkdə xəta baş verdi</div>;
+        return <div>{t('error')}</div>;
     }
 
     return (
@@ -73,7 +83,7 @@ function HomePage() {
                 overflow: 'hidden',
             }}
         >
-            {/* Statik şəkillər */}
+            {/* Statik resimler */}
             <img src={denizAti} alt="Deniz Atı" className="denizAti" />
             <img src={mavi} alt="Mavi" className="mavi" />
 
@@ -82,38 +92,38 @@ function HomePage() {
             <div className="container">
                 <section id="homePage">
                     <div className="row">
-                        {/* Sol tərəfdəki mətn bloku */}
+                        {/* Sol taraftaki metin bloğu */}
                         <div className="yazi col-6 col-md-6 col-sm-12 col-xs-12">
                             <div className="wordWrapper">
-                                <span className="span">Bacarıqlarını</span>
-                                <img src={qusImg} alt="Quş" className="image" />
-                                <span className="span">Kəşf Et</span>
+                                <span className="span">{t('homepage.title1')}</span>
+                                <img src={qusImg} alt="Kuş" className="image" />
+                                <span className="span">{t('homepage.title1.2')}</span>
                             </div>
                             <div className="wordWrapper">
-                                <span className="span">Güclü</span>
-                                <img src={strongImg} alt="Güclü" className="image" />
+                                <span className="span">{t('homepage.title2')}</span>
+                                <img src={strongImg} alt="Güçlü" className="image" />
                             </div>
                             <div className="wordWrapper">
-                                <span className="span">Tərəflərini Ortaya Çıxar</span>
+                                <span className="span">{t('homepage.title2.2')}</span>
                             </div>
                             {!isMobile && (
                                 <section className="item">
                                     <div className="text">
                                         <div className="line"></div>
-                                        <span>Daha ətraflı məlumat üçün</span>
+                                        <span>{t('homepage.more_info')}</span>
                                     </div>
-                                    <CircleText/>
+                                    <CircleText />
                                 </section>
                             )}
                         </div>
 
-                        {/* Sağ tərəfdəki çarx bloku */}
+                        {/* Sağ taraftaki çark bloğu */}
                         <div className="box col-6 col-md-6 col-sm-12 col-xs-12">
                             <div className="wheel-wrapper">
                                 <div className="wheel rotating">
                                     {wedges.map((wedge, index) => (
                                         <div
-                                            key={wedge.id} // Unikal ID istifadə edirik
+                                            key={wedge.id}
                                             className="slice"
                                             style={{
                                                 transform: `rotate(${index * (360 / wedges.length)}deg)`,
@@ -136,9 +146,7 @@ function HomePage() {
                                 <div className="center-text">
                                     <div className="circle-center">
                                         <div className="circle-center-content">
-                                            Asterias Training And
-                                            <br />
-                                            Development Center
+                                            {t('homepage.center_text')}
                                         </div>
                                     </div>
                                 </div>

@@ -13,7 +13,7 @@ import flagRu from "../../../assets/circle.png";
 import flagTr from "../../../assets/turkey.png";
 import { FaChevronDown } from "react-icons/fa";
 import { useGetOffersByIdQuery } from "../../../services/userApi.jsx";
-import {OFFER_GALERY, OFFER_IMAGES} from "../../../contants.js";
+import {DESCRIPTION_ICON, OFFER_GALERY, OFFER_IMAGES} from "../../../contants.js";
 import icon3 from "../../../assets/Rectangle477.png";
 import icon2 from "../../../assets/Star25.png";
 import PhotoGallery from "../../../components/UserComponents/PhotoGallery/index.jsx";
@@ -74,7 +74,16 @@ function ServDetailPageTwo() {
     if (error || !offer) {
         return <div>Error loading offer details or offer not found.</div>;
     }
-
+    const iconBgColors = [
+        "#E5F1F2",   // Mavi-gri
+        "#FBFFC1",   // Sarımsı
+        "rgba(255, 140, 91, 0.53)", // Narıncı
+        "#EFC",      // Açıq yaşıl
+        "#FDE2E4",   // Çəhrayımsı
+        "#E0BBE4",   // Açıq bənövşəyi
+        "#CDEAC0",   // Açıq yaşıl
+        "#FFD6A5"    // Portağal ton
+    ];
     const offerName = i18n.language?.startsWith("en")
         ? offer.nameEng
         : i18n.language?.startsWith("ru")
@@ -131,54 +140,28 @@ function ServDetailPageTwo() {
                             </div>
                             <p>{offerDescription}</p>
                             <div className={"functions"}>
-                                <div className={"icon1"}>
-                                    <div className={"overlay"}></div>
-                                    <div className={"content"}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
-                                            <path d="M9.79843 19.3173V4.6643C9.79843 4.07226 9.88724 2.88818 8.46634 2.88818C7.06556 2.88818 6.76954 4.54533 7.57828 5.24572M9.79843 19.3173C8.21334 19.3173 7.6892 17.9027 8.22603 16.9671M7.01349 4.14333C6.61086 4.06984 6.19459 4.11234 5.80158 4.26707C5.40856 4.4218 5.05091 4.68397 4.76032 5.03038C4.46973 5.37678 4.25517 5.79672 4.13563 6.253C4.01609 6.70927 3.99528 7.1878 4.07502 7.64619C4.15477 8.10459 4.33262 8.5287 4.59282 8.88096C4.85302 9.23322 5.18753 9.50275 5.56673 9.66569M5.54911 15.3516C5.41725 15.607 5.35166 15.9015 5.35814 16.2091C5.36462 16.5166 5.44299 16.8278 5.58628 17.115C5.72958 17.4021 5.9334 17.6565 6.17967 17.8554C6.42594 18.0543 6.70707 18.1917 6.99816 18.2555C7.28925 18.3192 7.5813 18.3073 7.84846 18.2207M4.60413 9.08439C4.34991 9.11313 4.10817 9.21208 3.90033 9.37248C3.69248 9.53287 3.52494 9.74976 3.41254 10.0039C3.30015 10.2581 3.24637 10.5417 3.25598 10.8296C3.26558 11.1176 3.33826 11.4009 3.46759 11.6546C3.59693 11.9083 3.77891 12.1244 3.99743 12.284C4.21594 12.4435 4.46425 12.5415 4.72035 12.5692M4.2323 12.5166C3.98167 12.6883 3.7773 12.9192 3.63731 13.1889C3.49732 13.4586 3.42602 13.7588 3.42973 14.0628C3.43344 14.3669 3.51204 14.6653 3.65858 14.9319C3.80512 15.1984 4.01506 15.4247 4.26981 15.5908C4.52457 15.7569 4.81627 15.8577 5.11909 15.8841" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round"/>
-                                            <path d="M6.81095 11.1557C7.07666 11.1657 7.34042 11.1005 7.57886 10.966C7.81729 10.8315 8.02305 10.6317 8.17791 10.3845C8.33276 10.1373 8.43193 9.85015 8.46663 9.54859C8.50133 9.24703 8.4705 8.94033 8.37685 8.65567C8.2832 8.371 8.12964 8.11715 7.92975 7.9166" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M9.75952 13.4948C9.48278 13.4951 9.21656 13.5584 8.98442 13.6791C8.75229 13.7999 8.5614 13.9743 8.42868 14.187C8.29596 14.3996 8.2255 14.644 8.22353 14.8984" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M5.85216 12.9858C6.00355 12.9841 6.14853 13.0211 6.27426 13.0934C6.39999 13.1657 6.50259 13.2712 6.57298 13.4004C6.64336 13.5297 6.67936 13.6788 6.67778 13.8345" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M6.69052 6.44038C6.58139 6.40672 6.46473 6.40444 6.35087 6.43374C6.237 6.46304 6.12944 6.52303 6.03772 6.60838C5.946 6.69373 5.87295 6.80181 5.82503 6.92305C5.77712 7.04429 5.75582 7.17495 5.76303 7.30345C5.77023 7.43195 5.80572 7.55432 5.86635 7.65973" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M11.5756 19.3173V4.6643C11.5756 4.07226 11.4868 2.88818 12.9077 2.88818C14.2929 2.88818 14.5978 4.50874 13.8223 5.22205M11.5756 19.3173C13.1607 19.3173 13.6848 17.9027 13.148 16.9671M14.3605 4.14333C14.7632 4.06984 15.1794 4.11234 15.5724 4.26707C15.9655 4.4218 16.3231 4.68397 16.6137 5.03038C16.9043 5.37678 17.1189 5.79672 17.2384 6.253C17.3579 6.70927 17.3787 7.1878 17.299 7.64619C17.2193 8.10459 17.0414 8.5287 16.7812 8.88096C16.521 9.23322 16.1865 9.50275 15.8073 9.66569M15.8249 15.3516C15.9568 15.607 16.0224 15.9015 16.0159 16.2091C16.0094 16.5166 15.9311 16.8278 15.7878 17.115C15.6445 17.4021 15.4407 17.6565 15.1944 17.8554C14.9481 18.0543 14.667 18.1917 14.3759 18.2555C14.0848 18.3192 13.7927 18.3073 13.5256 18.2207M16.7699 9.08439C17.0241 9.11313 17.2659 9.21208 17.4737 9.37248C17.6815 9.53287 17.8491 9.74976 17.9615 10.0039C18.0739 10.2581 18.1276 10.5417 18.118 10.8296C18.1084 11.1176 18.0358 11.4009 17.9064 11.6546C17.7771 11.9083 17.5951 12.1244 17.3766 12.284C17.1581 12.4435 16.9098 12.5415 16.6537 12.5692M17.1417 12.5166C17.3924 12.6883 17.5967 12.9192 17.7367 13.1889C17.8767 13.4586 17.948 13.7588 17.9443 14.0628C17.9406 14.3669 17.862 14.6653 17.7154 14.9319C17.5689 15.1984 17.359 15.4247 17.1042 15.5908C16.8495 15.7569 16.5577 15.8577 16.2549 15.8841" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round"/>
-                                            <path d="M15.0266 10.9392C14.7664 10.9935 14.4954 10.9734 14.2378 10.8807C13.9802 10.788 13.7439 10.6256 13.5498 10.4077C13.3558 10.1899 13.2099 9.92346 13.1252 9.63197C13.0405 9.34048 13.0196 9.03295 13.0642 8.73662" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M13.701 15.0546C13.9775 15.0429 14.2409 14.9686 14.4679 14.8384C14.6948 14.7081 14.8783 14.526 15.0022 14.308C15.126 14.09 15.1863 13.843 15.1778 13.5888" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M13.2031 12.2782C13.1474 12.419 13.13 12.5676 13.1526 12.7109C13.1752 12.8541 13.237 12.9877 13.3326 13.0996C13.4281 13.2116 13.5545 13.2985 13.7004 13.3527" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M14.8553 6.75468C14.9599 6.80051 15.0497 6.87502 15.1167 6.9716C15.1838 7.06819 15.226 7.18388 15.2396 7.30843C15.2533 7.43297 15.238 7.56252 15.195 7.68561C15.152 7.80869 15.0828 7.92151 14.9934 8.01407C14.9039 8.10663 14.7971 8.17607 14.6823 8.21624" stroke="#00689C" stroke-width="0.88806" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>                                    </div>
-                                </div>
-                                <div className={"icon2"}>
-                                    <div className={"overlay"}></div>
-                                    <div className={"content"}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                            <path d="M15.546 8.26364L16.1811 7.62856C16.6862 7.12336 16.97 6.43816 16.97 5.72369C16.97 5.00922 16.6862 4.32402 16.1811 3.81881C15.6759 3.31361 14.9907 3.02979 14.2763 3.02979C13.5618 3.02979 12.8767 3.31361 12.3715 3.81881L11.7365 4.45388L5.89846 10.2908C5.50318 10.6868 5.30521 10.8848 5.13531 11.1026C4.93486 11.3599 4.76283 11.638 4.62221 11.9323C4.5037 12.1816 4.41533 12.4474 4.23858 12.9777L3.48914 15.2255M15.546 8.26364C15.546 8.26364 14.1972 8.18417 13.0065 6.99349C11.8159 5.8035 11.7371 4.45388 11.7371 4.45388M15.546 8.26364L9.70871 14.1006C9.31343 14.4958 9.11545 14.6938 8.89761 14.8637C8.64039 15.0642 8.36224 15.2362 8.06801 15.3769C7.81865 15.4954 7.55354 15.5838 7.02263 15.7605L4.77498 16.51M4.77498 16.51L4.22557 16.6936C4.0975 16.7365 3.95999 16.7429 3.8285 16.712C3.69701 16.6811 3.57675 16.6141 3.48124 16.5186C3.38573 16.4231 3.31875 16.3028 3.28783 16.1713C3.25691 16.0398 3.26329 15.9023 3.30623 15.7742L3.48982 15.2248L4.77498 16.51Z" stroke="black" stroke-width="1.14179"/>
-                                        </svg>
-                                    </div>
+                                {offer.offerIconNames?.map((iconName, i) => {
+                                    const bgColor = iconBgColors[i % iconBgColors.length]; // Rənglər sırayla dönsün
 
-
-                                </div>
-                                <div className={"icon3"}>
-                                    <div className={"overlay"}></div>
-                                    <div className={"content"}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                            <path d="M13.8097 5.69897C14.7585 5.69897 15.5276 4.92984 15.5276 3.98108C15.5276 3.03231 14.7585 2.26318 13.8097 2.26318C12.8609 2.26318 12.0918 3.03231 12.0918 3.98108C12.0918 4.92984 12.8609 5.69897 13.8097 5.69897Z" stroke="#595959" stroke-width="1.23134"/>
-                                            <path d="M15.356 7.41695V11.0245C15.356 12.118 14.9216 13.1667 14.1484 13.9399C13.3752 14.7131 12.3265 15.1475 11.233 15.1475H6.7665C5.67302 15.1475 4.62434 14.7131 3.85114 13.9399C3.07793 13.1667 2.64355 12.118 2.64355 11.0245V6.558C2.64355 5.46453 3.07793 4.41584 3.85114 3.64264C4.62434 2.86944 5.67302 2.43506 6.7665 2.43506H10.3741" stroke="#595959" stroke-width="1.23134" stroke-linecap="round"/>
-                                            <path d="M5.74902 10.8832L7.2642 8.86709C7.35699 8.74294 7.49301 8.65815 7.64534 8.62952C7.79767 8.60088 7.9552 8.63049 8.08673 8.71248L9.56481 9.64633C9.70139 9.73331 9.86665 9.76325 10.0251 9.72971C10.1835 9.69618 10.3224 9.60185 10.4121 9.46698L11.9334 7.17188" stroke="#595959" stroke-width="1.23134" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </div>
-
-                                </div>
-                                <div className={"icon4"}>
-                                    <div className={"overlay"}></div>
-                                    <div className={"content"}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
-                                            <path d="M2.67578 9.91082C2.67578 6.5306 2.67578 4.83974 3.72578 3.78974C4.77577 2.73975 6.46588 2.73975 9.84685 2.73975C13.2271 2.73975 14.9179 2.73975 15.9679 3.78974C17.0179 4.83974 17.0179 6.52985 17.0179 9.91082C17.0179 13.291 17.0179 14.9819 15.9679 16.0319C14.9179 17.0819 13.2278 17.0819 9.84685 17.0819C6.46664 17.0819 4.77577 17.0819 3.72578 16.0319C2.67578 14.9819 2.67578 13.2918 2.67578 9.91082Z" stroke="#5B8700" stroke-width="1.29851" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M4.94043 10.2884L5.29898 10.0499C5.65603 9.81134 5.83493 9.69208 6.00703 9.74492C6.17838 9.79851 6.2584 9.99779 6.41843 10.3971L7.5824 13.3078L9.15853 8.57867C9.49066 7.58227 9.65673 7.08407 10.0523 6.79949C10.4478 6.51491 10.9732 6.51416 12.0232 6.51416H14.7535M13.6212 9.91098L12.4889 11.0433M12.4889 11.0433L11.3567 12.1755M12.4889 11.0433L13.6212 12.1755M12.4889 11.0433L11.3567 9.91098" stroke="#5B8700" stroke-width="1.29851" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </div>
-
-
-                                </div>
+                                    return (
+                                        <div
+                                            key={i}
+                                            className={`icon-dynamic`}
+                                            style={{
+                                                top: i % 2 === 0 ? "70px" : "0",
+                                                animationDelay: `${i * 0.2}s`,
+                                            }}
+                                        >
+                                            <div
+                                                className={"overlay"}
+                                                style={{ background: bgColor }}
+                                            ></div>
+                                            <div className={"content"}>
+                                                <img src={`${DESCRIPTION_ICON}${iconName}`} alt={`icon-${i}`} width={20} height={20} />
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                             <div>
                                 <button className={"moreBtn"} onClick={() => setShowDetails(true)}>Ətraflı bax <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -307,29 +290,36 @@ function ServDetailPageTwo() {
                     ) : (
                         <>{showDetails && (
                             offer.subTitle?.length > 1 ? (
-                                <div className="sub-titles-grid">
-                                    {offer.subTitle.map((sub, i) => {
-                                        // kart başlığı için istersen sub.title gibi bir alan kullan
-                                        const html = i18n.language.startsWith("en")
-                                            ? sub.textEng || sub.text
-                                            : i18n.language.startsWith("ru")
-                                                ? sub.textRu || sub.text
-                                                : i18n.language.startsWith("tr")
-                                                    ? sub.textTur || sub.text
-                                                    : sub.text;
-                                        return (
-                                            <div key={sub.id} className={`sub-title-card ${i % 2 ? 'alt-bg' : 'ust-bg'}`}>
-                                                <div
-                                                    className="card-content"
-                                                    dangerouslySetInnerHTML={{ __html: html }}
-                                                />
-                                            </div>
-                                        );
-                                    })}
-                                </div>
+                                <>
+                                    <div className="sub-titles-grid">
+                                        {offer.subTitle.map((sub, i) => {
+                                            // kart başlığı için istersen sub.title gibi bir alan kullan
+                                            const html = i18n.language.startsWith("en")
+                                                ? sub.textEng || sub.text
+                                                : i18n.language.startsWith("ru")
+                                                    ? sub.textRu || sub.text
+                                                    : i18n.language.startsWith("tr")
+                                                        ? sub.textTur || sub.text
+                                                        : sub.text;
+                                            return (
+                                                <div key={sub.id}
+                                                     className={`sub-title-card ${i % 2 ? 'alt-bg' : 'ust-bg'}`}>
+                                                    <div
+                                                        className="card-content"
+                                                        dangerouslySetInnerHTML={{__html: html}}
+                                                    />
+                                                </div>
+                                            );
+                                        })}
+
+                                    </div>
+                                    <div className={"yeniButton"}>
+                                        <button onClick={()=>navigate("/contact")}>Müraciət et</button>
+                                    </div>
+                                </>
                             ) : (
                                 <div className={"description-section row"}>
-                                    <img src={icon3} alt="Icon3" />
+                                    <img src={icon2} alt="Icon3" />
                                     <div className={"col-12 description-column"}>
                                         {Array.isArray(offer.subTitle) && offer.subTitle.length > 0 && (
                                             offer.subTitle.map(sub => (
