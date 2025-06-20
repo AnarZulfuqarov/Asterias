@@ -122,7 +122,7 @@ function ServDetailPageThree() {
                             alt="Back"
                         />
                     </div>
-                    <div className={"row"} style={{alignItems: "center"}}>
+                    <div className={"row ilkRow"} style={{alignItems: "center"}}>
                         <div
                             className={"col-6 col-md-12 col-sm-12 col-xs-12"}
                             style={{alignItems: "center", position: "relative", zIndex: 120}}

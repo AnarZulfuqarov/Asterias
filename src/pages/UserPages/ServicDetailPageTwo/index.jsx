@@ -122,7 +122,7 @@ function ServDetailPageTwo() {
                 <div className={"back"} onClick={() => navigate("/")}>
                     <img src={backBak} alt="Back" />
                 </div>
-                <div className={"row"} style={{ alignItems: "start" }}>
+                <div className={"row ilkRow"} style={{ alignItems: "start" }}>
                     <div className={"col-6 col-md-12 col-sm-12 col-xs-12"}>
                         <div className={"text"}>
                             <div className={"head"}>

@@ -12,7 +12,7 @@
   z-index: 999999999;
 
   @media screen and (max-width: 576px){
-    .row:nth-child(1){
+    .ilkRow{
       flex-direction: column-reverse !important;
       row-gap: 25px;
     }
