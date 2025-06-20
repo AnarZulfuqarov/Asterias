@@ -1,13 +1,41 @@
 import { useTranslation } from "react-i18next";
 import "./index.scss";
+import {useEffect, useState} from "react";
 
 const CircleTextBlack = () => {
     const { t, i18n } = useTranslation();
     const circleText = t("circleTextBlack").split(" ").join(" * ");
-    const baseSize = i18n.language === "az" ? 17 : i18n.language === "en" ? 13.5 : 12;
+    const [fontSize, setFontSize] = useState(16);
+    const [textLength, setTextLength] = useState(350);
 
+    useEffect(() => {
+        const updateSize = () => {
+            const width = window.innerWidth;
+            let baseFont;
+            let baseLength;
+
+            if (i18n.language === "az") baseFont = 17;
+            else if (i18n.language === "en") baseFont = 13.5;
+            else baseFont = 12;
+
+            if (width < 400) {
+                setFontSize(baseFont * 0.75);
+                setTextLength(280); // extra small
+            } else if (width < 768) {
+                setFontSize(baseFont * 0.9);
+                setTextLength(320); // small devices
+            } else {
+                setFontSize(baseFont);
+                setTextLength(350); // default
+            }
+        };
+
+        updateSize();
+        window.addEventListener("resize", updateSize);
+        return () => window.removeEventListener("resize", updateSize);
+    }, [i18n.language]);
     return (
-        <div className="circle-text-wrapperr">
+        <div className="circle-text-wrapperr-black">
             <svg
                 className="circle-text-svg"
                 viewBox="0 0 200 200"
@@ -32,7 +60,7 @@ const CircleTextBlack = () => {
 
                 <text
                     fill="#fff"
-                    fontSize={baseSize}
+                    fontSize={fontSize}
                     letterSpacing="1.4"
                     fontFamily="sans-serif"
                     fontWeight="bold"
@@ -41,7 +69,7 @@ const CircleTextBlack = () => {
                         href="#circlePathBlack"
                         startOffset="50%"
                         textAnchor="middle"
-                        textLength="345"
+                        textLength={textLength}
                         lengthAdjust="spacingAndGlyphs"
                         dy="1"
                     >

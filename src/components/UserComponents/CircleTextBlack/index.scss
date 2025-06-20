@@ -1,8 +1,13 @@
-.circle-text-wrapperr {
+.circle-text-wrapperr-black {
   position: relative;
   width: 120px; /* Circle width/height */
   height: 120px;
   margin: 50px auto;
+  @media screen and (max-width: 576px){
+    width: 100px;
+    height: 100px;
+    margin: 30px auto;
+  }
 }
 
 /* SVG styling with animation */
@@ -49,9 +54,7 @@
 /* Mobile */
 @media (max-width: 480px) {
   .circle-text-wrapper {
-    width: 100px;
-    height: 100px;
-    margin: 30px auto;
+
   }
 
   .center-icon {

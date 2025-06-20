@@ -34,7 +34,7 @@
       "phone_label": "Telefon",
       "phone_placeholder": "+994 ** *** ** **",
       "note_label": "Not",
-      "note_placeholder": "",
+      "note_placeholder": "Not",
       "submit_button": "Gönder"
     }
   },

@@ -3,12 +3,13 @@ import './index.scss';
 
 export default function PartnerBubbles({ logos }) {
     const [positions, setPositions] = useState([]);
+    const [isMobile, setIsMobile] = useState(false);
 
     const calculatePositions = (total) => {
         const newPositions = [];
         const maxAttempts = 300;
-        const containerWidth = 1000; // px
-        const containerHeight = 400; // px
+        const containerWidth = isMobile ? 360 : 1000;
+        const containerHeight = isMobile ? 270 : 400;
 
         for (let i = 0; i < total; i++) {
             let top, left, size;
@@ -16,7 +17,7 @@ export default function PartnerBubbles({ logos }) {
             let attempts = 0;
 
             do {
-                size = Math.floor(Math.random() * 40) + 60; // 60-100px
+                size = Math.floor(Math.random() * 20) + (isMobile ? 40 : 60); // 40–60 on mobile, 60–80 on desktop
                 top = Math.random() * (containerHeight - size);
                 left = Math.random() * (containerWidth - size);
 
@@ -26,7 +27,7 @@ export default function PartnerBubbles({ logos }) {
                     const dx = pos.left - left;
                     const dy = pos.top - top;
                     const distance = Math.sqrt(dx * dx + dy * dy);
-                    const minDist = (pos.size + size) / 1.5; // Hafif boşluk bırak
+                    const minDist = (pos.size + size) / 1.6;
 
                     if (distance < minDist) {
                         overlap = true;
@@ -40,27 +41,30 @@ export default function PartnerBubbles({ logos }) {
             if (!overlap) {
                 newPositions.push({ top, left, size });
             } else {
-                // fallback: düzgün sırayla koy
-                newPositions.push({ top: (i * 100) % containerHeight, left: (i * 120) % containerWidth, size: 80 });
+                newPositions.push({ top: (i * 70) % containerHeight, left: (i * 80) % containerWidth, size: isMobile ? 50 : 80 });
             }
         }
 
         setPositions(newPositions);
     };
 
-
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 576);
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     useEffect(() => {
         if (logos?.length) {
             calculatePositions(logos.length);
         }
-    }, [logos]);
+    }, [logos, isMobile]);
 
     const bubbleStyle = (index) => {
         if (!positions[index]) return {};
-
         const { top, left, size } = positions[index];
-        const delay = (index % 5) * 0.5; // 0s - 2s arasında farklı delay
+        const delay = (index % 5) * 0.5;
 
         return {
             position: 'absolute',
@@ -79,12 +83,10 @@ export default function PartnerBubbles({ logos }) {
         };
     };
 
-
-
     return (
         <div className="partner-bubbles">
             <div className="container">
-                <div className="row" style={{justifyContent:"space-between"}}>
+                <div className="row" style={{ justifyContent: "space-between" }}>
                     <div className="col-5 col-md-12 col-sm-12 col-xs-12">
                         <div className="content">
                             <h2>Tərəfdaşlarımızla Güclüyük</h2>
@@ -93,7 +95,7 @@ export default function PartnerBubbles({ logos }) {
                             </p>
                         </div>
                     </div>
-                    <div className="col-6 col-md-12 col-sm-12 col-xs-12 sponsorr" style={{ position: 'relative', height: '400px' }}>
+                    <div className="col-6 col-md-12 col-sm-12 col-xs-12 sponsorr">
                         {logos?.map((logo, i) => (
                             <div key={i} className="bubble" style={bubbleStyle(i)}>
                                 <img src={logo} alt={`partner-${i}`} />

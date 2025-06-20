@@ -35,7 +35,7 @@
       "phone_label": "Телефон",
       "phone_placeholder": "+994 ** *** ** **",
       "note_label": "Заметка",
-      "note_placeholder": "",
+      "note_placeholder": "Заметка",
       "submit_button": "Отправить"
     }
   },

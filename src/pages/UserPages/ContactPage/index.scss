@@ -212,6 +212,7 @@
       position: absolute;
       top: -115px;
       right: 75px;
+
     }
   }
 
@@ -446,7 +447,7 @@
           input,
           textarea {
             height: 24px;
-            padding: 5px 6px 5px 0.5px;
+            padding: 5px 6px 5px 5px;
             gap: 5px;
             font-size: 12px;
           }
@@ -479,6 +480,7 @@
   @media (max-width: 576px) {
     padding: 20px 10px;
     align-items: flex-start;
+    overflow: auto;
 
     .language {
       position: absolute;
@@ -655,11 +657,14 @@
           input,
           textarea {
             height: 20px;
-            padding: 4px 5px 4px 0.5px;
+            padding: 4px 5px 5px 0.5px;
             gap: 4px;
             font-size: 11px;
             width: 100%;
             border-radius:  0px;
+          }
+          textarea{
+            padding-bottom: 20px !important;
           }
         }
       }
@@ -671,8 +676,8 @@
       }
 
       .circleBlack {
-        top: -100px;
-        right: 15px;
+        top: -120px;
+        right: -25px;
         transform: scale(0.6);
       }
     }

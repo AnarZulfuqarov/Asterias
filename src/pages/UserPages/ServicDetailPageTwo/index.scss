@@ -7,7 +7,22 @@
   //background-position: center;
   display: flex !important;
   align-items: center !important;
+  position: relative;
   justify-content: center !important;
+
+  @media screen and (max-width: 576px){
+    .row:nth-child(1){
+      flex-direction: column-reverse !important;
+      row-gap: 0px !important;
+    }
+  }
+  .elli {
+    position: absolute;
+    right: -300px;
+    top: -300px;
+    width: 600px;
+    aspect-ratio: 1/1;
+  }
   .sub-titles-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -82,19 +97,22 @@
         transform: translateX(-50%);
         top:90px;
         @media screen and (max-width: 576px){
-
+          display: none;
         }
         @media only screen and (max-width: 375px) and (max-height: 667px) {
           left: 35%;
           top: 150px;
+          display: none;
         }
         @media only screen and (max-width: 390px) and (max-height: 844px) {
           left: 35%;
           top: 150px;
+          display: none;
         }
         @media only screen and (max-width: 430px) and (max-height: 932px) {
           left: 37%;
           top: 120px;
+          display: none;
         }
 
 
@@ -107,19 +125,22 @@
         transform: translateX(-40%);
         top:90px;
         @media screen and (max-width: 576px){
-
+        display: none;
         }
         @media only screen and (max-width: 375px) and (max-height: 667px) {
           right: 0%;
           top: 150px;
+          display: none;
         }
         @media only screen and (max-width: 390px) and (max-height: 844px) {
           right: 0%;
           top: 150px;
+          display: none;
         }
         @media only screen and (max-width: 430px) and (max-height: 932px) {
           right: 7%;
           top: 120px;
+          display: none;
         }
 
       }
@@ -244,6 +265,7 @@
     @media screen and (max-width: 576px){
       width: 90%;
       margin:100px auto 50px;
+      padding: 20px;
     }
     img{
       width: 222px;
@@ -271,6 +293,11 @@
       font-style: normal;
       font-weight: 500;
       line-height: 24px; /* 150% */
+      @media screen and (max-width: 576px){
+        width: 100%;
+        height: 40px;
+        font-size: 14px;
+      }
     }
   }
   .zakirinChevronu {
@@ -759,6 +786,11 @@
         cursor: pointer;
         border: none;
         margin-top: 130px;
+        @media screen and (max-width: 576px) {
+          height: 40px;
+          border-radius: 12px;
+          font-size: 14px;
+        }
       }
     }
 
@@ -1221,6 +1253,7 @@
     .images {
       width: 100%;
       height: 250px;
+      margin-top: 50px;
 
       .image1 {
         width: 80px;
@@ -1245,7 +1278,7 @@
         height: 100px;
         border-radius: 80px;
         bottom: 0;
-        left: 0px;
+        left: 250px;
       }
     }
   }

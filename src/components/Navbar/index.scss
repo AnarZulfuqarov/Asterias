@@ -17,8 +17,8 @@
     width: 200px;
     aspect-ratio: 15/5;
     @media screen and (max-width: 576px) {
-        width: 150px;
-      margin-top: 25px;
+        width: 120px;
+      margin-top: 15px;
     }
     img{
       width: 100%;
@@ -41,7 +41,10 @@
   }
 
   .language {
-
+    @media screen and (max-width: 576px) {
+      margin-top: 5px;
+      margin-right: 16px;
+    }
     .dropdown {
       position: relative;
       cursor: pointer;

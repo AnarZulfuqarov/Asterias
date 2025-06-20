@@ -18,6 +18,7 @@ import icon3 from "../../../assets/Rectangle477.png";
 import icon2 from "../../../assets/Star25.png";
 import PhotoGallery from "../../../components/UserComponents/PhotoGallery/index.jsx";
 import PartnerBubbles from "../../../components/UserComponents/PartnerBubbles/index.jsx";
+import elli from "../../../assets/Ellipse 2.png";
 
 function ServDetailPageTwo() {
     const navigate = useNavigate();
@@ -116,6 +117,7 @@ function ServDetailPageTwo() {
     return (
         <>
         <div id={"servDetailTwo"}>
+            <img className={"elli"} src={elli} alt="Ellipse"/>
             <div className={"container"}>
                 <div className={"back"} onClick={() => navigate("/")}>
                     <img src={backBak} alt="Back" />
