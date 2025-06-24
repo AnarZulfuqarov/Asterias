@@ -520,7 +520,7 @@ function AdminServDetail() {
                             />
                         </div>
                         <div>
-                            <label>Service (X):</label>
+                            <label>Service (TUR):</label>
                             <input
                                 type="text"
                                 name="nameTur"
@@ -558,7 +558,7 @@ function AdminServDetail() {
                             />
                         </div>
                         <div>
-                            <label>Description (X):</label>
+                            <label>Description (TUR):</label>
                             <textarea
                                 name="descriptionTur"
                                 value={formData.descriptionTur}
@@ -619,7 +619,7 @@ function AdminServDetail() {
                                         />
                                     </div>
                                     <div style={{marginBottom: 16}}>
-                                        <h4>X:</h4>
+                                        <h4>TUR:</h4>
                                         <ReactQuill
                                             value={subTitle.textTur || ""}
                                             onChange={(html) => updateSubtitle(idx, "textTur", html)}
