@@ -409,13 +409,17 @@ function ServDetailPageOne() {
             </div>
 
         </div>
-    {galleryTemplateId == "1" && (
-        <PhotoGallery images={offer.offerGalaryNames.map(name => `${OFFER_GALERY}${name}`)}/>
-    )}
+            {offer?.offerGalaryNames?.length > 0 && (
+                <div className={"container"}>
+                    {galleryTemplateId == "1" && (
+                        <PhotoGallery images={offer?.offerGalaryNames?.map(name => `${OFFER_GALERY}${name}`)}/>
+                    )}
 
-    {galleryTemplateId == "2" && (
-        <PartnerBubbles logos={offer.offerGalaryNames.map(name => `${OFFER_GALERY}${name}`)}/>
-    )}
+                    {galleryTemplateId == "2" && (
+                        <PartnerBubbles logos={offer?.offerGalaryNames?.map(name => `${OFFER_GALERY}${name}`)}/>
+                    )}
+                </div>
+            )}
     </>
     );
 }
