@@ -265,17 +265,17 @@ function ServDetailPageTwo() {
                                                             : subOffer.name}
                                             </h2>
                                         </h3>
-                                        {subOffer.subTitle && (
+                                        {subOffer.subTitle[0] && (
                                             <div
                                                 className="sub-title"
                                                 dangerouslySetInnerHTML={{
                                                     __html: i18n.language?.startsWith("en")
-                                                        ? subOffer.subTitleEng || subOffer.subTitle
+                                                        ? subOffer.subTitle[0]?.textEng || subOffer.subTitle
                                                         : i18n.language?.startsWith("ru")
-                                                            ? subOffer.subTitleRu || subOffer.subTitle
+                                                            ? subOffer.subTitle[0]?.textRu || subOffer.subTitle
                                                             : i18n.language?.startsWith("tr")
-                                                                ? subOffer.subTitleTur || subOffer.subTitle
-                                                                : subOffer.subTitle
+                                                                ? subOffer.subTitle[0]?.textTur || subOffer.subTitle
+                                                                : subOffer.subTitle[0]?.text
                                                 }}
                                             />
                                         )}
