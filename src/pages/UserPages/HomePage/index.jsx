@@ -57,14 +57,18 @@ function HomePage() {
             console.error('ID veya templateId eksik:', { id, templateId });
             return;
         }
+
         if (templateId === '1') {
             navigate(`/serviceDetailOne/${id}`);
         } else if (templateId === '2') {
             navigate(`/serviceDetailTwo/${id}`);
+        } else if (templateId === '3') {
+            navigate(`/serviceDetailThree/${id}`);
         } else {
             console.error('Bilinmeyen templateId:', templateId);
         }
     };
+
 
     // Yükleniyor ve hata durumları
     if (isLoading) {
