@@ -119,15 +119,18 @@ function AdminServCreate() {
             return;
         }
         if (!isSubOffer) {
-            if (singleImageSwitch && singleFileList.length === 0) {
+            if (templateId === "1" && singleFileList.length === 0) {
                 alert("Please upload a single image for the main offer");
                 return;
             }
-            if (tripleImageSwitch && tripleFileLists.every((list) => list.length === 0)) {
-                alert("Please upload at least one image for triple image mode");
+            if ((templateId === "2" || templateId === "3") &&
+                multiFileLists[templateId].every((list) => list.length === 0)
+            ) {
+                alert("Please upload at least one image for this template");
                 return;
             }
         }
+
 
         // Prepare FormData
         const offerData = new FormData();
