@@ -207,35 +207,27 @@ function ServDetailPageThree() {
                             </div>
                         </div>
                         <div className={"col-6 col-md-12 col-sm-12 col-xs-12"} style={{textAlign: "end"}}>
-                            <div className={"image"}>
-                                <div className={"mainImage"}>
-                                    <img src={offerImage} alt={offerName}/>
-                                </div>
-                                <div className={"mainImage2"}>
-                                    <img src={offerImage} alt={offerName}/>
-                                </div>
-                                <div className={"mainImage3"}>
-                                    <img src={offerImage} alt={offerName}/>
-                                </div>
-                                <div className={"mainImage4"}>
-                                    <img src={offerImage} alt={offerName}/>
-                                </div>
-                                <div className={"mainImage5"}>
-                                    <img src={offerImage} alt={offerName}/>
-                                </div>
+                            <div className="image">
+                                {offer.offerImageNames?.map((imageName, index) => (
+                                    <div key={index} className={`mainImage${index === 0 ? "" : index + 1}`}>
+                                        <img src={`${OFFER_IMAGES}${imageName}`} alt={`${offerName}-${index}`} />
+                                    </div>
+                                ))}
+
                                 <div className={"iconn"}>
-                                    <img src={imageIcon}/>
+                                    <img src={imageIcon} />
                                 </div>
                                 <div className={"iconn2"}>
-                                    <img src={imageIcon2}/>
+                                    <img src={imageIcon2} />
                                 </div>
                                 <div className={"iconn3"}>
-                                    <img src={imageIcon3}/>
+                                    <img src={imageIcon3} />
                                 </div>
                                 <div className={"iconn4"}>
-                                    <img src={imageIcon4}/>
+                                    <img src={imageIcon4} />
                                 </div>
                             </div>
+
                         </div>
                     </div>
                     {showDetails && (
