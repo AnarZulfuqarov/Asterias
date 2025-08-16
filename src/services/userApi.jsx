@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 export const userApi = createApi({
     reducerPath: 'userApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://asterias-001-site1.ktempurl.com/api',
+        baseUrl: 'https://asterias-back-production.up.railway.app/api',
         prepareHeaders: (headers) => {
             const token = Cookies.get('asteriasToken');
             if (token) {

@@ -1,7 +1,4 @@
-export const PROJECT_CARD_IMAGES = "https://api.sss-tel.az/files/project_card_images/"
-export const PROJECT_IMAGES = 'https://api.sss-tel.az/files/project_images/'
-export const OFFER_CARD_IMAGES = 'http://asterias-001-site1.ktempurl.com//files/offer_card_images/'
-export const OFFER_IMAGES = 'http://asterias-001-site1.ktempurl.com//files/offer_images/'
-export const OFFER_GALERY = 'http://asterias-001-site1.ktempurl.com//files/offer_galary/'
-export const DESCRIPTION_ICON = 'http://asterias-001-site1.ktempurl.com//files/description_icon/'
-export const PROJECT_VIDEOS = 'https://api.sss-tel.az/files/project_videos/'
+export const OFFER_CARD_IMAGES = 'https://asterias-back-production.up.railway.app/files/offer_card_images/'
+export const OFFER_IMAGES = 'https://asterias-back-production.up.railway.app/files/offer_images/'
+export const OFFER_GALERY = 'https://asterias-back-production.up.railway.app/files/offer_galary/'
+export const DESCRIPTION_ICON = 'https://asterias-back-production.up.railway.app/files/description_icon/'
